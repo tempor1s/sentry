@@ -1,12 +1,14 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo'
-import { User, Message } from 'discord.js'
 import { join } from 'path'
-import { default_prefix, owners } from '../config'
+import { defaultPrefix, owners, dbName } from '../config'
+import { Connection } from 'typeorm'
+import Database from '../structures/database'
 
 declare module 'discord-akairo' {
     interface AkairoClient {
         commandHander: CommandHandler
         listenerHandler: ListenerHandler
+        db: Connection
     }
 }
 
@@ -17,13 +19,14 @@ interface BotOptions {
 
 export default class Client extends AkairoClient {
     public config: BotOptions
+    public db: Connection
     public listenerHandler: ListenerHandler = new ListenerHandler(this, {
         directory: join(__dirname, '..', 'listeners'),
     })
     public commandHandler: CommandHandler = new CommandHandler(this, {
         directory: join(__dirname, '..', 'commands'),
         // TODO: Make this dynamic when I add a DB
-        prefix: default_prefix,
+        prefix: defaultPrefix,
         allowMention: true,
         commandUtil: true,
         ignorePermissions: owners,
@@ -47,6 +50,11 @@ export default class Client extends AkairoClient {
 
         this.commandHandler.loadAll()
         this.listenerHandler.loadAll()
+
+        // Get the DB and connect/synchronize to it.
+        this.db = Database.get(dbName)
+        await this.db.connect()
+        await this.db.synchronize()
     }
 
     public async start(): Promise<string> {

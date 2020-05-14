@@ -5,6 +5,8 @@
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "outDir": "./build",
         "rootDir": "./src",
         "lib": [

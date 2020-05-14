@@ -1,5 +1,8 @@
 FROM node:alpine 
 
+RUN apk update && apk upgrade && \
+  apk add --no-cache bash coreutils
+
 WORKDIR /usr/src/app 
 
 COPY package.json ./ 
@@ -8,4 +11,6 @@ RUN npm install
 
 COPY . ./ 
 
-RUN npm run start:dev 
+RUN chmod +x scripts/wait-for-it.sh
+
+CMD ["npm", "run", "start:dev"]
