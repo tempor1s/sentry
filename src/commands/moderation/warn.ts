@@ -61,16 +61,13 @@ export default class Warn extends Command {
             reason: reason,
         })
 
-        let title = `**${member.user.tag}** \`${member.user.id}\` was warned.`
+        let title = `User has been warned.`
         return msg.util.send(
             getDefaultEmbed('GREEN')
                 .setTitle(title)
-                .addField(
-                    'Moderator',
-                    `${msg.author.tag} \`${msg.author.id}\``,
-                    true
-                )
-                .addField('Reason', reason)
+                .addField('User', member.user)
+                .addField('Moderator', msg.author, false)
+                .addField('Reason', reason, false)
         )
     }
 }
