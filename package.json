@@ -12,7 +12,9 @@
         "start:dev": "nodemon"
     },
     "dependencies": {
+        "discord-akairo": "^8.0.0",
         "discord.js": "^12.2.0",
+        "dotenv": "^8.2.0",
         "nodemon": "^2.0.3"
     },
     "devDependencies": {
