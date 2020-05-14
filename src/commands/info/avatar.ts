@@ -1,5 +1,6 @@
 import { Command } from 'discord-akairo'
 import { Message, GuildMember, MessageEmbed, ImageSize } from 'discord.js'
+import { getDefaultEmbed } from '../../utils/message'
 
 export default class Avatar extends Command {
     public constructor() {
@@ -49,9 +50,8 @@ export default class Avatar extends Command {
         { member, size }: { member: GuildMember; size: number }
     ): Promise<Message> {
         return msg.util.send(
-            new MessageEmbed()
+            getDefaultEmbed()
                 .setTitle(`Avatar | ${member.user.tag}`)
-                .setColor('DARK_GREY')
                 .setImage(
                     member.user.displayAvatarURL({ size: size as ImageSize })
                 )
