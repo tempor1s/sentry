@@ -1,0 +1,7 @@
+version: '3'
+services:
+    bot:
+        image: bot
+        dockerfile: Dockerfile.dev
+        volumes:
+            - ./:/usr/src/app

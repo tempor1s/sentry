@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "commonjs",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./build",
+        "rootDir": "./src",
+        "lib": [
+            "ESNext",
+            "ESNext.Array",
+            "ESNext.AsyncIterable",
+            "ESNext.Intl",
+            "ESNext.Symbol"
+        ]
+    },
+    "exclude": ["node_modules", "build"]
+}
