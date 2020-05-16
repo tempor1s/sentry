@@ -9,7 +9,7 @@ export default class Avatar extends Command {
             category: 'info',
             description: {
                 content: 'Display the avatar of a user.',
-                usage: 'avatar @user',
+                usage: 'avatar',
                 examples: [
                     'avatar',
                     'avatar @temporis#6402',
