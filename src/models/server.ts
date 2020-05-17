@@ -1,12 +1,4 @@
-import {
-    Column,
-    PrimaryColumn,
-    Entity,
-    CreateDateColumn,
-    OneToOne,
-    JoinColumn,
-} from 'typeorm';
-import { Warnings } from './warnings';
+import { Column, PrimaryColumn, Entity, CreateDateColumn } from 'typeorm';
 
 // TODO: Server config
 
@@ -17,10 +9,6 @@ export class Servers {
 
     @Column({ type: 'text' })
     prefix!: string;
-
-    @OneToOne((type) => Warnings)
-    @JoinColumn()
-    warnings: Warnings;
 
     @CreateDateColumn()
     bot_joined!: Date;

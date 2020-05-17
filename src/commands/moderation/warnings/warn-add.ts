@@ -1,22 +1,22 @@
 import { Command } from 'discord-akairo';
-import { stripIndents } from 'common-tags';
 import { Message, GuildMember } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
 import { MESSAGES } from '../../../utils/constants';
-import * as moment from 'moment';
-import 'moment-duration-format';
 
-export default class WarningsCommand extends Command {
+export default class WarnAddCommand extends Command {
     public constructor() {
-        super('warnings', {
-            aliases: ['warnings'],
-            category: 'warnings',
+        super('warn-add', {
+            category: 'moderation',
             description: {
-                content: MESSAGES.COMMANDS.WARNINGS.WARN.DESCRIPTION,
-                usage: 'warnings [user]',
-                examples: ['@temporis#6402', 'temporis', '111901076520767488'],
+                // content: MESSAGES.COMMANDS.WARN.DESCRIPTION,
+                usage: 'warn [user] <reason>',
+                examples: [
+                    '@temporis#6402 you have been very bad!',
+                    'temporis you have been very bad!',
+                    '111901076520767488 you have been very bad!',
+                ],
             },
             userPermissions: 'MANAGE_MESSAGES',
             args: [
@@ -25,17 +25,28 @@ export default class WarningsCommand extends Command {
                     type: 'member',
                     match: 'content',
                 },
+                {
+                    id: 'reason',
+                    type: 'string',
+                    match: 'rest',
+                    default: 'No reason provided.',
+                },
             ],
         });
     }
 
     public async exec(
         msg: Message,
-        { member }: { member: GuildMember }
+        { member, reason }: { member: GuildMember; reason: string }
     ): Promise<Message> {
+        if (!member) {
+            return msg.util.send('User not specified / found.');
+        }
+
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
             Warnings
         );
+
         // TODO: Create helper function for this.
         if (
             member.roles.highest.position >=
@@ -50,30 +61,20 @@ export default class WarningsCommand extends Command {
                     )
             );
 
-        let warnings = await warningRepo.find({
-            where: { guild: member.guild.id, user: member.id },
+        await warningRepo.insert({
+            guild: msg.guild.id,
+            user: member.id,
+            moderator: msg.author.id,
+            reason: reason,
         });
 
-        const embed = getDefaultEmbed().setTitle(
-            `Warnings for ${member.user.tag}`
+        let title = `User has been warned.`;
+        return msg.util.send(
+            getDefaultEmbed('GREEN')
+                .setTitle(title)
+                .addField('User', member.user)
+                .addField('Moderator', msg.author, false)
+                .addField('Reason', reason, false)
         );
-
-        for (const warning of warnings) {
-            let moderator = msg.guild.members.cache.get(warning.moderator);
-            // TODO: Localize date time
-            embed.addField(
-                '**Warning**',
-                stripIndents`ID: \`${
-                    warning.id
-                }\`\nModerator: ${moderator}\nReason: \`${
-                    warning.reason
-                }\`\nTime (UTC): \`${moment
-                    .utc(warning.date)
-                    .format('MM/DD/YYYY hh:mm')}\``,
-                true
-            );
-        }
-
-        return msg.util.send(embed);
     }
 }

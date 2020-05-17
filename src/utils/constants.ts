@@ -13,9 +13,28 @@ export const MESSAGES = {
 				`,
             },
         },
-        WARNINGS: {
+        MODERATION: {
             WARN: {
-                DESCRIPTION: 'Warn a member in the server.',
+                DESCRIPTION: stripIndents`Manage warnings.
+
+                   Available methods:
+
+                     • add \`<member>\` \`[reason]\`
+                     • remove \`<member>\` \`<id>\`
+                     • list \`<member>\`
+                     • clear \`<member>\`
+
+                   Required: \`<>\` | Optional: \`[]\`
+                `,
+                REPLY: (
+                    prefix: string | string[] | Promise<string | string[]>
+                ) => stripIndents`
+                        When you beg me so much I just can't not help you~
+                        Check \`${prefix}help cases\` for more information.
+                        `,
+            },
+            WARN_LIST: {
+                DESCRIPTION: 'List all of the warnings for a user.',
             },
         },
         INFO: {
