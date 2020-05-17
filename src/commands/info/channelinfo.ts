@@ -5,7 +5,7 @@ import 'moment-duration-format';
 import { MESSAGES } from '../../utils/constants';
 import { getDefaultEmbed } from '../../utils/message';
 
-export default class ChannelInfo extends Command {
+export default class ChannelInfoCommand extends Command {
     public constructor() {
         super('channelinfo', {
             aliases: ['channelinfo', 'channel', 'channel-info'],

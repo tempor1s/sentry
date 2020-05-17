@@ -1,9 +1,22 @@
-import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import {
+    Column,
+    PrimaryColumn,
+    Entity,
+    CreateDateColumn,
+    OneToOne,
+} from 'typeorm';
+import { Warnings } from './warnings';
 
 // TODO: Server config
 
 @Entity('servers')
 export class Servers {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id!: number;
+
+    @OneToOne((type) => Warnings)
+    warnings!: Warnings;
+
+    @CreateDateColumn()
+    bot_joined!: Date;
 }

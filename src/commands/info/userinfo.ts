@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import 'moment-duration-format';
 import { getDefaultEmbed } from '../../utils/message';
 
-export default class UserInfo extends Command {
+export default class UserInfoCommand extends Command {
     public constructor() {
         super('userinfo', {
             aliases: ['userinfo', 'user', 'whois', 'member', 'user-info'],

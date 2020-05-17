@@ -40,7 +40,7 @@ const PERMISSIONS: PermissionsIndex = {
     USE_VAD: 'Use voice ativity',
 };
 
-export default class RoleInfo extends Command {
+export default class RoleInfoCommand extends Command {
     public constructor() {
         super('roleinfo', {
             aliases: ['roleinfo', 'role', 'role-info'],

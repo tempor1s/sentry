@@ -1,20 +1,20 @@
 import { Command } from 'discord-akairo';
-import { Message, GuildMember, MessageEmbed, ImageSize } from 'discord.js';
+import { Message, GuildMember, ImageSize } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 
-export default class Avatar extends Command {
+export default class AvatarCommand extends Command {
     public constructor() {
         super('avatar', {
-            aliases: ['avatar'],
+            aliases: ['avatar', 'av'],
             category: 'info',
             description: {
                 content: 'Display the avatar of a user.',
-                usage: 'avatar',
+                usage: 'avatar <user>',
                 examples: [
-                    'avatar',
-                    'avatar @temporis#6402',
-                    'avatar host',
-                    'avatar 111901076520767488',
+                    '',
+                    '@temporis#6402',
+                    'temporis',
+                    '111901076520767488',
                 ],
             },
             args: [
@@ -45,10 +45,10 @@ export default class Avatar extends Command {
         });
     }
 
-    public exec(
+    public async exec(
         msg: Message,
         { member, size }: { member: GuildMember; size: number }
-    ): Promise<Message> {
+    ) {
         return msg.util.send(
             getDefaultEmbed()
                 .setTitle(`Avatar | ${member.user.tag}`)

@@ -60,7 +60,7 @@ export default class WarningsCommand extends Command {
 
         for (const warning of warnings) {
             let moderator = msg.guild.members.cache.get(warning.moderator);
-            console.log(moment.utc(warning.date).format('MM/DD/YYYY hh:mm'));
+            // TODO: Localize date time
             embed.addField(
                 '**Warning**',
                 stripIndents`ID: \`${

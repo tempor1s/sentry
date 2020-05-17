@@ -17,7 +17,7 @@ const VERIFICATION_LEVELS: VerificationLevels = {
     VERY_HIGH: '┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻',
 };
 
-export default class ServerInfo extends Command {
+export default class ServerInfoCommand extends Command {
     public constructor() {
         super('guild', {
             aliases: ['serverinfo', 'server', 'guildinfo', 'guild'],
