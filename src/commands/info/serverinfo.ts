@@ -1,4 +1,3 @@
-import { stripIndents } from 'common-tags';
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
@@ -38,6 +37,11 @@ export default class ServerInfo extends Command {
             .setTitle(guild.name)
             .addField('ID', guild.id, false)
             .addField(
+                'Owner',
+                `${guild.owner!.user} (ID: ${guild.ownerID})`,
+                false
+            )
+            .addField(
                 'Server Created',
                 moment.utc(guild.createdAt).format('MM/DD/YYYY hh:mm:ss'),
                 true
@@ -65,11 +69,6 @@ export default class ServerInfo extends Command {
             .addField('Emojis', guild.emojis.cache.size, true)
             .addField('Roles', guild.roles.cache.size, true)
             .addField('Bans', (await guild.fetchBans()).size, true)
-            .addField(
-                'Owner',
-                `${guild.owner!.user} (ID: ${guild.ownerID})`,
-                true
-            )
             .addField('Region', guild.region, true)
             .addField(
                 'Verification Level',
