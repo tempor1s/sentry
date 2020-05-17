@@ -1,9 +1,9 @@
-import { ConnectionManager } from 'typeorm'
-import { dbName, dbHost, dbUsername, dbPassword } from '../config'
+import { ConnectionManager } from 'typeorm';
+import { dbName, dbHost, dbUsername, dbPassword } from '../config';
 
-import { Warnings } from '../models/warnings'
+import { Warnings } from '../models/warnings';
 
-const connectionManager: ConnectionManager = new ConnectionManager()
+const connectionManager: ConnectionManager = new ConnectionManager();
 
 connectionManager.create({
     name: dbName,
@@ -16,6 +16,6 @@ connectionManager.create({
     synchronize: true, // TODO: Disable this for production
     logging: false,
     entities: [Warnings],
-})
+});
 
-export default connectionManager
+export default connectionManager;

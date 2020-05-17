@@ -1,8 +1,8 @@
-import { Command } from 'discord-akairo'
-import { Message, GuildMember } from 'discord.js'
-import { Repository } from 'typeorm'
-import { Warnings } from '../../models/warnings'
-import { getDefaultEmbed } from '../../utils/message'
+import { Command } from 'discord-akairo';
+import { Message, GuildMember } from 'discord.js';
+import { Repository } from 'typeorm';
+import { Warnings } from '../../models/warnings';
+import { getDefaultEmbed } from '../../utils/message';
 
 export default class Warn extends Command {
     public constructor() {
@@ -31,7 +31,7 @@ export default class Warn extends Command {
                     default: 'No reason provided.',
                 },
             ],
-        })
+        });
     }
 
     public async exec(
@@ -40,7 +40,7 @@ export default class Warn extends Command {
     ): Promise<Message> {
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
             Warnings
-        )
+        );
         // TODO: Create helper function for this.
         if (
             member.roles.highest.position >=
@@ -53,21 +53,21 @@ export default class Warn extends Command {
                     .setDescription(
                         'This member has a higher or equal role to you. You are unable to warn them.'
                     )
-            )
+            );
         await warningRepo.insert({
             guild: msg.guild.id,
             user: member.id,
             moderator: msg.author.id,
             reason: reason,
-        })
+        });
 
-        let title = `User has been warned.`
+        let title = `User has been warned.`;
         return msg.util.send(
             getDefaultEmbed('GREEN')
                 .setTitle(title)
                 .addField('User', member.user)
                 .addField('Moderator', msg.author, false)
                 .addField('Reason', reason, false)
-        )
+        );
     }
 }

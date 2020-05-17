@@ -1,19 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('warnings')
 export class Warnings {
     @PrimaryGeneratedColumn()
-    id!: number
+    id!: number;
 
     @Column({ type: 'varchar', length: 22 })
-    guild!: string
+    guild!: string;
 
     @Column({ type: 'varchar', length: 22 })
-    user!: string
+    user!: string;
 
     @Column({ type: 'varchar', length: 22 })
-    moderator!: string
+    moderator!: string;
 
     @Column({ type: 'text' })
-    reason!: string
+    reason!: string;
 }

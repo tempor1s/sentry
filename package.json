@@ -12,9 +12,12 @@
         "start:dev": "nodemon"
     },
     "dependencies": {
+        "common-tags": "^1.8.0",
         "discord-akairo": "^8.0.0",
         "discord.js": "^12.2.0",
         "dotenv": "^8.2.0",
+        "moment": "^2.25.3",
+        "moment-duration-format": "^2.3.2",
         "pg": "^8.2.0",
         "reflect-metadata": "^0.1.13",
         "typeorm": "^0.2.24"

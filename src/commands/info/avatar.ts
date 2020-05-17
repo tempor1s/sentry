@@ -1,6 +1,6 @@
-import { Command } from 'discord-akairo'
-import { Message, GuildMember, MessageEmbed, ImageSize } from 'discord.js'
-import { getDefaultEmbed } from '../../utils/message'
+import { Command } from 'discord-akairo';
+import { Message, GuildMember, MessageEmbed, ImageSize } from 'discord.js';
+import { getDefaultEmbed } from '../../utils/message';
 
 export default class Avatar extends Command {
     public constructor() {
@@ -34,15 +34,15 @@ export default class Avatar extends Command {
                                 Number(str)
                             )
                         )
-                            return Number(str)
-                        return null
+                            return Number(str);
+                        return null;
                     },
                     match: 'option',
                     flag: ['-size='], // avatar @temporis#6402 -size=512
                     default: 2048,
                 },
             ],
-        })
+        });
     }
 
     public exec(
@@ -55,6 +55,6 @@ export default class Avatar extends Command {
                 .setImage(
                     member.user.displayAvatarURL({ size: size as ImageSize })
                 )
-        )
+        );
     }
 }

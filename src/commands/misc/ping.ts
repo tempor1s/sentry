@@ -1,5 +1,5 @@
-import { Command } from 'discord-akairo'
-import { Message } from 'discord.js'
+import { Command } from 'discord-akairo';
+import { Message } from 'discord.js';
 
 export default class Ping extends Command {
     public constructor() {
@@ -12,10 +12,10 @@ export default class Ping extends Command {
                 usage: 'ping',
                 examples: ['ping'],
             },
-        })
+        });
     }
 
     public exec(msg: Message): Promise<Message> {
-        return msg.util.send(`Pong. \`${this.client.ws.ping}ms\``)
+        return msg.util.send(`Pong. \`${this.client.ws.ping}ms\``);
     }
 }

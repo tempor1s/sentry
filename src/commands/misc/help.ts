@@ -1,8 +1,8 @@
-import { Command } from 'discord-akairo'
-import { defaultPrefix } from '../../config'
-import { Message, Permissions } from 'discord.js'
-import { getDefaultEmbed } from '../../utils/message'
-import { MESSAGES } from '../../utils/constants'
+import { Command } from 'discord-akairo';
+import { defaultPrefix } from '../../config';
+import { Message, Permissions } from 'discord.js';
+import { getDefaultEmbed } from '../../utils/message';
+import { MESSAGES } from '../../utils/constants';
 
 export default class Help extends Command {
     public constructor() {
@@ -20,18 +20,18 @@ export default class Help extends Command {
                     type: 'commandAlias',
                 },
             ],
-        })
+        });
     }
 
     public async exec(msg: Message, { command }: { command: Command }) {
         // TODO: Swap this to use prefix provider
-        const prefix = defaultPrefix
+        const prefix = defaultPrefix;
 
         if (!command) {
             const embed = getDefaultEmbed().addField(
                 '❯ Commands',
                 MESSAGES.HELP.REPLY(prefix)
-            )
+            );
 
             for (const category of this.handler.categories.values()) {
                 embed.addField(
@@ -42,22 +42,22 @@ export default class Help extends Command {
                         .filter((cmd) => cmd.aliases.length > 0)
                         .map((cmd) => `\`${cmd.aliases[0]}\``)
                         .join(' ')}`
-                )
+                );
             }
 
-            return msg.util?.send(embed)
+            return msg.util?.send(embed);
         }
 
         const embed = getDefaultEmbed()
             .setTitle(`\`${command.description.usage}\``)
-            .addField('❯ Description', command.description.content || '\u200b')
+            .addField('❯ Description', command.description.content || '\u200b');
 
         if (command.aliases.length > 1)
             embed.addField(
                 '❯ Aliases',
                 `\`${command.aliases.join('` `')}\``,
                 true
-            )
+            );
         if (command.description.examples?.length)
             embed.addField(
                 '❯ Examples',
@@ -65,8 +65,8 @@ export default class Help extends Command {
                     `\`\n\`${command.aliases[0]} `
                 )}\``,
                 true
-            )
+            );
 
-        return msg.util?.send(embed)
+        return msg.util?.send(embed);
     }
 }
