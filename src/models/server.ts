@@ -4,6 +4,7 @@ import {
     Entity,
     CreateDateColumn,
     OneToOne,
+    JoinColumn,
 } from 'typeorm';
 import { Warnings } from './warnings';
 
@@ -11,11 +12,15 @@ import { Warnings } from './warnings';
 
 @Entity('servers')
 export class Servers {
-    @PrimaryColumn()
-    id!: number;
+    @PrimaryColumn({ type: 'text' })
+    id!: string;
+
+    @Column({ type: 'text' })
+    prefix!: string;
 
     @OneToOne((type) => Warnings)
-    warnings!: Warnings;
+    @JoinColumn()
+    warnings: Warnings;
 
     @CreateDateColumn()
     bot_joined!: Date;

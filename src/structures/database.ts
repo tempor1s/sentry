@@ -2,6 +2,7 @@ import { ConnectionManager } from 'typeorm';
 import { dbName, dbHost, dbUsername, dbPassword } from '../config';
 
 import { Warnings } from '../models/warnings';
+import { Servers } from '../models/server';
 
 const connectionManager: ConnectionManager = new ConnectionManager();
 
@@ -15,7 +16,7 @@ connectionManager.create({
     database: 'sentry',
     synchronize: true, // TODO: Disable this for production
     logging: false,
-    entities: [Warnings],
+    entities: [Warnings, Servers],
 });
 
 export default connectionManager;
