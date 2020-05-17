@@ -1,4 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+} from 'typeorm';
 
 @Entity('warnings')
 export class Warnings {
@@ -16,4 +21,7 @@ export class Warnings {
 
     @Column({ type: 'text' })
     reason!: string;
+
+    @CreateDateColumn()
+    date!: Date;
 }

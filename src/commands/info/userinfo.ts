@@ -59,6 +59,7 @@ export default class UserInfo extends Command {
                 user.presence.activities?.[0]?.name ?? 'None',
                 true
             )
+            // TODO: Order these
             .addField(
                 'Roles',
                 member.roles.cache.map((role) => role).join(', '),

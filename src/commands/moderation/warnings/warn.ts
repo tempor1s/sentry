@@ -1,9 +1,9 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember } from 'discord.js';
 import { Repository } from 'typeorm';
-import { Warnings } from '../../models/warnings';
-import { getDefaultEmbed } from '../../utils/message';
-import { MESSAGES } from '../../utils/constants';
+import { Warnings } from '../../../models/warnings';
+import { getDefaultEmbed } from '../../../utils/message';
+import { MESSAGES } from '../../../utils/constants';
 
 export default class WarnCommand extends Command {
     public constructor() {

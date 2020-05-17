@@ -2,9 +2,11 @@ import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
 import { Message, GuildMember } from 'discord.js';
 import { Repository } from 'typeorm';
-import { Warnings } from '../../models/warnings';
-import { getDefaultEmbed } from '../../utils/message';
-import { MESSAGES } from '../../utils/constants';
+import { Warnings } from '../../../models/warnings';
+import { getDefaultEmbed } from '../../../utils/message';
+import { MESSAGES } from '../../../utils/constants';
+import * as moment from 'moment';
+import 'moment-duration-format';
 
 export default class WarningsCommand extends Command {
     public constructor() {
@@ -58,9 +60,16 @@ export default class WarningsCommand extends Command {
 
         for (const warning of warnings) {
             let moderator = msg.guild.members.cache.get(warning.moderator);
+            console.log(moment.utc(warning.date).format('MM/DD/YYYY hh:mm'));
             embed.addField(
                 '**Warning**',
-                stripIndents`ID: \`${warning.id}\`\nModerator: ${moderator}\nReason: \`${warning.reason}\``,
+                stripIndents`ID: \`${
+                    warning.id
+                }\`\nModerator: ${moderator}\nReason: \`${
+                    warning.reason
+                }\`\nTime (UTC): \`${moment
+                    .utc(warning.date)
+                    .format('MM/DD/YYYY hh:mm')}\``,
                 true
             );
         }
