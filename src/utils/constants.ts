@@ -23,6 +23,9 @@ export const MESSAGES = {
             ROLE: {
                 DESCRIPTION: 'Get information about a role in a server.',
             },
+            CHANNEL: {
+                DESCRIPTION: 'Get information about a channel in a server.',
+            },
         },
     },
 };

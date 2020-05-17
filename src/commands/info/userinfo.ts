@@ -42,7 +42,7 @@ export default class UserInfo extends Command {
             .setTitle(user.tag)
             .addField('ID', user.id, false)
             .addField(
-                'Account Created',
+                'Created at',
                 moment.utc(user.createdAt).format('MM/DD/YYYY hh:mm:ss'),
                 true
             )

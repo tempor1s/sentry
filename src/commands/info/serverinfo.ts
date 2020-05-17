@@ -43,7 +43,7 @@ export default class ServerInfo extends Command {
                 false
             )
             .addField(
-                'Server Created',
+                'Created at',
                 moment.utc(guild.createdAt).format('MM/DD/YYYY hh:mm:ss'),
                 true
             )
