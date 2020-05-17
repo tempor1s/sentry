@@ -10,7 +10,7 @@ export default class UserInfo extends Command {
             aliases: ['userinfo', 'user', 'whois', 'member', 'user-info'],
             description: {
                 content: 'Get information about a user in a server.',
-                useage: 'userinfo [member]',
+                usage: 'userinfo [member]',
                 examples: ['temporis', '@temporis#6402', '111901076520767488'],
             },
             category: 'info',
@@ -40,7 +40,7 @@ export default class UserInfo extends Command {
 
         const embed = getDefaultEmbed()
             .setTitle(user.tag)
-            .addField('ID', user.id, true)
+            .addField('ID', user.id, false)
             .addField(
                 'Account Created',
                 moment.utc(user.createdAt).format('MM/DD/YYYY hh:mm:ss'),
@@ -61,7 +61,8 @@ export default class UserInfo extends Command {
             )
             .addField(
                 'Roles',
-                member.roles.cache.map((role) => role).join(', ')
+                member.roles.cache.map((role) => role).join(', '),
+                false
             )
             .setThumbnail(user.displayAvatarURL());
 

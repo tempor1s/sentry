@@ -20,6 +20,9 @@ export const MESSAGES = {
             USER: {
                 DESCRIPTION: 'Get information about a user in a server.',
             },
+            ROLE: {
+                DESCRIPTION: 'Get information about a role in a server.',
+            },
         },
     },
 };
