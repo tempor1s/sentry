@@ -12,11 +12,11 @@ export default class WarnCommand extends Command {
             category: 'warnings',
             description: {
                 content: MESSAGES.COMMANDS.WARNINGS.WARN.DESCRIPTION,
-                useage: 'warn [user] <reason>',
+                usage: 'warn [user] <reason>',
                 examples: [
-                    'warn @temporis#6402 you have been very bad!',
-                    'warn temporis you have been very bad!',
-                    'warn 111901076520767488 you have been very bad!',
+                    '@temporis#6402 you have been very bad!',
+                    'temporis you have been very bad!',
+                    '111901076520767488 you have been very bad!',
                 ],
             },
             userPermissions: 'MANAGE_MESSAGES',

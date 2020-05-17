@@ -13,12 +13,8 @@ export default class WarningsCommand extends Command {
             category: 'warnings',
             description: {
                 content: MESSAGES.COMMANDS.WARNINGS.WARN.DESCRIPTION,
-                useage: 'warnings [user]',
-                examples: [
-                    'warnings @temporis#6402',
-                    'warnings temporis',
-                    'warnings 111901076520767488',
-                ],
+                usage: 'warnings [user]',
+                examples: ['@temporis#6402', 'temporis', '111901076520767488'],
             },
             userPermissions: 'MANAGE_MESSAGES',
             args: [
