@@ -9,7 +9,7 @@ export default class Help extends Command {
         super('help', {
             aliases: ['help'],
             description: {
-                content: 'Get help and information about the bot.',
+                content: MESSAGES.COMMANDS.MISC.HELP.DESCRIPTION,
                 usage: ['help'],
                 examples: ['help ping', 'help warn'],
             },
@@ -30,7 +30,7 @@ export default class Help extends Command {
         if (!command) {
             const embed = getDefaultEmbed().addField(
                 '❯ Commands',
-                MESSAGES.HELP.REPLY(prefix)
+                MESSAGES.COMMANDS.MISC.HELP.REPLY(prefix)
             );
 
             for (const category of this.handler.categories.values()) {

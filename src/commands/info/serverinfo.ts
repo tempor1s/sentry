@@ -23,6 +23,7 @@ export default class ServerInfo extends Command {
             aliases: ['serverinfo', 'server', 'guildinfo', 'guild'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.SERVER.DESCRIPTION,
+                usage: 'serverinfo',
             },
             category: 'info',
             channel: 'guild',
