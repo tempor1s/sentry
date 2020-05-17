@@ -13,6 +13,11 @@ export const MESSAGES = {
 				`,
             },
         },
+        WARNINGS: {
+            WARN: {
+                DESCRIPTION: 'Warn a member in the server.',
+            },
+        },
         INFO: {
             SERVER: {
                 DESCRIPTION: 'Get information about the current server.',
@@ -25,6 +30,9 @@ export const MESSAGES = {
             },
             CHANNEL: {
                 DESCRIPTION: 'Get information about a channel in a server.',
+            },
+            EMOJI: {
+                DESCRIPTION: 'Get information about an emoji in a server.',
             },
         },
     },
