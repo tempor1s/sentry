@@ -37,7 +37,7 @@ export default class WarnCommand extends Command {
                 ['warn-list', 'list'],
                 ['warn-clear', 'clear'],
             ],
-            otherwise: (msg: Message) => {
+            otherwise: (_: Message) => {
                 return `Check help for more information.`;
             },
         };
