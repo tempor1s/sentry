@@ -10,7 +10,7 @@ export default class UserInfoCommand extends Command {
             aliases: ['user', 'userinfo', 'whois', 'member', 'user-info'],
             description: {
                 content: 'Get information about a user in a server.',
-                usage: 'userinfo [member]',
+                usage: 'userinfo <member>',
                 examples: ['temporis', '@temporis#6402', '111901076520767488'],
             },
             category: 'info',

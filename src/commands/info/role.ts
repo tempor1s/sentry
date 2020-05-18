@@ -46,7 +46,7 @@ export default class RoleInfoCommand extends Command {
             aliases: ['role', 'roleinfo', 'role-info'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.ROLE.DESCRIPTION,
-                usage: 'role [role]',
+                usage: 'role <role>',
                 examples: ['mod', '@mod', '536334100055719954'],
             },
             category: 'info',

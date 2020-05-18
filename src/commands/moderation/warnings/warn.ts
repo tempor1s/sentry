@@ -10,7 +10,7 @@ export default class WarnCommand extends Command {
             description: {
                 content: MESSAGES.COMMANDS.MODERATION.WARN.DESCRIPTION,
                 usage: 'warn <method> <...arguments>',
-                example: [
+                examples: [
                     'add temporis bad boy!',
                     'remove temporis 3',
                     'list temporis',
@@ -30,7 +30,6 @@ export default class WarnCommand extends Command {
                 ['warn-list', 'list'],
                 ['warn-clear', 'clear'],
             ],
-            // TODO: Replace with prefix supplier
             otherwise: (msg: Message) => {
                 const prefix = (this.handler.prefix as PrefixSupplier)(msg);
                 return MESSAGES.COMMANDS.MODERATION.WARN.REPLY(prefix);

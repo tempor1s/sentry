@@ -65,6 +65,8 @@ export default class Help extends Command {
                 true
             );
 
+        embed.addField('❯ Legend', MESSAGES.COMMANDS.MISC.HELP.SUB_DESCRIPTION);
+
         return msg.util?.send(embed);
     }
 }

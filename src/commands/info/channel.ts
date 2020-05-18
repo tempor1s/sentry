@@ -11,7 +11,7 @@ export default class ChannelInfoCommand extends Command {
             aliases: ['channel', 'channelinfo', 'channel-info'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.CHANNEL.DESCRIPTION,
-                usage: 'channel [channel]',
+                usage: 'channel <channel>',
                 examples: ['#general', 'general', '688166040513151041'],
             },
             category: 'info',

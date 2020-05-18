@@ -4,13 +4,18 @@ export const MESSAGES = {
     COMMANDS: {
         MISC: {
             HELP: {
+                SUB_DESCRIPTION: stripIndents`Required: \`<>\` | Optional: \`[]\``,
                 DESCRIPTION:
                     'Displays a list of available commands, or detailed information for a specified command.',
                 REPLY: (
                     prefix: string | string[] | Promise<string | string[]>
                 ) => stripIndents`A list of available commands.
 					For additional info on a command, type \`${prefix}help <command>\`
+                    Required: \`<>\` | Optional: \`[]\`
 				`,
+            },
+            PREFIX: {
+                DESCRIPTION: 'View or update the prefix of the bot.',
             },
         },
         MODERATION: {
@@ -18,19 +23,15 @@ export const MESSAGES = {
                 DESCRIPTION: stripIndents`Manage warnings.
 
                    Available methods:
-
                      • add \`<member>\` \`[reason]\`
                      • remove \`<member>\` \`<id>\`
                      • list \`<member>\`
                      • clear \`<member>\`
-
-                   Required: \`<>\` | Optional: \`[]\`
                 `,
                 REPLY: (
                     prefix: string | string[] | Promise<string | string[]>
                 ) => stripIndents`
-                        When you beg me so much I just can't not help you~
-                        Check \`${prefix}help cases\` for more information.
+                        Check \`${prefix}help warnings\` for more information.
                         `,
             },
         },
