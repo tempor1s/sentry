@@ -4,7 +4,6 @@ import { Message, GuildMember } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
-import { MESSAGES } from '../../../utils/constants';
 import * as moment from 'moment';
 import 'moment-duration-format';
 
@@ -12,15 +11,6 @@ export default class WarnListCommand extends Command {
     public constructor() {
         super('warn-list', {
             category: 'moderation',
-            description: {
-                content: MESSAGES.COMMANDS.MODERATION.WARN_LIST.DESCRIPTION,
-                usage: 'warn list <member>',
-                examples: [
-                    'list @temporis#6402',
-                    'list temporis',
-                    'list 111901076520767488',
-                ],
-            },
             userPermissions: 'MANAGE_MESSAGES',
             args: [
                 {

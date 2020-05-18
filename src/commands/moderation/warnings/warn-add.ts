@@ -3,27 +3,16 @@ import { Message, GuildMember } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
-import { MESSAGES } from '../../../utils/constants';
 
 export default class WarnAddCommand extends Command {
     public constructor() {
         super('warn-add', {
             category: 'moderation',
-            description: {
-                // content: MESSAGES.COMMANDS.WARN.DESCRIPTION,
-                usage: 'warn [user] <reason>',
-                examples: [
-                    '@temporis#6402 you have been very bad!',
-                    'temporis you have been very bad!',
-                    '111901076520767488 you have been very bad!',
-                ],
-            },
             userPermissions: 'MANAGE_MESSAGES',
             args: [
                 {
                     id: 'member',
                     type: 'member',
-                    match: 'content',
                 },
                 {
                     id: 'reason',
@@ -38,7 +27,7 @@ export default class WarnAddCommand extends Command {
     public async exec(
         msg: Message,
         { member, reason }: { member: GuildMember; reason: string }
-    ): Promise<Message> {
+    ) {
         if (!member) {
             return msg.util.send('User not specified / found.');
         }
@@ -68,13 +57,12 @@ export default class WarnAddCommand extends Command {
             reason: reason,
         });
 
-        let title = `User has been warned.`;
         return msg.util.send(
             getDefaultEmbed('GREEN')
-                .setTitle(title)
-                .addField('User', member.user)
-                .addField('Moderator', msg.author, false)
-                .addField('Reason', reason, false)
+                .setTitle('User has been warned.')
+                .addField('User', member.user, true)
+                .addField('Moderator', msg.author, true)
+                .addField('Reason', reason, true)
         );
     }
 }

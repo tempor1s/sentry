@@ -10,6 +10,12 @@ export default class WarnCommand extends Command {
             description: {
                 content: MESSAGES.COMMANDS.MODERATION.WARN.DESCRIPTION,
                 usage: 'warn <method> <...arguments>',
+                example: [
+                    'add temporis bad boy!',
+                    'remove temporis 3',
+                    'list temporis',
+                    'clear temporis',
+                ],
             },
             channel: 'guild',
             clientPermissions: [Permissions.FLAGS.MANAGE_MESSAGES],

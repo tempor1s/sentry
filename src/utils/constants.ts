@@ -33,9 +33,6 @@ export const MESSAGES = {
                         Check \`${prefix}help cases\` for more information.
                         `,
             },
-            WARN_LIST: {
-                DESCRIPTION: 'List all of the warnings for a user.',
-            },
         },
         INFO: {
             SERVER: {
