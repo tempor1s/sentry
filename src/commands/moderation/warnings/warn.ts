@@ -38,8 +38,7 @@ export default class WarnCommand extends Command {
                 ['warn-clear', 'clear'],
             ],
             otherwise: (msg: Message) => {
-                const prefix = (this.handler.prefix as PrefixSupplier)(msg);
-                return `Check \`${prefix}help warn\` for more information.`;
+                return `Check help for more information.`;
             },
         };
 

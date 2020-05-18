@@ -28,8 +28,8 @@ export default class Client extends AkairoClient {
     });
     public commandHandler: CommandHandler = new CommandHandler(this, {
         directory: join(__dirname, '..', 'commands'),
-        // TODO: Add LRU cache to increase speed and reduce queries
-        prefix: (msg: Message): string | Promise<string> => {
+        // TODO: Add LRU cache to increase speed and reduce queries and also make this not a promise :)
+        prefix: (msg: Message): Promise<string> => {
             let serverRepo: Repository<Servers> = this.db.getRepository(
                 Servers
             );
