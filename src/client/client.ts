@@ -1,5 +1,5 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { join } from 'path';
 import { owners, dbName, defaultPrefix } from '../config';
 import { Connection } from 'typeorm';
@@ -12,6 +12,7 @@ declare module 'discord-akairo' {
         commandHander: CommandHandler;
         listenerHandler: ListenerHandler;
         db: Connection;
+        invite: string;
     }
 }
 
@@ -23,6 +24,7 @@ interface BotOptions {
 export default class Client extends AkairoClient {
     public config: BotOptions;
     public db: Connection;
+    public invite: string;
     public listenerHandler: ListenerHandler = new ListenerHandler(this, {
         directory: join(__dirname, '..', 'listeners'),
     });
@@ -76,6 +78,11 @@ export default class Client extends AkairoClient {
 
         this.commandHandler.loadAll();
         this.listenerHandler.loadAll();
+
+        // Get invite
+        this.invite = await this.generateInvite([
+            Permissions.FLAGS.ADMINISTRATOR,
+        ]);
 
         // Get the DB and connect/synchronize to it.
         this.db = Database.get(dbName);

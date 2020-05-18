@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 
-export default class Ping extends Command {
+export default class PingCommand extends Command {
     public constructor() {
         super('ping', {
             aliases: ['ping', 'alive'],
@@ -15,7 +15,7 @@ export default class Ping extends Command {
         });
     }
 
-    public exec(msg: Message): Promise<Message> {
+    public async exec(msg: Message) {
         return msg.util.send(`Pong. \`${this.client.ws.ping}ms\``);
     }
 }

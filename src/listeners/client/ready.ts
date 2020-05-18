@@ -13,6 +13,11 @@ export default class ReadyListener extends Listener {
         console.log(`${this.client.user.tag} is now online.`);
 
         // Update servers/members every 5 minutes.
+        this.client.user.setActivity(
+            `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
+            { type: 'WATCHING' }
+        );
+
         setInterval(() => {
             this.client.user.setActivity(
                 `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
