@@ -16,6 +16,15 @@ export const MESSAGES = {
             },
             PREFIX: {
                 DESCRIPTION: 'View or update the prefix of the bot.',
+                REPLY: (
+                    prefix: string | string[] | Promise<string | string[]>
+                ) => `The current prefix for this server is \`${prefix}\``,
+                REPLY_2: (
+                    prefix: string | string[] | Promise<string | string[]>
+                ) => `Reset prefix back to \`${prefix}\``,
+                REPLY_3: (
+                    prefix: string | string[] | Promise<string | string[]>
+                ) => `The prefix has been set to \`${prefix}\``,
             },
         },
         MODERATION: {
