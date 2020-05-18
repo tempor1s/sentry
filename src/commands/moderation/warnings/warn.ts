@@ -1,3 +1,4 @@
+import { stripIndents } from 'common-tags';
 import { Command, Flag, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { MESSAGES } from '../../../utils/constants';
@@ -8,7 +9,14 @@ export default class WarnCommand extends Command {
             aliases: ['warn'],
             category: 'moderation',
             description: {
-                content: MESSAGES.COMMANDS.MODERATION.WARN.DESCRIPTION,
+                content: stripIndents`Manage warnings.
+
+                   Available methods:
+                     • add \`<member>\` \`[reason]\`
+                     • remove \`<member>\` \`<id>\`
+                     • list \`<member>\`
+                     • clear \`<member>\`
+                `,
                 usage: 'warn <method> <...arguments>',
                 examples: [
                     'add temporis bad boy!',
@@ -32,7 +40,7 @@ export default class WarnCommand extends Command {
             ],
             otherwise: (msg: Message) => {
                 const prefix = (this.handler.prefix as PrefixSupplier)(msg);
-                return MESSAGES.COMMANDS.MODERATION.WARN.REPLY(prefix);
+                return `Check \`${prefix}help warn\` for more information.`;
             },
         };
 

@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
 import * as moment from 'moment';
 import 'moment-duration-format';
-import { MESSAGES } from '../../utils/constants';
 import { getDefaultEmbed } from '../../utils/message';
 
 interface PermissionsIndex {
@@ -45,7 +44,7 @@ export default class RoleInfoCommand extends Command {
         super('role', {
             aliases: ['role', 'roleinfo', 'role-info'],
             description: {
-                content: MESSAGES.COMMANDS.INFO.ROLE.DESCRIPTION,
+                content: 'Get information about a role in a server.',
                 usage: 'role <role>',
                 examples: ['mod', '@mod', '536334100055719954'],
             },

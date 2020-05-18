@@ -10,7 +10,7 @@ export default class PrefixCommand extends Command {
         super('prefix', {
             aliases: ['prefix'],
             description: {
-                content: MESSAGES.COMMANDS.MISC.PREFIX,
+                content: 'View or update the prefix of the bot.',
                 usage: 'prefix [prefix]',
                 examples: ['', '>', 'pls'],
             },
@@ -28,10 +28,9 @@ export default class PrefixCommand extends Command {
 
     public async exec(msg: Message, { prefix }: { prefix: string }) {
         if (!prefix) {
+            let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
             return msg.util.send(
-                MESSAGES.COMMANDS.MISC.PREFIX.REPLY(
-                    await (this.handler.prefix as PrefixSupplier)(msg)
-                )
+                `The current prefix for the server is \`${prefix}\``
             );
         }
 
@@ -42,12 +41,10 @@ export default class PrefixCommand extends Command {
         serverRepo.update({ id: msg.guild.id }, { prefix: prefix });
 
         if (prefix === defaultPrefix) {
-            return msg.util?.send(
-                MESSAGES.COMMANDS.MISC.PREFIX.REPLY_2(prefix)
-            );
+            return msg.util?.send(`Reset prefix back to \`${prefix}\``);
         }
 
-        return msg.util?.send(MESSAGES.COMMANDS.MISC.PREFIX.REPLY_3(prefix));
+        return msg.util?.send(`The prefix has been set to \`${prefix}\``);
     }
 }
 

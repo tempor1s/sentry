@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import * as moment from 'moment';
 import 'moment-duration-format';
-import { MESSAGES } from '../../utils/constants';
 import { getDefaultEmbed } from '../../utils/message';
 
 export default class ChannelInfoCommand extends Command {
@@ -10,7 +9,7 @@ export default class ChannelInfoCommand extends Command {
         super('channel', {
             aliases: ['channel', 'channelinfo', 'channel-info'],
             description: {
-                content: MESSAGES.COMMANDS.INFO.CHANNEL.DESCRIPTION,
+                content: 'Get information about a channel in a server.',
                 usage: 'channel <channel>',
                 examples: ['#general', 'general', '688166040513151041'],
             },

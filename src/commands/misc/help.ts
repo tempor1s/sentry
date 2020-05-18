@@ -1,14 +1,15 @@
+import { stripIndents } from 'common-tags';
 import { Command, PrefixSupplier } from 'discord-akairo';
-import { Message, Permissions } from 'discord.js';
+import { Message } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
-import { MESSAGES } from '../../utils/constants';
 
 export default class Help extends Command {
     public constructor() {
         super('help', {
             aliases: ['help'],
             description: {
-                content: MESSAGES.COMMANDS.MISC.HELP.DESCRIPTION,
+                content:
+                    'Displays a list of available commands, or detailed information for a specified command.',
                 usage: ['help'],
                 examples: ['help ping', 'help warn'],
             },
@@ -28,7 +29,10 @@ export default class Help extends Command {
         if (!command) {
             const embed = getDefaultEmbed().addField(
                 '❯ Commands',
-                MESSAGES.COMMANDS.MISC.HELP.REPLY(prefix)
+                stripIndents`A list of available commands.
+					For additional info on a command, type \`${prefix}help <command>\`
+                    Required: \`<>\` | Optional: \`[]\`
+				`
             );
 
             for (const category of this.handler.categories.values()) {
@@ -67,7 +71,7 @@ export default class Help extends Command {
                 true
             );
 
-        embed.addField('❯ Legend', MESSAGES.COMMANDS.MISC.HELP.SUB_DESCRIPTION);
+        embed.addField('❯ Legend', `Required: \`<>\` | Optional: \`[]\``);
 
         return msg.util?.send(embed);
     }

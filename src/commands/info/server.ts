@@ -22,7 +22,7 @@ export default class ServerInfoCommand extends Command {
         super('server', {
             aliases: ['server', 'serverinfo', 'guildinfo', 'guild'],
             description: {
-                content: MESSAGES.COMMANDS.INFO.SERVER.DESCRIPTION,
+                content: 'Get information about the current server.',
                 usage: 'server',
             },
             category: 'info',
