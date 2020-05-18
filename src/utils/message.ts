@@ -6,3 +6,4 @@ export function getDefaultEmbed(color: string = 'DARKER_GREY'): MessageEmbed {
         .setTimestamp()
         .setFooter('Powered by Sentry');
 }
+

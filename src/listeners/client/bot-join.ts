@@ -2,6 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Guild } from 'discord.js';
 import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
+import { defaultPrefix } from '../../config';
 
 export default class BotJoinListener extends Listener {
     public constructor() {
@@ -18,6 +19,6 @@ export default class BotJoinListener extends Listener {
             Servers
         );
 
-        await serversRepo.insert({ id: guild.id, prefix: '!' });
+        await serversRepo.insert({ id: guild.id, prefix: defaultPrefix });
     }
 }
