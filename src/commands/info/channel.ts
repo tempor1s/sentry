@@ -36,8 +36,8 @@ export default class ChannelInfoCommand extends Command {
             .addField('Topic', channel.topic || 'None', true)
             .addField('NSFW', Boolean(channel.nsfw) ? 'Yes' : 'No', true)
             .addField(
-                'Created at',
-                moment.utc(channel.createdAt).format('MM/DD/YYYY hh:mm:ss'),
+                'Created at (UTC)',
+                moment.utc(channel.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .setThumbnail(msg.guild!.iconURL() ?? '');

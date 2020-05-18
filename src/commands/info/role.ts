@@ -46,7 +46,7 @@ export default class RoleInfoCommand extends Command {
             aliases: ['role', 'roleinfo', 'role-info'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.ROLE.DESCRIPTION,
-                usage: 'roleinfo [role]',
+                usage: 'role [role]',
                 examples: ['mod', '@mod', '536334100055719954'],
             },
             category: 'info',
@@ -56,6 +56,7 @@ export default class RoleInfoCommand extends Command {
                 {
                     id: 'role',
                     match: 'content',
+                    type: 'role',
                     default: (msg: Message) => msg.member?.roles.highest,
                 },
             ],
@@ -73,8 +74,8 @@ export default class RoleInfoCommand extends Command {
             .addField('Hoisted', role.hoist ? 'Yes' : 'No', true)
             .addField('Mentionable', role.mentionable ? 'Yes' : 'No', true)
             .addField(
-                'Creation Date',
-                moment.utc(role.createdAt).format('MM/DD/YYYY hh:mm:ss'),
+                'Created at (UTC)',
+                moment.utc(role.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .addField(

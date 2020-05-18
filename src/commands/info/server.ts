@@ -43,8 +43,8 @@ export default class ServerInfoCommand extends Command {
                 false
             )
             .addField(
-                'Created at',
-                moment.utc(guild.createdAt).format('MM/DD/YYYY hh:mm:ss'),
+                'Created at (UTC)',
+                moment.utc(guild.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .addField('Members', guild.memberCount, true)
