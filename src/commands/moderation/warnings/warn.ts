@@ -1,7 +1,6 @@
 import { stripIndents } from 'common-tags';
 import { Command, Flag, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { MESSAGES } from '../../../utils/constants';
 
 export default class WarnCommand extends Command {
     public constructor() {

@@ -1,6 +1,5 @@
 import { Command, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { MESSAGES } from '../../utils/constants';
 import { Repository } from 'typeorm';
 import { Servers } from '../../models/server';
 import { defaultPrefix } from '../../config';

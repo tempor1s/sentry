@@ -3,7 +3,6 @@ import { Message, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 import * as moment from 'moment';
 import 'moment-duration-format';
-import { MESSAGES } from '../../utils/constants';
 
 interface VerificationLevels {
     [key: string]: string;
