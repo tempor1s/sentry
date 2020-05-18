@@ -19,11 +19,11 @@ const VERIFICATION_LEVELS: VerificationLevels = {
 
 export default class ServerInfoCommand extends Command {
     public constructor() {
-        super('guild', {
-            aliases: ['serverinfo', 'server', 'guildinfo', 'guild'],
+        super('server', {
+            aliases: ['server', 'serverinfo', 'guildinfo', 'guild'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.SERVER.DESCRIPTION,
-                usage: 'serverinfo',
+                usage: 'server',
             },
             category: 'info',
             channel: 'guild',

@@ -6,8 +6,8 @@ import { getDefaultEmbed } from '../../utils/message';
 
 export default class UserInfoCommand extends Command {
     public constructor() {
-        super('userinfo', {
-            aliases: ['userinfo', 'user', 'whois', 'member', 'user-info'],
+        super('user', {
+            aliases: ['user', 'userinfo', 'whois', 'member', 'user-info'],
             description: {
                 content: 'Get information about a user in a server.',
                 usage: 'userinfo [member]',

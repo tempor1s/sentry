@@ -7,11 +7,11 @@ import { getDefaultEmbed } from '../../utils/message';
 
 export default class ChannelInfoCommand extends Command {
     public constructor() {
-        super('channelinfo', {
-            aliases: ['channelinfo', 'channel', 'channel-info'],
+        super('channel', {
+            aliases: ['channel', 'channelinfo', 'channel-info'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.CHANNEL.DESCRIPTION,
-                usage: 'channelinfo [channel]',
+                usage: 'channel [channel]',
                 examples: ['#general', 'general', '688166040513151041'],
             },
             category: 'info',

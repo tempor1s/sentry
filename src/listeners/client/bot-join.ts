@@ -14,7 +14,6 @@ export default class BotJoinListener extends Listener {
 
     public async exec(guild: Guild) {
         // TODO: Send message to 'main' channel when the bot joins.
-
         const serversRepo: Repository<Servers> = this.client.db.getRepository(
             Servers
         );

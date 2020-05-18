@@ -42,8 +42,8 @@ const PERMISSIONS: PermissionsIndex = {
 
 export default class RoleInfoCommand extends Command {
     public constructor() {
-        super('roleinfo', {
-            aliases: ['roleinfo', 'role', 'role-info'],
+        super('role', {
+            aliases: ['role', 'roleinfo', 'role-info'],
             description: {
                 content: MESSAGES.COMMANDS.INFO.ROLE.DESCRIPTION,
                 usage: 'roleinfo [role]',
