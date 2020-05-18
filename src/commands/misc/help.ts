@@ -59,8 +59,10 @@ export default class Help extends Command {
         if (command.description.examples?.length)
             embed.addField(
                 '❯ Examples',
-                `\`${command.aliases[0]} ${command.description.examples.join(
-                    `\`\n\`${command.aliases[0]} `
+                `\`${prefix}${
+                    command.aliases[0]
+                } ${command.description.examples.join(
+                    `\`\n\`${prefix}${command.aliases[0]} `
                 )}\``,
                 true
             );
