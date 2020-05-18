@@ -33,19 +33,6 @@ export default class WarnListCommand extends Command {
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
             Warnings
         );
-        // TODO: Create helper function for this.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        )
-            return msg.util.reply(
-                getDefaultEmbed('RED')
-                    .setTitle('Error')
-                    .setDescription(
-                        'This member has a higher or equal role to you. You are unable to warn them.'
-                    )
-            );
 
         let warnings = await warningRepo.find({
             where: { guild: member.guild.id, user: member.id },

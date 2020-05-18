@@ -41,14 +41,11 @@ export default class WarnAddCommand extends Command {
             member.roles.highest.position >=
                 msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
-        )
-            return msg.util.reply(
-                getDefaultEmbed('RED')
-                    .setTitle('Error')
-                    .setDescription(
-                        'This member has a higher or equal role to you. You are unable to warn them.'
-                    )
+        ) {
+            return msg.util.send(
+                'This member has a higher or equal role to you. You are unable to warn them.'
             );
+        }
 
         await warningRepo.insert({
             guild: msg.guild.id,

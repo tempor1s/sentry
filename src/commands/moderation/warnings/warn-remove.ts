@@ -1,4 +1,4 @@
-import { Command, Argument } from 'discord-akairo';
+import { Command } from 'discord-akairo';
 import { Message, GuildMember } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
@@ -55,7 +55,7 @@ export default class WarnRemoveCommand extends Command {
 
         try {
             let warning = await warningRepo.delete({
-                guild: member.guild.id,
+                guild: msg.guild.id,
                 user: member.id,
                 id: id,
             });
