@@ -1,4 +1,4 @@
-import { Command, Flag } from 'discord-akairo';
+import { Command, Flag, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { MESSAGES } from '../../../utils/constants';
 
@@ -31,8 +31,8 @@ export default class WarnCommand extends Command {
                 ['warn-clear', 'clear'],
             ],
             // TODO: Replace with prefix supplier
-            otherwise: (_: Message) => {
-                const prefix = '>';
+            otherwise: (msg: Message) => {
+                const prefix = (this.handler.prefix as PrefixSupplier)(msg);
                 return MESSAGES.COMMANDS.MODERATION.WARN.REPLY(prefix);
             },
         };

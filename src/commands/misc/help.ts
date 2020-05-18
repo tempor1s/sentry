@@ -1,5 +1,4 @@
-import { Command } from 'discord-akairo';
-import { defaultPrefix } from '../../config';
+import { Command, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 import { MESSAGES } from '../../utils/constants';
@@ -24,8 +23,7 @@ export default class Help extends Command {
     }
 
     public async exec(msg: Message, { command }: { command: Command }) {
-        // TODO: Swap this to use prefix provider
-        const prefix = defaultPrefix;
+        const prefix = await (this.handler.prefix as PrefixSupplier)(msg);
 
         if (!command) {
             const embed = getDefaultEmbed().addField(
@@ -49,7 +47,7 @@ export default class Help extends Command {
         }
 
         const embed = getDefaultEmbed()
-            .setTitle(`\`${command.description.usage}\``)
+            .setTitle(`\`${prefix}${command.description.usage}\``)
             .addField('❯ Description', command.description.content || '\u200b');
 
         if (command.aliases.length > 1)
