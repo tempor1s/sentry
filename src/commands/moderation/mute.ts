@@ -79,14 +79,13 @@ export default class MuteCommand extends Command {
             );
         }
 
-        let mutesRepo = this.client.db.getRepository(Mutes);
-
         // TODO: Could just swap this over to checking user roles later if we need to optimize DB
-        let mute = await mutesRepo.findOne({
+        let mutesRepo = this.client.db.getRepository(Mutes);
+        let mutedUser = await mutesRepo.findOne({
             where: { server: msg.guild.id, user: member.id },
         });
 
-        if (mute) {
+        if (mutedUser) {
             return msg.util?.send('That user is already muted.');
         }
 
@@ -101,46 +100,16 @@ export default class MuteCommand extends Command {
             duration = guild.muteDuration;
         }
 
-        // Get the time that the mute will end
-        const end = Date.now() + duration;
-
-        // TODO: Remove all of their current roles before we assign them the muted role.
+        // Get the ID of the 'muted' role.
         let muteRoleId = guild.mutedRole;
-
         if (!muteRoleId) {
             muteRoleId = await createMuteOrUpdate(serverRepo, msg.guild);
         }
 
-        // Add the muted role
-        await member.roles
-            .add(muteRoleId, `Muted | Reason: ${reason}`)
-            .catch(() => {
-                return msg.util?.send(
-                    'Coud not mute user. This is probably due to an issue with permissions.'
-                );
-            });
+        // Mute the person
+        await mute(mutesRepo, msg, member, muteRoleId, reason, duration);
 
-        // Let the user know we muted them
-        // TODO: Add flag to make it silent and not mute them.
-        member.send(
-            `You have been muted by ${msg.member.user} in ${
-                msg.guild.name
-            } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
-        );
-
-        // TODO: Check to see if they are already muted.
-        let roles = member.roles.cache.map((role) => role.id);
-
-        // Insert the mute into the DB
-        mutesRepo.insert({
-            server: msg.guild.id,
-            user: member.user.id,
-            end: end,
-            reason: reason,
-            moderator: msg.member.id,
-            roles: roles,
-        });
-
+        // Info sent to the channel for when the person is muted
         const embed = getDefaultEmbed('GREEN')
             .setTitle(`Muted ${member.user.tag}`)
             .addField('Reason', reason, true)

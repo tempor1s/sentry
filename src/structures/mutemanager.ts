@@ -1,12 +1,54 @@
-import { GuildMember, Guild, Permissions } from 'discord.js';
+import { GuildMember, Guild, Permissions, Message } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
+import { duration as dur } from 'moment';
 
 // TODO: Check if a user is muted when they join.
 
-export async function mute(user: GuildMember, server: Guild) {
+export async function mute(
+    muteRepo: Repository<Mutes>,
+    msg: Message,
+    member: GuildMember,
+    muteRoleId: string,
+    reason: string,
+    duration: number
+) {
     // TODO: Mute a given user in a given guild.
+    // TODO: Remove all of their current roles before we assign them the muted role.
+
+    // Add the muted role
+    await member.roles
+        .add(muteRoleId, `Muted | Reason: ${reason}`)
+        .catch(() => {
+            return msg.util?.send(
+                'Could not mute user. This is probably due to an issue with permissions.'
+            );
+        });
+
+    // Get the time that the mute will end
+    const end = Date.now() + duration;
+
+    // Let the user know we muted them
+    // TODO: Add flag to make it silent and not mute them.
+    member.send(
+        `You have been muted by ${msg.member.user} in ${
+            msg.guild.name
+        } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
+    );
+
+    // TODO: Check to see if they are already muted.
+    let roles = member.roles.cache.map((role) => role.id);
+
+    // Insert the mute into the DB
+    muteRepo.insert({
+        server: member.guild.id,
+        user: member.user.id,
+        end: end,
+        reason: reason,
+        moderator: member.id,
+        roles: roles,
+    });
 }
 
 export async function unmute(
