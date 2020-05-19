@@ -35,7 +35,7 @@ export default class WarnListCommand extends Command {
         );
 
         let warnings = await warningRepo.find({
-            where: { guild: member.guild.id, user: member.id },
+            where: { server: member.guild.id, user: member.id },
         });
 
         const embed = getDefaultEmbed().setTitle(

@@ -1,12 +1,7 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('warnings')
-export class Warnings {
+@Entity('mutes')
+export class Mutes {
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -19,9 +14,12 @@ export class Warnings {
     @Column({ type: 'varchar', length: 22 })
     moderator!: string;
 
+    @Column({ type: 'bigint' })
+    end!: number;
+
     @Column({ type: 'text' })
     reason!: string;
 
-    @CreateDateColumn()
-    date!: Date;
+    @Column({ type: 'varchar', length: 22, array: true, nullable: true })
+    roles!: string[];
 }

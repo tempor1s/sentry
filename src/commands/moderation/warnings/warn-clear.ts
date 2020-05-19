@@ -39,7 +39,7 @@ export default class WarnClearCommand extends Command {
 
         try {
             await warningRepo.delete({
-                guild: msg.guild.id,
+                server: msg.guild.id,
                 user: member.id,
             });
 

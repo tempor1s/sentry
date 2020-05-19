@@ -18,6 +18,6 @@ export default class BotJoinListener extends Listener {
             Servers
         );
 
-        await serversRepo.insert({ id: guild.id, prefix: defaultPrefix });
+        await serversRepo.insert({ server: guild.id, prefix: defaultPrefix });
     }
 }

@@ -55,7 +55,7 @@ export default class WarnRemoveCommand extends Command {
 
         try {
             let warning = await warningRepo.delete({
-                guild: msg.guild.id,
+                server: msg.guild.id,
                 user: member.id,
                 id: id,
             });

@@ -1,6 +1,7 @@
 import { Command } from 'discord-akairo';
 import { GuildMember, Message, Permissions } from 'discord.js';
-import * as moment from 'moment';
+// import * as moment from 'moment';
+import { utc } from 'moment';
 import 'moment-duration-format';
 import { getDefaultEmbed } from '../../utils/message';
 
@@ -43,7 +44,7 @@ export default class UserInfoCommand extends Command {
             .addField('ID', user.id, false)
             .addField(
                 'Created at (UTC)',
-                moment.utc(user.createdAt).format('MM/DD/YYYY hh:mm'),
+                utc(user.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .addField(
@@ -51,7 +52,7 @@ export default class UserInfoCommand extends Command {
                 member.nickname == undefined ? 'No nickname' : member.nickname,
                 true
             )
-            .addField('Is Bot?', user.bot, true)
+            .addField('Is Bot?', user.bot ? 'Yes' : 'No', true)
             .addField('Banned?', isBanned, true)
             .addField('Status', user.presence.status.toUpperCase(), true)
             .addField(

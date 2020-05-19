@@ -37,7 +37,7 @@ export default class Client extends AkairoClient {
             );
 
             let prefix = serverRepo
-                .findOne({ where: { id: msg.guild.id } })
+                .findOne({ where: { server: msg.guild.id } })
                 .then((server) => server.prefix)
                 // insert the server into the db if we have not seen it before
                 .catch((_) => {
@@ -46,7 +46,7 @@ export default class Client extends AkairoClient {
                     );
 
                     serversRepo.insert({
-                        id: msg.guild.id,
+                        server: msg.guild.id,
                         prefix: defaultPrefix,
                     });
 
