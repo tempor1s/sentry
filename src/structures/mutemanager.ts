@@ -3,8 +3,10 @@ import { Repository } from 'typeorm';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
 
+// TODO: Check if a user is muted when they join.
+
 export async function mute(user: GuildMember, server: Guild) {
-    // TODO: Unmute a given user in a given guild.
+    // TODO: Mute a given user in a given guild.
 }
 
 export async function unmute(
@@ -25,6 +27,8 @@ export async function unmute(
         server: member.guild.id,
         user: member.id,
     });
+
+    await member.send(`You have been unmuted in ${member.guild.name}.`);
 }
 
 export async function createMuteOrUpdate(

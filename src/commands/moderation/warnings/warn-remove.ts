@@ -27,11 +27,11 @@ export default class WarnRemoveCommand extends Command {
         { member, id }: { member: GuildMember; id: number }
     ) {
         if (!member) {
-            return msg.util.send('User not specified / found.');
+            return msg.util?.send('User not specified / found.');
         }
 
         if (!id) {
-            return msg.util.send('Please specify a warning ID to remove.');
+            return msg.util?.send('Please specify a warning ID to remove.');
         }
 
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
@@ -68,12 +68,12 @@ export default class WarnRemoveCommand extends Command {
                     .addField('User', member.user, true)
                     .addField('Moderator', msg.member.user, true);
 
-                return msg.util.send(embed);
+                return msg.util?.send(embed);
             }
 
-            return msg.util.send('Warning does not exist.');
+            return msg.util?.send('Warning does not exist.');
         } catch (err) {
-            return msg.util.send('Failed to remove warning.');
+            return msg.util?.send('Failed to remove warning.');
         }
     }
 }

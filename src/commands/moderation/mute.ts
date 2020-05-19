@@ -6,7 +6,7 @@ import { Mutes } from '../../models/mutes';
 import { duration as dur } from 'moment';
 import 'moment-duration-format';
 import ms from 'ms';
-import { createMuteOrUpdate, mute, unmute } from '../../structures/mutemanager';
+import { createMuteOrUpdate, mute } from '../../structures/mutemanager';
 
 export default class MuteCommand extends Command {
     public constructor() {
@@ -14,7 +14,7 @@ export default class MuteCommand extends Command {
             aliases: ['mute', 'silence'],
             description: {
                 content: 'Mute a user in the discord server.',
-                usage: ['mute <user> [duration]'],
+                usage: 'mute <user> [duration] [reason]',
                 examples: [
                     'mute @temporis#6402',
                     'mute @temporis#6402 10m',
@@ -63,8 +63,6 @@ export default class MuteCommand extends Command {
             reason,
         }: { member: GuildMember; duration: number; reason: string }
     ) {
-        // TODO: Check if a user is muted when they join.
-
         // If they did not specify a member.
         if (!member) {
             return msg.util?.send('Please specify a user to mute.');
@@ -79,6 +77,17 @@ export default class MuteCommand extends Command {
             return msg.util.send(
                 'This member has a higher or equal role to you. You are unable to mute them.'
             );
+        }
+
+        let mutesRepo = this.client.db.getRepository(Mutes);
+
+        // TODO: Could just swap this over to checking user roles later if we need to optimize DB
+        let mute = await mutesRepo.findOne({
+            where: { server: msg.guild.id, user: member.id },
+        });
+
+        if (mute) {
+            return msg.util?.send('That user is already muted.');
         }
 
         // Get the guild that we are going to be getting info for
@@ -119,8 +128,6 @@ export default class MuteCommand extends Command {
             } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
         );
 
-        let mutesRepo = this.client.db.getRepository(Mutes);
-
         // TODO: Check to see if they are already muted.
         let roles = member.roles.cache.map((role) => role.id);
 
@@ -134,18 +141,14 @@ export default class MuteCommand extends Command {
             roles: roles,
         });
 
-        // Unmute the user at the end of the duration.
-        setTimeout(async () => {
-            await unmute(mutesRepo, member, muteRoleId);
-        }, duration);
-
         const embed = getDefaultEmbed('GREEN')
             .setTitle(`Muted ${member.user.tag}`)
-            .addField('Reason', reason)
-            .addField('Moderator', msg.member.user)
+            .addField('Reason', reason, true)
+            .addField('Moderator', msg.member.user, true)
             .addField(
                 'Mute Duration',
-                dur(duration).format('d[d ]h[h ]m[m ]s[s]')
+                dur(duration).format('d[d ]h[h ]m[m ]s[s]'),
+                true
             );
 
         return msg.util?.send(embed);
