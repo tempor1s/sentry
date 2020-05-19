@@ -3,9 +3,10 @@ import { Message, Permissions, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 import { Servers } from '../../models/server';
 import { Mutes } from '../../models/mutes';
-import { duration as dur, utc } from 'moment';
+import { duration as dur } from 'moment';
 import 'moment-duration-format';
 import ms from 'ms';
+import { createMuteOrUpdate, mute, unmute } from '../../structures/mutemanager';
 
 export default class MuteCommand extends Command {
     public constructor() {
@@ -31,7 +32,6 @@ export default class MuteCommand extends Command {
                 Permissions.FLAGS.MANAGE_MESSAGES,
             ],
             args: [
-                // TODO: Add reason
                 {
                     id: 'member',
                     type: 'member',
@@ -68,7 +68,16 @@ export default class MuteCommand extends Command {
             return msg.util?.send('Please specify a user to mute.');
         }
 
-        // TODO: Check to make sure the person we are muting do not have higher or same role as us.
+        // Check to make sure that we are not muting someone with an equal or higher role
+        if (
+            member.roles.highest.position >=
+                msg.member.roles.highest.position &&
+            msg.author.id !== msg.guild.ownerID
+        ) {
+            return msg.util.send(
+                'This member has a higher or equal role to you. You are unable to mute them.'
+            );
+        }
 
         // Get the guild that we are going to be getting info for
         let serverRepo = this.client.db.getRepository(Servers);
@@ -88,10 +97,17 @@ export default class MuteCommand extends Command {
         let muteRoleId = guild.mutedRole;
 
         if (!muteRoleId) {
-            // TODO: If we do not have a muted role, either find one or create it and add it to the DB.
-            // TODO: Also check
-            // let myRole = message.guild.roles.find(role => role.name === "Moderators");
+            muteRoleId = await createMuteOrUpdate(serverRepo, msg.guild);
         }
+
+        // Add the muted role
+        await member.roles
+            .add(muteRoleId, `Muted | Reason: ${reason}`)
+            .catch(() => {
+                return msg.util?.send(
+                    'Coud not mute user. This is probably due to an issue with permissions.'
+                );
+            });
 
         // Let the user know we muted them
         // TODO: Add flag to make it silent and not mute them.
@@ -101,18 +117,10 @@ export default class MuteCommand extends Command {
             } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
         );
 
-        // add the muted role
-        await member.roles
-            .add(muteRoleId, `Muted | Reason: ${reason}`)
-            .catch(() => {
-                return msg.util?.send(
-                    'Coud not mute user. This is probably due to an issue with permissions.'
-                );
-            });
-
         let muteRepo = this.client.db.getRepository(Mutes);
 
         // TODO: Check to see if they are already muted.
+        let roles = member.roles.cache.map((role) => role.id);
 
         // Insert the mute into the DB
         muteRepo.insert({
@@ -121,14 +129,14 @@ export default class MuteCommand extends Command {
             end: end,
             reason: reason,
             moderator: msg.member.id,
-            roles: member.roles.cache.map((role) => role.id),
+            roles: roles,
         });
 
         // Unmute the user at the end of the duration.
         setTimeout(async () => {
             await member.roles.remove(muteRoleId, 'Unmuted');
             // TODO: Add back all the roles we removed from them.
-            // TODO: Remove mute form the DB
+            // TODO: Remove mute from the DB
         }, duration);
 
         const embed = getDefaultEmbed('GREEN')
