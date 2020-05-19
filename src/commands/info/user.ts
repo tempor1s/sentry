@@ -38,6 +38,8 @@ export default class UserInfoCommand extends Command {
             isBanned = 'No';
         }
 
+        // TODO: If user requesting is a mod, get infractions
+
         const embed = getDefaultEmbed()
             .setTitle(user.tag)
             .addField('ID', user.id, false)

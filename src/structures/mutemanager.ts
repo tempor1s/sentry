@@ -3,8 +3,7 @@ import { Repository } from 'typeorm';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
 import { duration as dur } from 'moment';
-
-// TODO: Check if a user is muted when they join.
+import logger from '../utils/logger';
 
 export async function mute(
     muteRepo: Repository<Mutes>,
@@ -14,41 +13,59 @@ export async function mute(
     reason: string,
     duration: number
 ) {
-    // TODO: Mute a given user in a given guild.
     // TODO: Remove all of their current roles before we assign them the muted role.
+    // TODO: Add flag to make it silent and not mute them.
 
     // Add the muted role
-    await member.roles
-        .add(muteRoleId, `Muted | Reason: ${reason}`)
-        .catch(() => {
-            return msg.util?.send(
-                'Could not mute user. This is probably due to an issue with permissions.'
-            );
-        });
+    try {
+        await member.roles.add(muteRoleId, `Muted | Reason: ${reason}`);
+
+        logger.debug(
+            `Muting ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}) for ${duration}ms`
+        );
+    } catch (err) {
+        logger.error(
+            `Error muting ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}) for ${duration}ms`
+        );
+
+        return msg.util?.send(
+            'Could not mute user. This is probably due to an issue with permissions.'
+        );
+    }
 
     // Get the time that the mute will end
     const end = Date.now() + duration;
-
-    // Let the user know we muted them
-    // TODO: Add flag to make it silent and not mute them.
-    member.send(
-        `You have been muted by ${msg.member.user} in ${
-            msg.guild.name
-        } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
-    );
-
-    // TODO: Check to see if they are already muted.
+    // get all the roles that the user already has
     let roles = member.roles.cache.map((role) => role.id);
 
     // Insert the mute into the DB
-    muteRepo.insert({
-        server: member.guild.id,
-        user: member.user.id,
-        end: end,
-        reason: reason,
-        moderator: member.id,
-        roles: roles,
-    });
+    try {
+        let insertedMute = await muteRepo.insert({
+            server: member.guild.id,
+            user: member.user.id,
+            end: end,
+            reason: reason,
+            moderator: member.id,
+            roles: roles,
+        });
+
+        // Let the user know we muted them
+        member.send(
+            `You have been muted by ${msg.member.user} in ${
+                msg.guild.name
+            } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
+        );
+
+        logger.debug('Mute insert was successful. Insert: ', insertedMute);
+    } catch (err) {
+        logger.error(
+            `Error inserting mute for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}) for ${duration}ms`
+        );
+
+        return msg.util?.send(
+            'Error occured when attempting to mute the user.'
+        );
+    }
 }
 
 export async function unmute(
@@ -58,19 +75,30 @@ export async function unmute(
 ) {
     // TODO: Add back all the roles we removed from them.
     // remove the muted role
-    await member.roles
-        .remove(muteRoleId, 'Unmuted')
-        .catch((err) =>
-            console.log(`Unable to remove mute role. Reason ${err}`)
+    try {
+        await member.roles.remove(muteRoleId, 'Unmuted');
+        logger.debug(
+            `Unmuted ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`
         );
+    } catch (err) {
+        logger.error(`Unable to remove mute role. Reason ${err}`);
+    }
 
-    // Remove mute from the DB
-    await muteRepo.delete({
-        server: member.guild.id,
-        user: member.id,
-    });
+    try {
+        // Remove mute from the DB
+        let removedMute = await muteRepo.delete({
+            server: member.guild.id,
+            user: member.id,
+        });
 
-    await member.send(`You have been unmuted in ${member.guild.name}.`);
+        await member.send(`You have been unmuted in ${member.guild.name}.`);
+
+        logger.info('Mute db remove was successful. Remove: ', removedMute);
+    } catch (err) {
+        logger.error(
+            `Error removing mute db entry from ${member.user.tag}' (${member.id}) in ${member.guild.name} (${member.guild.id})`
+        );
+    }
 }
 
 export async function createMuteOrUpdate(
@@ -79,19 +107,28 @@ export async function createMuteOrUpdate(
 ): Promise<string> {
     let muteRoleId: string;
 
+    // see if we can find a muted role
     let mutedRole = server.roles.cache.find((role) =>
         role.name.toLowerCase().includes('muted')
     );
 
     // We found an already existing muted role and we know its not in the db, update it.
     if (mutedRole) {
+        logger.debug(
+            `Found muted role ${mutedRole.name} (${mutedRole.id})! Using...`
+        );
         // updated out muted role
         muteRoleId = mutedRole.id;
-        await serverRepo.update(
-            { server: server.id },
-            { mutedRole: mutedRole.id }
-        );
+        try {
+            await serverRepo.update(
+                { server: server.id },
+                { mutedRole: mutedRole.id }
+            );
+        } catch (err) {
+            logger.error(`Error updating muted role for ${server.id}`);
+        }
     } else {
+        logger.debug('Did not find existing muted role. Creating..');
         muteRoleId = await createMutedRole(serverRepo, server);
     }
 
@@ -120,6 +157,9 @@ async function createMutedRole(
 
     // deny write permissions for every channel for muted role in server
     server.channels.cache.forEach((channel) => {
+        logger.debug(
+            `Creating permissions overrides for ${channel.name} (${channel.id})`
+        );
         channel.overwritePermissions(
             [{ id: role.id, deny: [Permissions.FLAGS.SEND_MESSAGES] }],
             'Mute role overrides.'
@@ -127,7 +167,11 @@ async function createMutedRole(
     });
 
     // add the role id to the server configuration
-    await serverRepo.update({ server: server.id }, { mutedRole: role.id });
+    try {
+        await serverRepo.update({ server: server.id }, { mutedRole: role.id });
+    } catch (err) {
+        logger.error(`Error updating muted role for ${server.id}`);
+    }
 
     return role.id;
 }

@@ -42,7 +42,7 @@ export default class UnmuteCommand extends Command {
     public async exec(msg: Message, { member }: { member: GuildMember }) {
         // If they did not specify a member.
         if (!member) {
-            return msg.util?.send('Please specify a user to mute.');
+            return msg.util?.send('Please specify a user to unmute.');
         }
 
         let mutesRepos = this.client.db.getRepository(Mutes);

@@ -2,8 +2,8 @@ import { Listener } from 'discord-akairo';
 import { Guild } from 'discord.js';
 import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
-import { defaultPrefix } from '../../config';
 import { createMuteOrUpdate } from '../../structures/mutemanager';
+import logger from '../../utils/logger';
 
 export default class BotJoinListener extends Listener {
     public constructor() {
@@ -23,6 +23,16 @@ export default class BotJoinListener extends Listener {
         await createMuteOrUpdate(serversRepo, guild);
 
         // Create a new DB entry when the bot joins a server.
-        await serversRepo.insert({ server: guild.id, prefix: defaultPrefix });
+        try {
+            await serversRepo.insert({ server: guild.id });
+            logger.info(
+                `Bot joined ${guild.name} (${guild.id}) with ${guild.members.cache.size} members.`
+            );
+        } catch (err) {
+            logger.error(
+                `Error creating DB entry when joining ${guild.name} (${guild.id}). Reason: `,
+                err
+            );
+        }
     }
 }

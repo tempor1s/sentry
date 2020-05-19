@@ -3,6 +3,7 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
+import logger from '../../../utils/logger';
 
 export default class WarnRemoveCommand extends Command {
     public constructor() {
@@ -68,7 +69,10 @@ export default class WarnRemoveCommand extends Command {
             });
 
             if (warning.affected > 0) {
-                console.log(warning);
+                logger.debug(
+                    `Removed warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id})`
+                );
+
                 const embed = getDefaultEmbed()
                     .setTitle('Removed Warning')
                     .addField('ID', id, true)
@@ -80,6 +84,11 @@ export default class WarnRemoveCommand extends Command {
 
             return msg.util?.send('Warning does not exist.');
         } catch (err) {
+            logger.error(
+                `Error removing warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
+                err
+            );
+
             return msg.util?.send('Failed to remove warning.');
         }
     }

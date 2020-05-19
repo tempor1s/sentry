@@ -2,6 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
+import logger from '../../../utils/logger';
 
 export default class WarnClearCommand extends Command {
     public constructor() {
@@ -26,7 +27,7 @@ export default class WarnClearCommand extends Command {
 
     public async exec(msg: Message, { member }: { member: GuildMember }) {
         if (!member) {
-            return msg.util.send('User not specified / found.');
+            return msg.util?.send('User not specified / found.');
         }
 
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
@@ -39,7 +40,7 @@ export default class WarnClearCommand extends Command {
                 msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
-            return msg.util.send(
+            return msg.util?.send(
                 'This member has a higher or equal role to you. You are unable to clear their warnings.'
             );
         }
@@ -50,9 +51,18 @@ export default class WarnClearCommand extends Command {
                 user: member.id,
             });
 
-            return msg.util.send('Cleared all warnings.');
+            logger.debug(
+                `Cleared warnings from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`
+            );
+
+            return msg.util?.send('Cleared all warnings.');
         } catch (err) {
-            return msg.util.send('Failed to clear warnings.');
+            logger.error(
+                `Error clearing warnings from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
+                err
+            );
+
+            return msg.util?.send('Failed to clear warnings.');
         }
     }
 }

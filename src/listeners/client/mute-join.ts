@@ -3,6 +3,7 @@ import { GuildMember } from 'discord.js';
 import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
 import { Mutes } from '../../models/mutes';
+import logger from '../../utils/logger';
 
 export default class MuteJoinListener extends Listener {
     public constructor() {
@@ -33,15 +34,22 @@ export default class MuteJoinListener extends Listener {
         });
 
         // Add the muted role
-        await member.roles
-            .add(
+        try {
+            await member.roles.add(
                 server.mutedRole,
                 `Muted | Reason: Left and rejoined while muted.`
-            )
-            .catch((err) => {
-                console.log(err);
-            });
+            );
 
-        await member.send('Nice try mute evading...');
+            logger.info(
+                `Remuted ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) because they left and rejoined while muted.`
+            );
+
+            await member.send('Nice try mute evading...');
+        } catch (err) {
+            logger.error(
+                `Error occured when remuting ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) when they rejoined. Reason: `,
+                err
+            );
+        }
     }
 }

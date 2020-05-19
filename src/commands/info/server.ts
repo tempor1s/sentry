@@ -46,6 +46,7 @@ export default class ServerInfoCommand extends Command {
                 utc(guild.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
+            // TODO: Filter bot and user accounts
             .addField('Members', guild.memberCount, true)
             .addField(
                 'Text Channels',

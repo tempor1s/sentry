@@ -2,6 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
 import { unmute } from '../../structures/mutemanager';
+import logger from '../../utils/logger';
 
 export default class ReadyListener extends Listener {
     public constructor() {
@@ -13,8 +14,7 @@ export default class ReadyListener extends Listener {
     }
 
     public async exec() {
-        // Log bot is online :)
-        console.log(`${this.client.user.tag} is now online.`);
+        logger.info(`${this.client.user.tag} is now online.`);
 
         const mutesRepo = this.client.db.getRepository(Mutes);
         const serversRepo = this.client.db.getRepository(Servers);
@@ -25,6 +25,7 @@ export default class ReadyListener extends Listener {
             { type: 'WATCHING' }
         );
 
+        // update activity every 5mins with new server/member count
         setInterval(() => {
             this.client.user.setActivity(
                 `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
@@ -32,6 +33,8 @@ export default class ReadyListener extends Listener {
             );
         }, 3e5);
 
+        // Unmute loop
+        // TODO: Move this into mute strcture as a refactor to clean this up
         setInterval(async () => {
             const mutes = await mutesRepo.find();
             mutes
@@ -44,7 +47,19 @@ export default class ReadyListener extends Listener {
                         where: { server: m.server },
                     });
 
-                    await unmute(mutesRepo, member, serverDb.mutedRole);
+                    // try to mute the user
+                    try {
+                        await unmute(mutesRepo, member, serverDb.mutedRole);
+
+                        logger.debug(
+                            `Unmuting user ${member.user.tag} (${member.id}).`
+                        );
+                    } catch (err) {
+                        logger.error(
+                            'Error unmuting user in unmute loop. Reason: ',
+                            err
+                        );
+                    }
                 });
         }, 30000);
     }

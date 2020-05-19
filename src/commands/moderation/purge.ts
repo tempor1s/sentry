@@ -1,5 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
+import logger from '../../utils/logger';
+import { Collection } from 'typeorm';
 
 export default class PurgeCommand extends Command {
     public constructor() {
@@ -38,11 +40,26 @@ export default class PurgeCommand extends Command {
         await msg.delete();
 
         // if its less than 100 messages, just call a bulk delete on those
+        let purgeSize: number;
         if (amount < 100) {
-            let msgs = await msg.channel.bulkDelete(amount, true);
+            try {
+                const msgs = await msg.channel.bulkDelete(amount, true);
+                purgeSize = msgs.size;
+
+                logger.debug(
+                    `Purging ${msgs.size} messages in ${msg.guild.name} (${msg.guild.id})`
+                );
+            } catch (err) {
+                logger.error(
+                    `Error purging messages in ${msg.guild.id} (${msg.guild.id})`
+                );
+
+                return msg.util?.send('Error purging messages.');
+            }
+
             return msg.util?.send(
-                `Deleted \`${msgs.size}\` message(s).${
-                    msgs.size < amount
+                `Deleted \`${purgeSize}\` message(s).${
+                    purgeSize < amount
                         ? ' Less messages were probably purged due to messages being older than 2 weeks or other discord limitation.'
                         : ''
                 }`

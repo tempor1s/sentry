@@ -3,6 +3,7 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
+import logger from '../../../utils/logger';
 
 export default class WarnAddCommand extends Command {
     public constructor() {
@@ -29,7 +30,7 @@ export default class WarnAddCommand extends Command {
         { member, reason }: { member: GuildMember; reason: string }
     ) {
         if (!member) {
-            return msg.util.send('User not specified / found.');
+            return msg.util?.send('User not specified / found.');
         }
 
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
@@ -47,14 +48,27 @@ export default class WarnAddCommand extends Command {
             );
         }
 
-        await warningRepo.insert({
-            server: msg.guild.id,
-            user: member.id,
-            moderator: msg.author.id,
-            reason: reason,
-        });
+        try {
+            await warningRepo.insert({
+                server: msg.guild.id,
+                user: member.id,
+                moderator: msg.author.id,
+                reason: reason,
+            });
 
-        return msg.util.send(
+            logger.debug(
+                `Added warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'`
+            );
+        } catch (err) {
+            logger.error(
+                `Error adding warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'. Error: `,
+                err
+            );
+
+            return msg.util?.send('Error adding warning.');
+        }
+
+        return msg.util?.send(
             getDefaultEmbed('GREEN')
                 .setTitle('User has been warned.')
                 .addField('User', member.user, true)

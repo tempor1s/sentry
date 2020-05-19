@@ -6,6 +6,7 @@ import { Connection } from 'typeorm';
 import { Repository } from 'typeorm';
 import { Servers } from '../models/server';
 import Database from '../structures/database';
+import logger from '../utils/logger';
 
 declare module 'discord-akairo' {
     interface AkairoClient {
@@ -45,10 +46,7 @@ export default class Client extends AkairoClient {
                         Servers
                     );
 
-                    serversRepo.insert({
-                        server: msg.guild.id,
-                        prefix: defaultPrefix,
-                    });
+                    serversRepo.insert({ server: msg.guild.id });
 
                     return defaultPrefix;
                 });
@@ -61,9 +59,12 @@ export default class Client extends AkairoClient {
     });
 
     public constructor(config: BotOptions) {
-        super({
-            ownerID: config.owners,
-        });
+        super(
+            {
+                ownerID: config.owners,
+            },
+            { messageCacheMaxSize: 1000, disableMentions: 'everyone' }
+        );
 
         this.config = config;
     }
@@ -77,20 +78,26 @@ export default class Client extends AkairoClient {
         });
 
         this.commandHandler.loadAll();
+        logger.debug('Registering command handler.');
         this.listenerHandler.loadAll();
+        logger.debug('Registering listeners.');
 
         // Get invite
         this.invite = await this.generateInvite([
             Permissions.FLAGS.ADMINISTRATOR,
         ]);
+        logger.debug('Generating invite.');
 
         // Get the DB and connect/synchronize to it.
         this.db = Database.get(dbName);
         await this.db.connect();
+        logger.debug('Connecting to DB...');
         await this.db.synchronize();
+        logger.debug('Synchronizing DB..');
     }
 
     public async start(): Promise<string> {
+        logger.info('Initializing bot services...');
         await this._init();
         return this.login(this.config.token);
     }

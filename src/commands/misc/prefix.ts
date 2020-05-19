@@ -3,6 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Servers } from '../../models/server';
 import { defaultPrefix } from '../../config';
+import logger from '../../utils/logger';
 
 export default class PrefixCommand extends Command {
     public constructor() {
@@ -26,10 +27,10 @@ export default class PrefixCommand extends Command {
     }
 
     public async exec(msg: Message, { prefix }: { prefix: string }) {
+        let serverPrefix = await (this.handler.prefix as PrefixSupplier)(msg);
         if (!prefix) {
-            let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
             return msg.util.send(
-                `The current prefix for the server is \`${prefix}\``
+                `The current prefix for the server is \`${serverPrefix}\``
             );
         }
 
@@ -38,7 +39,21 @@ export default class PrefixCommand extends Command {
         );
 
         // update the prefix
-        serverRepo.update({ server: msg.guild.id }, { prefix: prefix });
+        try {
+            await serverRepo.update(
+                { server: msg.guild.id },
+                { prefix: prefix }
+            );
+
+            logger.debug(
+                `Updating prefix in ${msg.guild.name} (${msg.guild.id}) from '${serverPrefix}' -> '${prefix}'`
+            );
+        } catch (err) {
+            logger.error(
+                `Error updating prefix in ${msg.guild.name} (${msg.guild.id}). Reason: `,
+                err
+            );
+        }
 
         if (prefix === defaultPrefix) {
             return msg.util?.send(`Reset prefix back to \`${prefix}\``);
@@ -47,4 +62,3 @@ export default class PrefixCommand extends Command {
         return msg.util?.send(`The prefix has been set to \`${prefix}\``);
     }
 }
-

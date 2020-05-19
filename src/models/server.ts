@@ -1,4 +1,5 @@
 import { Column, PrimaryColumn, Entity, CreateDateColumn } from 'typeorm';
+import { defaultPrefix } from '../config';
 
 // TODO: Server config
 
@@ -7,7 +8,7 @@ export class Servers {
     @PrimaryColumn({ type: 'varchar', length: 22 })
     server!: string;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', default: defaultPrefix })
     prefix!: string;
 
     @Column({ type: 'varchar', nullable: true, length: 22 })
