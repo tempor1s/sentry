@@ -1,4 +1,4 @@
-import { Message, GuildMember, Guild, Permissions } from 'discord.js';
+import { GuildMember, Guild, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
@@ -7,8 +7,24 @@ export async function mute(user: GuildMember, server: Guild) {
     // TODO: Unmute a given user in a given guild.
 }
 
-export async function unmute(user: GuildMember, server: Guild) {
-    // TODO: Unmute a given user in a given guild.
+export async function unmute(
+    muteRepo: Repository<Mutes>,
+    member: GuildMember,
+    muteRoleId: string
+) {
+    // TODO: Add back all the roles we removed from them.
+    // remove the muted role
+    await member.roles
+        .remove(muteRoleId, 'Unmuted')
+        .catch((err) =>
+            console.log(`Unable to remove mute role. Reason ${err}`)
+        );
+
+    // Remove mute from the DB
+    await muteRepo.delete({
+        server: member.guild.id,
+        user: member.id,
+    });
 }
 
 export async function createMuteOrUpdate(

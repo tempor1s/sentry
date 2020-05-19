@@ -1,6 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
+import { unmute } from '../../structures/mutemanager';
 
 export default class ReadyListener extends Listener {
     public constructor() {
@@ -43,9 +44,7 @@ export default class ReadyListener extends Listener {
                         where: { server: m.server },
                     });
 
-                    // Remove the mute
-                    // TODO: Replace this with 'unmute' function that we will create
-                    await member.roles.remove(serverDb.mutedRole, 'Unmuted');
+                    await unmute(mutesRepo, member, serverDb.mutedRole);
                 });
         }, 30000);
     }

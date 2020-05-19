@@ -63,6 +63,8 @@ export default class MuteCommand extends Command {
             reason,
         }: { member: GuildMember; duration: number; reason: string }
     ) {
+        // TODO: Check if a user is muted when they join.
+
         // If they did not specify a member.
         if (!member) {
             return msg.util?.send('Please specify a user to mute.');
@@ -117,13 +119,13 @@ export default class MuteCommand extends Command {
             } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
         );
 
-        let muteRepo = this.client.db.getRepository(Mutes);
+        let mutesRepo = this.client.db.getRepository(Mutes);
 
         // TODO: Check to see if they are already muted.
         let roles = member.roles.cache.map((role) => role.id);
 
         // Insert the mute into the DB
-        muteRepo.insert({
+        mutesRepo.insert({
             server: msg.guild.id,
             user: member.user.id,
             end: end,
@@ -134,16 +136,17 @@ export default class MuteCommand extends Command {
 
         // Unmute the user at the end of the duration.
         setTimeout(async () => {
-            await member.roles.remove(muteRoleId, 'Unmuted');
-            // TODO: Add back all the roles we removed from them.
-            // TODO: Remove mute from the DB
+            await unmute(mutesRepo, member, muteRoleId);
         }, duration);
 
         const embed = getDefaultEmbed('GREEN')
             .setTitle(`Muted ${member.user.tag}`)
             .addField('Reason', reason)
             .addField('Moderator', msg.member.user)
-            .addField('Ends', dur(duration).format('d[d ]h[h ]m[m ]s[s]'));
+            .addField(
+                'Mute Duration',
+                dur(duration).format('d[d ]h[h ]m[m ]s[s]')
+            );
 
         return msg.util?.send(embed);
     }
