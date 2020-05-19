@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
-import * as moment from 'moment';
+import { utc } from 'moment';
 import 'moment-duration-format';
 
 interface VerificationLevels {
@@ -43,7 +43,7 @@ export default class ServerInfoCommand extends Command {
             )
             .addField(
                 'Created at (UTC)',
-                moment.utc(guild.createdAt).format('MM/DD/YYYY hh:mm'),
+                utc(guild.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .addField('Members', guild.memberCount, true)

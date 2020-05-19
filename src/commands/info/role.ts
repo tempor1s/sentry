@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
-import * as moment from 'moment';
+import { utc } from 'moment';
 import 'moment-duration-format';
 import { getDefaultEmbed } from '../../utils/message';
 
@@ -74,7 +74,7 @@ export default class RoleInfoCommand extends Command {
             .addField('Mentionable', role.mentionable ? 'Yes' : 'No', true)
             .addField(
                 'Created at (UTC)',
-                moment.utc(role.createdAt).format('MM/DD/YYYY hh:mm'),
+                utc(role.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .addField(

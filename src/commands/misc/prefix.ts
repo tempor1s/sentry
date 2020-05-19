@@ -37,6 +37,7 @@ export default class PrefixCommand extends Command {
             Servers
         );
 
+        // update the prefix
         serverRepo.update({ server: msg.guild.id }, { prefix: prefix });
 
         if (prefix === defaultPrefix) {

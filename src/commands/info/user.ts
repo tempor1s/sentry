@@ -1,6 +1,5 @@
 import { Command } from 'discord-akairo';
 import { GuildMember, Message, Permissions } from 'discord.js';
-// import * as moment from 'moment';
 import { utc } from 'moment';
 import 'moment-duration-format';
 import { getDefaultEmbed } from '../../utils/message';

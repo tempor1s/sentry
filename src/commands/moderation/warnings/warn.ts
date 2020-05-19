@@ -7,6 +7,14 @@ export default class WarnCommand extends Command {
         super('warn', {
             aliases: ['warn'],
             category: 'moderation',
+            clientPermissions: [
+                Permissions.FLAGS.MANAGE_MESSAGES,
+                Permissions.FLAGS.MANAGE_ROLES,
+            ],
+            userPermissions: [
+                Permissions.FLAGS.MANAGE_MESSAGES,
+                Permissions.FLAGS.MANAGE_ROLES,
+            ],
             description: {
                 content: stripIndents`Manage warnings.
 
@@ -25,7 +33,6 @@ export default class WarnCommand extends Command {
                 ],
             },
             channel: 'guild',
-            clientPermissions: [Permissions.FLAGS.MANAGE_MESSAGES],
         });
     }
 

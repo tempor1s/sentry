@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
-import * as moment from 'moment';
+import { duration } from 'moment';
 import 'moment-duration-format';
 
 export default class InfoCommand extends Command {
@@ -24,9 +24,7 @@ export default class InfoCommand extends Command {
             .addField('❯ Bot Owner', `${owner.tag} (${owner.id})`, false)
             .addField(
                 '❯ Uptime',
-                moment
-                    .duration(this.client.uptime ?? 0)
-                    .format('d[d ]h[h ]m[m ]s[s]'),
+                duration(this.client.uptime ?? 0).format('d[d ]h[h ]m[m ]s[s]'),
                 true
             )
             .addField(

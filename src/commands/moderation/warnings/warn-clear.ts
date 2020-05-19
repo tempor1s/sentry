@@ -1,5 +1,5 @@
 import { Command } from 'discord-akairo';
-import { Message, GuildMember } from 'discord.js';
+import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 
@@ -7,7 +7,14 @@ export default class WarnClearCommand extends Command {
     public constructor() {
         super('warn-clear', {
             category: 'moderation',
-            userPermissions: 'MANAGE_MESSAGES',
+            clientPermissions: [
+                Permissions.FLAGS.MANAGE_MESSAGES,
+                Permissions.FLAGS.MANAGE_ROLES,
+            ],
+            userPermissions: [
+                Permissions.FLAGS.MANAGE_MESSAGES,
+                Permissions.FLAGS.MANAGE_ROLES,
+            ],
             args: [
                 {
                     id: 'member',

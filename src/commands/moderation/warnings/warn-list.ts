@@ -1,17 +1,24 @@
 import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
-import { Message, GuildMember } from 'discord.js';
+import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
-import * as moment from 'moment';
+import { utc } from 'moment';
 import 'moment-duration-format';
 
 export default class WarnListCommand extends Command {
     public constructor() {
         super('warn-list', {
             category: 'moderation',
-            userPermissions: 'MANAGE_MESSAGES',
+            clientPermissions: [
+                Permissions.FLAGS.MANAGE_MESSAGES,
+                Permissions.FLAGS.MANAGE_ROLES,
+            ],
+            userPermissions: [
+                Permissions.FLAGS.MANAGE_MESSAGES,
+                Permissions.FLAGS.MANAGE_ROLES,
+            ],
             args: [
                 {
                     id: 'member',
@@ -51,9 +58,9 @@ export default class WarnListCommand extends Command {
                     warning.id
                 }\`\nModerator: ${moderator}\nReason: \`${
                     warning.reason
-                }\`\nTime (UTC): \`${moment
-                    .utc(warning.date)
-                    .format('MM/DD/YYYY hh:mm')}\``,
+                }\`\nTime (UTC): \`${utc(warning.date).format(
+                    'MM/DD/YYYY hh:mm'
+                )}\``,
                 true
             );
         }

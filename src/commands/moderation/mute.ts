@@ -26,6 +26,11 @@ export default class MuteCommand extends Command {
             },
             category: 'moderation',
             channel: 'guild',
+            userPermissions: [
+                Permissions.FLAGS.MUTE_MEMBERS,
+                Permissions.FLAGS.MANAGE_ROLES,
+                Permissions.FLAGS.MANAGE_MESSAGES,
+            ],
             clientPermissions: [
                 Permissions.FLAGS.MUTE_MEMBERS,
                 Permissions.FLAGS.MANAGE_ROLES,

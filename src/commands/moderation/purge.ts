@@ -3,7 +3,7 @@ import { Message, Permissions } from 'discord.js';
 
 export default class PurgeCommand extends Command {
     public constructor() {
-        // TODO: Allow the ability to purge only a user.
+        // TODO: Allow the ability to purge messages only from a user.
         super('purge', {
             aliases: ['purge', 'clear', 'clean'],
             description: {
@@ -14,6 +14,7 @@ export default class PurgeCommand extends Command {
             category: 'moderation',
             channel: 'guild',
             clientPermissions: [Permissions.FLAGS.MANAGE_MESSAGES],
+            userPermissions: [Permissions.FLAGS.MANAGE_MESSAGES],
             args: [
                 {
                     id: 'amount',
@@ -26,6 +27,7 @@ export default class PurgeCommand extends Command {
 
     public async exec(msg: Message, { amount }: { amount: number }) {
         // TODO: Update this to remove max 1k msgs.
+        // TODO: Purge from a specific user
         if (!amount) {
             return msg.util?.send(
                 'Please specify an amount of messages to purge. (Max 100)'

@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import * as moment from 'moment';
+import { utc } from 'moment';
 import 'moment-duration-format';
 import { getDefaultEmbed } from '../../utils/message';
 
@@ -36,7 +36,7 @@ export default class ChannelInfoCommand extends Command {
             .addField('NSFW', Boolean(channel.nsfw) ? 'Yes' : 'No', true)
             .addField(
                 'Created at (UTC)',
-                moment.utc(channel.createdAt).format('MM/DD/YYYY hh:mm'),
+                utc(channel.createdAt).format('MM/DD/YYYY hh:mm'),
                 true
             )
             .setThumbnail(msg.guild!.iconURL() ?? '');
