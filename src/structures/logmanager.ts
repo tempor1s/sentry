@@ -4,22 +4,51 @@ import { Message, TextChannel, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
 
+export enum Executor {
+    USER = 'User',
+}
+
+export async function logMsgDelete(
+    repo: Repository<Servers>,
+    msg: Message,
+    executor: Executor
+) {
+    let server = await repo.findOne({ where: { server: msg.member.guild.id } });
+
+    if (!server.messageLogDeletesEnabled && !server.messageLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Message Deleted')
+        .addField('Content', msg.content, false)
+        .addField('ID', msg.id, true)
+        .addField('Channel', msg.channel, true)
+        .addField('Executor', `${executor} - ${msg.member.user}`, true)
+        .setThumbnail(msg.member.user.displayAvatarURL());
+
+    let channel = msg.guild.channels.cache.get(
+        server.messageLog
+    ) as TextChannel;
+
+    channel.send(embed);
+}
+
 export async function logCommandExecute(
     repo: Repository<Servers>,
     msg: Message
 ) {
     let server = await repo.findOne({ where: { server: msg.member.guild.id } });
 
+    if (!server.commandLogEnabled && !server.modLog) {
+        return;
+    }
+
     let embed = getDefaultEmbed()
         .setTitle('Command Executed')
         .addField('Command', msg.content, false)
         .addField('Executor', msg.member.user, true)
         .setThumbnail(msg.member.user.displayAvatarURL());
-
-    // send the message to the command log channel
-    if (!server.commandLogEnabled && !server.modLog) {
-        return;
-    }
 
     let channel = msg.guild.channels.cache.get(
         server.commandLog
@@ -104,4 +133,3 @@ export async function logPurge(
 
     modLogChannel.send(embed);
 }
-
