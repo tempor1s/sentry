@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import ms from 'ms';
-import 'moment-duration-format';
 
 export default class ShowConfigCommand extends Command {
     public constructor() {
@@ -31,53 +30,58 @@ export default class ShowConfigCommand extends Command {
             .setTitle(`Server Config | ${msg.guild.name}`)
             .addField('**❯ Prefix** (prefix)', server.prefix, true)
             .addField(
-                '**❯ Mute Role** (muterole)',
-                `${muteRole.name} (${muteRole.id})`,
+                '**❯ Mute Configuration**',
+                stripIndent`
+                **• Role** \`muterole\`
+                <@&${muteRole.id}> *(${muteRole.id})*
+                **• Duration** \`muteduration\`
+                *${ms(server.muteDuration)}*
+                `,
                 true
             )
             .addField(
-                '**❯ Logging**',
+                '**❯ Command Logging**',
                 stripIndent`
-                __**Command Log**__
-                • Command Log (commandlogtoggle)
-                ${server.commandLogEnabled ? 'Enabled' : 'Disabled'}
-                • Command Log Channel (commandlog)
-                ${
-                    server.commandLog
-                        ? (msg.guild.channels.cache.get(
-                              server.commandLog
-                          ) as TextChannel)
-                        : 'Not set'
-                }
-                __**Mod Log**__
-                • Mod Log (modlogtoggle)
-                ${server.modLogEnabled ? 'Enabled' : 'Disabled'}
-                • Mod Log Channel (modlog)
+                • **Status** \`commandlogtoggle\`
+                *${server.commandLogEnabled ? 'Enabled' : 'Disabled'}*
+                • **Channel** \`commandlog\`
+                ${server.commandLog ? `<#${server.commandLog}>` : '*Not set*'}`,
+                true
+            )
+            .addField(
+                '**❯ Mod Action Logging**',
+                stripIndent`
+                **• Status** \`modlogtoggle\`
+                *${server.modLogEnabled ? 'Enabled' : 'Disabled'}*
+                **• Channel** \`modlog\`
                 ${
                     server.modLog
                         ? (msg.guild.channels.cache.get(
                               server.modLog
                           ) as TextChannel)
-                        : 'Not set'
-                }
-                __**Message Logging**__
-                • Log Deletes (logdeletes)
-                ${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}
-                • Log Edits (logedits)
-                ${server.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}
-                • Log Images (logimages)
-                ${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}
-                • Message Log Channel (msglog)
+                        : '*Not set*'
+                }`,
+                true
+            )
+            .addField(
+                '**❯ Message Logging**',
+                stripIndent`
+                **• Deletes** \`logdeletes\`
+                *${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}*
+                **• Edits** \`logedits\`
+                *${server.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}*
+                **• Images** \`logimages\`
+                *${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}*
+                **• Channel** \`msglog\`
                 ${
                     server.messageLog
                         ? (msg.guild.channels.cache.get(
                               server.modLog
                           ) as TextChannel)
-                        : 'Not set'
+                        : '*Not set*'
                 }
                 `,
-
-                false
+                true
             )
             .setThumbnail(msg.guild.iconURL() ?? '');
 
