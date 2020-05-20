@@ -27,8 +27,6 @@ export default class ShowConfigCommand extends Command {
 
         let muteRole = msg.guild.roles.cache.get(server.mutedRole);
 
-        let commandLogChannel = msg.guild.channels.cache.get(server.commandLog);
-
         const embed = getDefaultEmbed()
             .setTitle(`Server Config | ${msg.guild.name}`)
             .addField('**❯ Prefix** (prefix)', server.prefix, true)
@@ -40,13 +38,25 @@ export default class ShowConfigCommand extends Command {
             .addField(
                 '**❯ Logging**',
                 stripIndent`
+                __**Command Log**__
                 • Command Log (commandlogtoggle)
-                --- ${server.commandLogEnabled ? 'Enabled' : 'Disabled'}
+                ${server.commandLogEnabled ? 'Enabled' : 'Disabled'}
                 • Command Log Channel (commandlog)
-                --- ${
+                ${
                     server.commandLog
                         ? (msg.guild.channels.cache.get(
                               server.commandLog
+                          ) as TextChannel)
+                        : 'Not set'
+                }
+                __**Mod Log**__
+                • Mod Log (modlogtoggle)
+                ${server.modLogEnabled ? 'Enabled' : 'Disabled'}
+                • Mod Log Channel (modlog)
+                ${
+                    server.modLog
+                        ? (msg.guild.channels.cache.get(
+                              server.modLog
                           ) as TextChannel)
                         : 'Not set'
                 }

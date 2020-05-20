@@ -3,13 +3,13 @@ import { Message, Permissions } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 
-export default class CommandLogToggleConfigCommand extends Command {
+export default class ModLogToggleConfigCommand extends Command {
     public constructor() {
-        super('field-commandlogtoggle', {
-            aliases: ['commandlogtoggle'],
+        super('field-modlogtoggle', {
+            aliases: ['modlogtoggle'],
             description: {
-                content: 'Enable/Disable command logging in the server.',
-                usage: 'commandlogtoggle',
+                content: 'Enable/Disable mod action logging on the server.',
+                usage: 'modlogtoggle',
             },
             channel: 'guild',
             category: 'config',
@@ -25,7 +25,7 @@ export default class CommandLogToggleConfigCommand extends Command {
         });
 
         let flag: boolean;
-        if (server.commandLogEnabled) {
+        if (server.modLogEnabled) {
             flag = false;
         } else {
             flag = true;
@@ -35,25 +35,25 @@ export default class CommandLogToggleConfigCommand extends Command {
         try {
             await serverRepo.update(
                 { server: msg.guild.id },
-                { commandLogEnabled: flag }
+                { modLogEnabled: flag }
             );
 
             logger.debug(
-                `Set command logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+                `Set mod action logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
             );
         } catch (err) {
             logger.error(
-                `Error toggling command logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+                `Error toggling mod action logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
                 err
             );
 
             return msg.util?.send(
-                'Error when toggling command logging. Please try again.'
+                'Error when toggling mod action logging. Please try again.'
             );
         }
 
         return msg.util?.send(
-            `Successfully ${flag ? 'enabled' : 'disabled'} command logging.`
+            `Successfully ${flag ? 'enabled' : 'disabled'} mod action logging.`
         );
     }
 }

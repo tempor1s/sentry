@@ -1,8 +1,9 @@
 import { Repository } from 'typeorm';
 import { Servers } from '../models/server';
-import { Message, TextChannel } from 'discord.js';
+import { Message, TextChannel, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
 import logger from '../utils/logger';
+import ms from 'ms';
 
 enum Action {
     MUTE = 'Mute',
@@ -33,31 +34,47 @@ export async function logCommandExecute(
         .setThumbnail(msg.member.user.displayAvatarURL());
 
     // send the message to the command log channel
-    if (server.commandLogEnabled) {
-        if (server.commandLog) {
-            let channel = msg.guild.channels.cache.get(
-                server.commandLog
-            ) as TextChannel;
-            channel.send(embed);
-        } else {
-            logger.debug(
-                'Command not logged because there is no command log channel set.'
-            );
-        }
-    } else {
-        logger.debug('Command not logged because command log not enabled.');
+    if (!server.commandLogEnabled && !server.modLog) {
+        return;
     }
+
+    let channel = msg.guild.channels.cache.get(
+        server.commandLog
+    ) as TextChannel;
+
+    channel.send(embed);
+}
+
+export async function logMute(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    reason: string,
+    duration: number,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    // make sure mod log is enabled and a channel is set
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle(`User Muted | ${member.user.tag}`)
+        .addField('Reason', reason, false)
+        .addField('Moderator', moderator.user, false)
+        .addField('Duration', ms(duration), false)
+        .setThumbnail(member.user.displayAvatarURL());
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
 }
 
 // export async function logPurge(repo: Repository<Servers>, reason: string) {}
 
-// export async function logMute(
-//     repo: Repository<Servers>,
-//     member: GuildMember,
-//     reason: string,
-//     duration: string,
-//     moderator: string
-// );
 //
 // export async function logUnmute(
 //     repo: Repository<Servers>,

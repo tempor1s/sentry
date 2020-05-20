@@ -4,9 +4,10 @@ import { getDefaultEmbed } from '../../utils/message';
 import { Servers } from '../../models/server';
 import { Mutes } from '../../models/mutes';
 import { duration as dur } from 'moment';
+import { createMuteOrUpdate, mute } from '../../structures/mutemanager';
+import { logMute } from '../../structures/logmanager';
 import 'moment-duration-format';
 import ms from 'ms';
-import { createMuteOrUpdate, mute } from '../../structures/mutemanager';
 
 export default class MuteCommand extends Command {
     public constructor() {
@@ -113,6 +114,8 @@ export default class MuteCommand extends Command {
 
         // Mute the person
         await mute(mutesRepo, msg, member, muteRoleId, reason, duration);
+        // Log the mute
+        logMute(serverRepo, member, reason, duration, msg.member);
 
         // Info sent to the channel for when the person is muted
         const embed = getDefaultEmbed('GREEN')

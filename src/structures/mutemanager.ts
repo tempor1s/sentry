@@ -4,6 +4,7 @@ import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
 import { duration as dur } from 'moment';
 import logger from '../utils/logger';
+import { logMute } from '../structures/logmanager';
 
 export async function mute(
     muteRepo: Repository<Mutes>,
@@ -40,7 +41,7 @@ export async function mute(
 
     // Insert the mute into the DB
     try {
-        let insertedMute = await muteRepo.insert({
+        await muteRepo.insert({
             server: member.guild.id,
             user: member.user.id,
             end: end,

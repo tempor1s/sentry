@@ -4,6 +4,7 @@ import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
 import { Mutes } from '../../models/mutes';
 import logger from '../../utils/logger';
+import { logMute } from '../../structures/logmanager';
 
 export default class MuteJoinListener extends Listener {
     public constructor() {
@@ -45,6 +46,14 @@ export default class MuteJoinListener extends Listener {
             );
 
             await member.send('Nice try mute evading...');
+
+            logMute(
+                serversRepo,
+                member,
+                'Mute Evading | Remute',
+                muted.end - Date.now(),
+                member.guild.members.cache.get(this.client.user.id)
+            );
         } catch (err) {
             logger.error(
                 `Error occured when remuting ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) when they rejoined. Reason: `,
