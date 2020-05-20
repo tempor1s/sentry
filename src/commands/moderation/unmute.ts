@@ -1,12 +1,10 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
-import { getDefaultEmbed } from '../../utils/message';
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
-import { duration as dur } from 'moment';
 import 'moment-duration-format';
-import ms from 'ms';
 import { unmute } from '../../structures/mutemanager';
+import { logUnmute } from '../../structures/logmanager';
 
 export default class UnmuteCommand extends Command {
     public constructor() {
@@ -62,6 +60,7 @@ export default class UnmuteCommand extends Command {
         }
 
         unmute(mutesRepos, member, server.mutedRole);
+        logUnmute(serverRepo, member, msg.member);
 
         return msg.util?.send(`Unmuted ${member.user}.`);
     }

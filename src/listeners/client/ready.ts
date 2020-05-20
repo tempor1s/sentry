@@ -2,6 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
 import { unmute } from '../../structures/mutemanager';
+import { logUnmute } from '../../structures/logmanager';
 import logger from '../../utils/logger';
 
 export default class ReadyListener extends Listener {
@@ -49,7 +50,14 @@ export default class ReadyListener extends Listener {
 
                     // try to mute the user
                     try {
-                        await unmute(mutesRepo, member, serverDb.mutedRole);
+                        // Unmute the user
+                        unmute(mutesRepo, member, serverDb.mutedRole);
+                        // Log the unmute
+                        logUnmute(
+                            serversRepo,
+                            member,
+                            member.guild.members.cache.get(this.client.user.id)
+                        );
 
                         logger.debug(
                             `Unmuting user ${member.user.tag} (${member.id}).`

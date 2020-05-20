@@ -73,6 +73,30 @@ export async function logMute(
     modLogChannel.send(embed);
 }
 
+export async function logUnmute(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    // make sure mod log is enabled and a channel is set
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle(`User Unmuted | ${member.user.tag}`)
+        .addField('Moderator', moderator.user, false)
+        .setThumbnail(member.user.displayAvatarURL());
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
 // export async function logPurge(repo: Repository<Servers>, reason: string) {}
 
 //

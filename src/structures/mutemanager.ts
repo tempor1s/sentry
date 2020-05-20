@@ -4,7 +4,6 @@ import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
 import { duration as dur } from 'moment';
 import logger from '../utils/logger';
-import { logMute } from '../structures/logmanager';
 
 export async function mute(
     muteRepo: Repository<Mutes>,
