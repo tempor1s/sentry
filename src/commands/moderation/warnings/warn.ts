@@ -44,8 +44,9 @@ export default class WarnCommand extends Command {
                 ['warn-list', 'list'],
                 ['warn-clear', 'clear'],
             ],
-            otherwise: (_: Message) => {
-                return `Check help for more information.`;
+            otherwise: async (msg: Message) => {
+                let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
+                return `Check \`${prefix}help warn\` for more information.`;
             },
         };
 

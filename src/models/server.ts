@@ -5,7 +5,7 @@ import { defaultPrefix } from '../config';
 
 @Entity('servers')
 export class Servers {
-    @PrimaryColumn({ type: 'varchar', length: 22 })
+    @PrimaryColumn({ type: 'varchar', length: 22, unique: true })
     server!: string;
 
     @Column({ type: 'text', default: defaultPrefix })
