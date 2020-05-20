@@ -97,24 +97,28 @@ export async function logUnmute(
     modLogChannel.send(embed);
 }
 
-// export async function logPurge(repo: Repository<Servers>, reason: string) {}
+export async function logPurge(
+    repo: Repository<Servers>,
+    moderator: GuildMember,
+    count: number
+) {
+    let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
-//
-// export async function logUnmute(
-//     repo: Repository<Servers>,
-//     member: GuildMember,
-//     reason: string,
-//     duration: string,
-//     moderator: string
-// );
+    // make sure mod log is enabled and a channel is set
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
 
-// export async function logNuke(repo: Repository<Servers>, )
-//
+    let embed = getDefaultEmbed()
+        .setTitle(`Messages Purged`)
+        .addField('Moderator', moderator.user, true)
+        .addField('Purged Count', count, true)
+        .setThumbnail(moderator.user.displayAvatarURL());
 
-// ENABLE
-// -- use log channel if it already exists
-// -- create log channel if it does not exists? maybe prompt? don't let enable
+    let modLogChannel = moderator.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
 
-// DISABLE
-// -- just turn off and no longer log actions
-// -- maybe give option to delete channel? idk
+    modLogChannel.send(embed);
+}
+
