@@ -4,15 +4,7 @@ import { Message, TextChannel, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
 
-export enum Executor {
-    USER = 'User',
-}
-
-export async function logMsgDelete(
-    repo: Repository<Servers>,
-    msg: Message,
-    executor: Executor
-) {
+export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
     let server = await repo.findOne({ where: { server: msg.member.guild.id } });
 
     if (!server.messageLogDeletesEnabled && !server.messageLog) {
@@ -24,10 +16,39 @@ export async function logMsgDelete(
         .addField('Content', msg.content, false)
         .addField('ID', msg.id, true)
         .addField('Channel', msg.channel, true)
-        .addField('Executor', `${executor} - ${msg.member.user}`, true)
+        .addField('Executor', msg.member.user, true)
         .setThumbnail(msg.member.user.displayAvatarURL());
 
     let channel = msg.guild.channels.cache.get(
+        server.messageLog
+    ) as TextChannel;
+
+    channel.send(embed);
+}
+
+export async function logMsgEdit(
+    repo: Repository<Servers>,
+    oldMsg: Message,
+    newMsg: Message
+) {
+    let server = await repo.findOne({
+        where: { server: newMsg.member.guild.id },
+    });
+
+    if (!server.messageLogEditsEnabled && !server.messageLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Message Edited')
+        .addField('Before', oldMsg.content, false)
+        .addField('After', newMsg.content, false)
+        .addField('ID', newMsg.id, true)
+        .addField('Channel', newMsg.channel, true)
+        .addField('Executor', newMsg.member.user, true)
+        .setThumbnail(newMsg.member.user.displayAvatarURL());
+
+    let channel = newMsg.guild.channels.cache.get(
         server.messageLog
     ) as TextChannel;
 

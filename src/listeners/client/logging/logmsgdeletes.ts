@@ -2,7 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
-import { logMsgDelete, Executor } from '../../../structures/logmanager';
+import { logMsgDelete } from '../../../structures/logmanager';
 
 export default class LogMessageDeleteListener extends Listener {
     public constructor() {
@@ -17,6 +17,6 @@ export default class LogMessageDeleteListener extends Listener {
         logger.debug(`Message deleted in ${msg.guild.name} (${msg.guild.id})`);
 
         let serversRepo = this.client.db.getRepository(Servers);
-        logMsgDelete(serversRepo, msg, Executor.USER);
+        logMsgDelete(serversRepo, msg);
     }
 }
