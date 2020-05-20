@@ -1,21 +1,16 @@
 import { Command, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
-import { Servers } from '../../models/server';
-import { defaultPrefix } from '../../config';
-import logger from '../../utils/logger';
+import { Servers } from '../../../models/server';
+import { defaultPrefix } from '../../../config';
+import logger from '../../../utils/logger';
 
-export default class PrefixCommand extends Command {
+export default class PrefixConfigCommand extends Command {
     public constructor() {
-        super('prefix', {
-            aliases: ['prefix'],
-            description: {
-                content: 'View or update the prefix of the bot.',
-                usage: 'prefix [prefix]',
-                examples: ['', '>', 'pls'],
-            },
-            category: 'misc',
+        super('field-prefix', {
             channel: 'guild',
+            category: 'config',
+            clientPermissions: [Permissions.FLAGS.MANAGE_GUILD],
             userPermissions: [Permissions.FLAGS.MANAGE_GUILD],
             args: [
                 {

@@ -28,9 +28,17 @@ export default class ShowConfigCommand extends Command {
 
         const embed = getDefaultEmbed()
             .setTitle(`Server Config | ${msg.guild.name}`)
-            .addField('❯ Prefix', server.prefix, false)
-            .addField('❯ Mute Role', `${muteRole.name} (${muteRole.id})`, false)
-            .addField('❯ Mute Duration', ms(server.muteDuration), false)
+            .addField('❯ Prefix `prefix`', server.prefix, false)
+            .addField(
+                '❯ Mute Role `muterole`',
+                `${muteRole.name} (${muteRole.id})`,
+                false
+            )
+            .addField(
+                '❯ Mute Duration `muteduration`',
+                ms(server.muteDuration),
+                false
+            )
             .setThumbnail(msg.guild.iconURL() ?? '');
 
         return msg.util?.send(embed);
