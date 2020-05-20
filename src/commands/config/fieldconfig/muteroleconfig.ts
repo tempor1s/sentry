@@ -10,7 +10,7 @@ export default class MuteRoleConfigCommand extends Command {
             description: {
                 content: 'Update the mute role in the server.',
                 usage: 'muterole [muterole]',
-                examples: ['', '>', 'pls'],
+                examples: ['', '@Role', 'role', '712205605951242273'],
             },
             channel: 'guild',
             category: 'config',

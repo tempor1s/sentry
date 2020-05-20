@@ -28,7 +28,7 @@ export default class UpdateConfigCommand extends Command {
             type: [
                 ['field-prefix', 'prefix'],
                 ['field-muterole', 'muterole'],
-                ['config-muteduration', 'muteduration'],
+                ['field-muteduration', 'muteduration'],
             ],
             otherwise: async (msg: Message) => {
                 let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
