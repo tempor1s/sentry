@@ -26,9 +26,12 @@ export default class UpdateConfigCommand extends Command {
     public *args() {
         const method = yield {
             type: [
+                // TODO: Rework names
                 ['field-prefix', 'prefix'],
                 ['field-muterole', 'muterole'],
                 ['field-muteduration', 'muteduration'],
+                ['field-commandlogtoggle', 'commandlogtoggle'],
+                ['field-commandlog', 'commandlog'],
             ],
             otherwise: async (msg: Message) => {
                 let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
