@@ -2,24 +2,7 @@ import { Repository } from 'typeorm';
 import { Servers } from '../models/server';
 import { Message, TextChannel, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
-import logger from '../utils/logger';
 import ms from 'ms';
-
-enum Action {
-    MUTE = 'Mute',
-    UNMUTE = 'Unmute',
-    KICK = 'Kick',
-    BAN = 'Ban',
-    PURGE = 'Purge',
-    NUKE = 'Nuke',
-    SLOWMODE = 'Slowmode',
-    LOCK = 'Channel Lock',
-}
-
-enum Executor {
-    USER = 'User',
-    BOT = 'Bot', // TODO: Antispam? lol
-}
 
 export async function logCommandExecute(
     repo: Repository<Servers>,
