@@ -60,7 +60,23 @@ export default class ShowConfigCommand extends Command {
                           ) as TextChannel)
                         : 'Not set'
                 }
+                __**Message Logging**__
+                • Log Deletes (logdeletes)
+                ${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}
+                • Log Edits (logedits)
+                ${server.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}
+                • Log Images (logimages)
+                ${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}
+                • Message Log Channel (msglog)
+                ${
+                    server.messageLog
+                        ? (msg.guild.channels.cache.get(
+                              server.modLog
+                          ) as TextChannel)
+                        : 'Not set'
+                }
                 `,
+
                 false
             )
             .setThumbnail(msg.guild.iconURL() ?? '');

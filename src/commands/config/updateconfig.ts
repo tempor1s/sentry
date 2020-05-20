@@ -34,6 +34,10 @@ export default class UpdateConfigCommand extends Command {
                 ['field-commandlog', 'commandlog'],
                 ['field-modlogtoggle', 'modlogtoggle'],
                 ['field-modlog', 'modlog'],
+                ['field-logdeletes', 'logdeletes'],
+                ['field-logedits', 'logedits'],
+                ['field-logimages', 'logedits'],
+                ['field-msglog', 'msglog'],
             ],
             otherwise: async (msg: Message) => {
                 let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
