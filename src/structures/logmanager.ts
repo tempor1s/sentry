@@ -39,10 +39,6 @@ export async function logCommandExecute(
                 server.commandLog
             ) as TextChannel;
             channel.send(embed);
-
-            logger.debug(
-                `Command: '${msg.content}' -- Executor: '${msg.member.user.tag} (${msg.member.id})'`
-            );
         } else {
             logger.debug(
                 'Command not logged because there is no command log channel set.'

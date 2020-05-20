@@ -1,5 +1,6 @@
+import { stripIndent } from 'common-tags';
 import { Command } from 'discord-akairo';
-import { Message, Permissions } from 'discord.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
@@ -26,17 +27,30 @@ export default class ShowConfigCommand extends Command {
 
         let muteRole = msg.guild.roles.cache.get(server.mutedRole);
 
+        let commandLogChannel = msg.guild.channels.cache.get(server.commandLog);
+
         const embed = getDefaultEmbed()
             .setTitle(`Server Config | ${msg.guild.name}`)
-            .addField('❯ Prefix `prefix`', server.prefix, false)
+            .addField('**❯ Prefix** (prefix)', server.prefix, true)
             .addField(
-                '❯ Mute Role `muterole`',
+                '**❯ Mute Role** (muterole)',
                 `${muteRole.name} (${muteRole.id})`,
-                false
+                true
             )
             .addField(
-                '❯ Mute Duration `muteduration`',
-                ms(server.muteDuration),
+                '**❯ Logging**',
+                stripIndent`
+                • Command Log (commandlogtoggle)
+                --- ${server.commandLogEnabled ? 'Enabled' : 'Disabled'}
+                • Command Log Channel (commandlog)
+                --- ${
+                    server.commandLog
+                        ? (msg.guild.channels.cache.get(
+                              server.commandLog
+                          ) as TextChannel)
+                        : 'Not set'
+                }
+                `,
                 false
             )
             .setThumbnail(msg.guild.iconURL() ?? '');
