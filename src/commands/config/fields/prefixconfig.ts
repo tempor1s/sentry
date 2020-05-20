@@ -8,6 +8,12 @@ import logger from '../../../utils/logger';
 export default class PrefixConfigCommand extends Command {
     public constructor() {
         super('field-prefix', {
+            aliases: ['prefix'],
+            description: {
+                content: 'View or update the prefix of the bot.',
+                usage: 'prefix [prefix]',
+                examples: ['', '>', 'pls'],
+            },
             channel: 'guild',
             category: 'config',
             clientPermissions: [Permissions.FLAGS.MANAGE_GUILD],
@@ -24,7 +30,7 @@ export default class PrefixConfigCommand extends Command {
     public async exec(msg: Message, { prefix }: { prefix: string }) {
         let serverPrefix = await (this.handler.prefix as PrefixSupplier)(msg);
         if (!prefix) {
-            return msg.util.send(
+            return msg.util?.send(
                 `The current prefix for the server is \`${serverPrefix}\``
             );
         }

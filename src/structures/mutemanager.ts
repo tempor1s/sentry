@@ -56,7 +56,7 @@ export async function mute(
             } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
         );
 
-        logger.debug('Mute insert was successful. Insert: ', insertedMute);
+        logger.debug('Mute insert was successful.');
     } catch (err) {
         logger.error(
             `Error inserting mute for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}) for ${duration}ms`
@@ -86,14 +86,14 @@ export async function unmute(
 
     try {
         // Remove mute from the DB
-        let removedMute = await muteRepo.delete({
+        await muteRepo.delete({
             server: member.guild.id,
             user: member.id,
         });
 
         await member.send(`You have been unmuted in ${member.guild.name}.`);
 
-        logger.info('Mute db remove was successful. Remove: ', removedMute);
+        logger.info('Mute db remove was successful');
     } catch (err) {
         logger.error(
             `Error removing mute db entry from ${member.user.tag}' (${member.id}) in ${member.guild.name} (${member.guild.id})`
