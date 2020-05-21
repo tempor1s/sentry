@@ -55,7 +55,8 @@ export default class KickCommand extends Command {
 
         // Checks so that you can not kick someone higher than you.
         if (
-            member.roles.highest.position > msg.member.roles.highest.position &&
+            member.roles.highest.position >=
+                msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.send(

@@ -74,7 +74,8 @@ export default class MuteCommand extends Command {
 
         // Check to make sure that we are not muting someone with an equal or higher role
         if (
-            member.roles.highest.position > msg.member.roles.highest.position &&
+            member.roles.highest.position >=
+                msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.send(

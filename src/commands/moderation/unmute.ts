@@ -43,6 +43,17 @@ export default class UnmuteCommand extends Command {
             return msg.util?.send('Please specify a user to unmute.');
         }
 
+        // Check to make sure that we are not muting someone with an equal or higher role
+        if (
+            member.roles.highest.position >=
+                msg.member.roles.highest.position &&
+            msg.author.id !== msg.guild.ownerID
+        ) {
+            return msg.util.send(
+                'This member has a higher or equal role to you. You are unable to unmute them.'
+            );
+        }
+
         let mutesRepos = this.client.db.getRepository(Mutes);
         let serverRepo = this.client.db.getRepository(Servers);
 
