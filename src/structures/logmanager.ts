@@ -218,3 +218,29 @@ export async function logKick(
 
     modLogChannel.send(embed);
 }
+
+export async function logNick(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    moderator: GuildMember,
+    oldNick: string,
+    newNick: string
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle(`Nickname Changed`)
+        .addField('Old Nickname', oldNick ? oldNick : '*N/A*')
+        .addField('New Nickname', newNick ? newNick : '*N/A*')
+        .addField('Moderator', moderator.user);
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}

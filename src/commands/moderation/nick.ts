@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logKick } from '../../structures/logmanager';
+import { logNick } from '../../structures/logmanager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 
@@ -58,16 +58,21 @@ export default class NickCommand extends Command {
             );
         }
 
-        let serversRepo = this.client.db.getRepository(Servers);
+        let oldNick: string;
+        let retMsg: string;
 
         try {
-            if (!nick) {
+            // Bleh
+            oldNick = member.nickname;
+            if (!nick && oldNick) {
+                retMsg = `${member.user}'s nickname has been reset.`;
                 await member.setNickname(member.user.username);
-            } else {
+            } else if (nick) {
+                retMsg = `${member.user}'s nickname has been updated.`;
                 await member.setNickname(nick);
+            } else {
+                return msg.util?.send('That user does not have a nickname.');
             }
-
-            // TODO: Log nickname changes?
 
             logger.debug(
                 `Changed nickname of ${member.user.tag} (${member.id}) to ${nick}`
@@ -76,8 +81,12 @@ export default class NickCommand extends Command {
             logger.error('Error changing nickname of user. Error: ', err);
             return msg.util?.send('Error occured when trying to nick user.');
         }
+        let serversRepo = this.client.db.getRepository(Servers);
 
-        return msg.util?.send(`${member.user}'s nickname has been updated.`);
+        // log that we updated the nickname
+        logNick(serversRepo, member, msg.member, oldNick, member.nickname);
+
+        return msg.util?.send(retMsg);
     }
 }
 
