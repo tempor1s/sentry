@@ -59,7 +59,7 @@ export default class KickCommand extends Command {
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.send(
-                'This member has a higher or equal role to you. You are unable to kick them.'
+                'That member has a higher or equal role to you. You are unable to kick them.'
             );
         }
 
@@ -81,7 +81,7 @@ export default class KickCommand extends Command {
             );
         } catch (err) {
             logger.error('Error kicking user. Error: ', err);
-            msg.util?.send('Error occured when trying to kick user.');
+            return msg.util?.send('Error occured when trying to kick user.');
         }
 
         const embed = getDefaultEmbed('GREEN')
