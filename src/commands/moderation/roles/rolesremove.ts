@@ -1,6 +1,8 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
+import { logRoleRemove } from '../../../structures/logmanager';
+import { Servers } from '../../../models/server';
 
 export default class RolesRemoveCommand extends Command {
     public constructor() {
@@ -21,7 +23,6 @@ export default class RolesRemoveCommand extends Command {
         });
     }
 
-    // TODO: Add role remove logging
     public async exec(
         msg: Message,
         { member, role }: { member: GuildMember; role: Role }
@@ -46,9 +47,13 @@ export default class RolesRemoveCommand extends Command {
             );
         }
 
+        let serverRepo = this.client.db.getRepository(Servers);
+
         try {
             if (member.roles.cache.has(role.id)) {
-                await member.roles.remove(role);
+                await member.roles.remove(role).then(() => {
+                    logRoleRemove(serverRepo, member, msg.member, role);
+                });
             } else {
                 return msg.util?.send('User does not have that role.');
             }

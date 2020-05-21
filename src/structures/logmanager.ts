@@ -1,9 +1,16 @@
 import { Repository } from 'typeorm';
 import { Servers } from '../models/server';
-import { Message, TextChannel, GuildMember } from 'discord.js';
+import {
+    Message,
+    TextChannel,
+    GuildMember,
+    Role,
+    Collection,
+} from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
 
+// TODO: Use raw events to log old message deletes
 export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
     let server = await repo.findOne({ where: { server: msg.member.guild.id } });
 
@@ -30,6 +37,7 @@ export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
     channel.send(embed);
 }
 
+// TODO: Use raw events to log old message edits
 export async function logMsgEdit(
     repo: Repository<Servers>,
     oldMsg: Message,
@@ -193,6 +201,7 @@ export async function logPurge(
     modLogChannel.send(embed);
 }
 
+// TODO: Log kick through event as well
 export async function logKick(
     repo: Repository<Servers>,
     member: GuildMember,
@@ -219,6 +228,7 @@ export async function logKick(
     modLogChannel.send(embed);
 }
 
+// log nick changes through event as well
 export async function logNick(
     repo: Repository<Servers>,
     member: GuildMember,
@@ -239,6 +249,133 @@ export async function logNick(
         .addField('Moderator', moderator.user);
 
     let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+// TODO: Log role add through event as well
+export async function logRoleAdd(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    moderator: GuildMember,
+    role: Role
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Role Added')
+        .addField('Role', `<@&${role.id}>`, false)
+        .addField('Member', member.user, true)
+        .addField('Moderator', moderator.user, true);
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+// TODO: Log role remove through event as well
+export async function logRoleRemove(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    moderator: GuildMember,
+    role: Role
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Role Removed')
+        .addField('Role', role, false)
+        .addField('Member', member.user, true)
+        .addField('Moderator', moderator.user, true);
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+export async function logRoleClear(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    moderator: GuildMember,
+    roles: Collection<string, Role>
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Roles Cleared')
+        .addField(
+            'Roles',
+            roles.map((role) => `<@&${role.id}>`).join(', '),
+            false
+        )
+        .addField('Member', member.user, true)
+        .addField('Moderator', moderator.user, true);
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+export async function logRolesAddAll(
+    repo: Repository<Servers>,
+    role: Role,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: moderator.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Mass Role Assignment')
+        .addField('Role', role, true)
+        .addField('Moderator', moderator.user, true);
+
+    let modLogChannel = moderator.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+export async function logRolesRemoveAll(
+    repo: Repository<Servers>,
+    role: Role,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: moderator.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Mass Role Removal')
+        .addField('Role', role, true)
+        .addField('Moderator', moderator.user, true);
+
+    let modLogChannel = moderator.guild.channels.cache.get(
         server.modLog
     ) as TextChannel;
 

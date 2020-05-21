@@ -1,6 +1,8 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import logger from '../../../utils/logger';
+import { logRoleClear } from '../../../structures/logmanager';
+import { Servers } from '../../../models/server';
 
 export default class RolesClearCommand extends Command {
     public constructor() {
@@ -16,7 +18,6 @@ export default class RolesClearCommand extends Command {
         });
     }
 
-    // TODO: Add role clear logging
     public async exec(msg: Message, { member }: { member: GuildMember }) {
         if (!member) {
             return msg.util?.send('Please specify user to remove role from.');
@@ -32,19 +33,25 @@ export default class RolesClearCommand extends Command {
             );
         }
 
+        let serverRepo = this.client.db.getRepository(Servers);
+
         try {
+            // Get all the roles from the cache
             let roles = member.roles.cache.filter(
                 (role) => role.name !== '@everyone'
             );
 
             for (const r of roles) {
                 let role = r[1];
+
                 await member.roles.remove(role);
 
                 logger.debug(
                     `Removed role @${role.name} (${role.id}) from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`
                 );
             }
+
+            logRoleClear(serverRepo, member, msg.member, roles);
         } catch (err) {
             logger.error(
                 `Error clearing roles from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}). Error: `,

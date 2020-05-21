@@ -1,6 +1,8 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
+import { logRoleAdd } from '../../../structures/logmanager';
+import { Servers } from '../../../models/server';
 
 export default class RolesAddCommand extends Command {
     public constructor() {
@@ -21,7 +23,6 @@ export default class RolesAddCommand extends Command {
         });
     }
 
-    // TODO: Add role addition logging
     public async exec(
         msg: Message,
         { member, role }: { member: GuildMember; role: Role }
@@ -44,8 +45,12 @@ export default class RolesAddCommand extends Command {
             );
         }
 
+        let serverRepo = this.client.db.getRepository(Servers);
+
         try {
-            await member.roles.add(role);
+            await member.roles.add(role).then(() => {
+                logRoleAdd(serverRepo, member, msg.member, role);
+            });
 
             logger.debug(
                 `Added role @${role.name} (${role.id}) to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`
