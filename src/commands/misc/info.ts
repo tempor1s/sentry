@@ -38,10 +38,7 @@ export default class InfoCommand extends Command {
             .addField('❯ Language', 'Typescript', true)
             .addField('❯ Library', 'Discord.js', true)
             .addField('❯ Framework', 'Akairo', true)
-            .addField(
-                'Source Code',
-                '[Source](https://github.com/tempor1s/sentry)'
-            )
+            .addField('Code', '[Source](https://github.com/tempor1s/sentry)')
             .setThumbnail(this.client.user?.displayAvatarURL() ?? '');
 
         msg.util?.send(embed);
