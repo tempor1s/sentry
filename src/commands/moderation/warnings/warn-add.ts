@@ -1,24 +1,25 @@
 import { Command } from 'discord-akairo';
-import { Message, GuildMember, Permissions, Role } from 'discord.js';
+import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
 import logger from '../../../utils/logger';
 
-export default class RolesAddCommand extends Command {
+export default class WarnAddCommand extends Command {
     public constructor() {
-        super('roles-add', {
+        super('warn-add', {
             category: 'moderation',
-            userPermissions: Permissions.FLAGS.MANAGE_ROLES,
+            userPermissions: Permissions.FLAGS.MANAGE_MESSAGES,
             args: [
                 {
                     id: 'member',
                     type: 'member',
                 },
                 {
-                    id: 'role',
-                    type: 'role',
+                    id: 'reason',
+                    type: 'string',
                     match: 'rest',
+                    default: 'No reason provided.',
                 },
             ],
         });
@@ -26,15 +27,15 @@ export default class RolesAddCommand extends Command {
 
     public async exec(
         msg: Message,
-        { member, role }: { member: GuildMember; role: Role }
+        { member, reason }: { member: GuildMember; reason: string }
     ) {
         if (!member) {
-            return msg.util?.send('Please specify user to add role to.');
+            return msg.util?.send('User not specified / found.');
         }
 
-        if (!role) {
-            return msg.util?.send('Please specify a role to give the user.');
-        }
+        const warningRepo: Repository<Warnings> = this.client.db.getRepository(
+            Warnings
+        );
 
         // TODO: Create helper function for this.
         if (
@@ -42,27 +43,36 @@ export default class RolesAddCommand extends Command {
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.send(
-                'This member has a higher or equal role to you. You are unable to update their roles.'
+                'This member has a higher or equal role to you. You are unable to warn them.'
             );
         }
 
         try {
-            await member.roles.add(role);
+            await warningRepo.insert({
+                server: msg.guild.id,
+                user: member.id,
+                moderator: msg.author.id,
+                reason: reason,
+            });
 
             logger.debug(
-                `Added role @${role.name} (${role.id}) to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`
+                `Added warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'`
             );
         } catch (err) {
             logger.error(
-                `Error adding role @${role.name} (${role.id}) to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
+                `Error adding warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'. Error: `,
                 err
             );
 
-            return msg.util?.send('Error adding role.');
+            return msg.util?.send('Error adding warning.');
         }
 
         return msg.util?.send(
-            `Assigned role <@&${role.id}> to ${member.user}!`
+            getDefaultEmbed('GREEN')
+                .setTitle('User has been warned.')
+                .addField('User', member.user, true)
+                .addField('Moderator', msg.author, true)
+                .addField('Reason', reason, true)
         );
     }
 }
