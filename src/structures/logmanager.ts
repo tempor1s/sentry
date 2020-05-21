@@ -193,4 +193,28 @@ export async function logPurge(
     modLogChannel.send(embed);
 }
 
-export async function logKick() {}
+export async function logKick(
+    repo: Repository<Servers>,
+    member: GuildMember,
+    reason: string,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    // make sure mod log is enabled and a channel is set
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle(`User Kicked | ${member.user.tag}`)
+        .addField('Reason', reason, false)
+        .addField('Moderator', moderator.user, false)
+        .setThumbnail(member.user.displayAvatarURL());
+
+    let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}

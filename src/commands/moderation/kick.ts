@@ -1,7 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { Collection } from 'typeorm';
 import { logKick } from '../../structures/logmanager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
@@ -30,6 +29,7 @@ export default class KickCommand extends Command {
                 Permissions.FLAGS.MANAGE_ROLES,
                 Permissions.FLAGS.MANAGE_MESSAGES,
             ],
+            // TODO: Create a silent flag to not send them a message. (maybe dont log??)
             args: [
                 {
                     id: 'member',
@@ -63,10 +63,19 @@ export default class KickCommand extends Command {
             );
         }
 
+        let serversRepo = this.client.db.getRepository(Servers);
+
         try {
-            // TODO: Log kick as a mod action.
-            // kick the user
-            await member.kick(reason);
+            // kick the user and send them a msg
+            await member.kick(reason).then(() => {
+                member.send(
+                    `You have been kicked from ${member.guild.name} for the reason: *${reason}*`
+                );
+            });
+
+            // log kick
+            logKick(serversRepo, member, reason, msg.member);
+
             logger.debug(
                 `Kicked ${member.user.tag} (${member.id}) for reason: ${reason}`
             );

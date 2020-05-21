@@ -2,8 +2,8 @@ import { GuildMember, Guild, Permissions, Message } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
-import { duration as dur } from 'moment';
 import logger from '../utils/logger';
+import ms from 'ms';
 
 export async function mute(
     muteRepo: Repository<Mutes>,
@@ -53,13 +53,15 @@ export async function mute(
         member.send(
             `You have been muted by ${msg.member.user} in ${
                 msg.guild.name
-            } for \`${dur(duration).format('d[d ]h[h ]m[m ]s[s]')}\``
+            } for \`${ms(duration)}\``
         );
 
         logger.debug('Mute insert was successful.');
     } catch (err) {
         logger.error(
-            `Error inserting mute for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}) for ${duration}ms`
+            `Error inserting mute for ${member.user.tag} (${member.id}) in ${
+                member.guild.name
+            } (${member.guild.id}) for ${ms(duration)}`
         );
 
         return msg.util?.send(
