@@ -21,7 +21,7 @@ export default class RolesRemoveCommand extends Command {
         });
     }
 
-    // TODO: Add role addition logging
+    // TODO: Add role remove logging
     public async exec(
         msg: Message,
         { member, role }: { member: GuildMember; role: Role }
