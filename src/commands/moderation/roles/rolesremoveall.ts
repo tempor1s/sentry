@@ -53,7 +53,6 @@ export default class RolesRemoveAllCommand extends Command {
         }
 
         let serverRepo = this.client.db.getRepository(Servers);
-
         logRolesRemoveAll(serverRepo, role, msg.member);
 
         return msg.util?.send(`Removed <@&${role.id}> from everyone.`);

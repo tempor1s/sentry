@@ -19,7 +19,7 @@ export default class RolesCommand extends Command {
                      • removeall \`<role>\`
                      • clear \`<user>\`
                 `,
-                usage: 'warn <method> <...arguments>',
+                usage: 'roles <method> <...arguments>',
                 examples: [
                     'add @temporis#6402 Member',
                     'remove temporis Moderator',
