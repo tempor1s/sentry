@@ -3,10 +3,8 @@ import { Message, Permissions, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 import { Servers } from '../../models/server';
 import { Mutes } from '../../models/mutes';
-import { duration as dur } from 'moment';
 import { createMuteOrUpdate, mute } from '../../structures/mutemanager';
 import { logMute } from '../../structures/logmanager';
-import 'moment-duration-format';
 import ms from 'ms';
 
 export default class MuteCommand extends Command {
@@ -76,8 +74,7 @@ export default class MuteCommand extends Command {
 
         // Check to make sure that we are not muting someone with an equal or higher role
         if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
+            member.roles.highest.position > msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.send(
@@ -122,11 +119,7 @@ export default class MuteCommand extends Command {
             .setTitle(`Muted ${member.user.tag}`)
             .addField('Reason', reason, true)
             .addField('Moderator', msg.member.user, true)
-            .addField(
-                'Mute Duration',
-                dur(duration).format('d[d ]h[h ]m[m ]s[s]'),
-                true
-            );
+            .addField('Mute Duration', ms(duration), true);
 
         return msg.util?.send(embed);
     }

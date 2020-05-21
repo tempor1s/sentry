@@ -193,3 +193,4 @@ export async function logPurge(
     modLogChannel.send(embed);
 }
 
+export async function logKick() {}

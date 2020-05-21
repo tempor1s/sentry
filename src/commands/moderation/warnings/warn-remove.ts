@@ -48,8 +48,7 @@ export default class WarnRemoveCommand extends Command {
 
         // TODO: Create helper function for this.
         if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
+            member.roles.highest.position > msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.reply(

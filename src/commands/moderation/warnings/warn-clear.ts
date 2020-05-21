@@ -36,8 +36,7 @@ export default class WarnClearCommand extends Command {
 
         // TODO: Create helper function for permission checking.
         if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
+            member.roles.highest.position > msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util?.send(
