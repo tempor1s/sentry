@@ -24,8 +24,6 @@ export default class ShowConfigCommand extends Command {
             where: { server: msg.guild.id },
         });
 
-        let muteRole = msg.guild.roles.cache.get(server.mutedRole);
-
         const embed = getDefaultEmbed()
             .setTitle(`Server Config | ${msg.guild.name}`)
             .addField('**❯ Prefix** (prefix)', server.prefix, true)
@@ -33,11 +31,29 @@ export default class ShowConfigCommand extends Command {
                 '**❯ Mute Configuration**',
                 stripIndent`
                 **• Role** \`muterole\`
-                <@&${muteRole.id}> *(${muteRole.id})*
+                ${
+                    server.mutedRole
+                        ? `<@&${server.mutedRole}> *(${server.mutedRole})*`
+                        : '*Not set*'
+                }
                 **• Duration** \`muteduration\`
                 *${ms(server.muteDuration)}*
                 `,
-                true
+                false
+            )
+            .addField(
+                '**❯ Auto Role**',
+                stripIndent`
+                **• Status ** \`autoroletoggle\`
+                *${server.autoroleEnabled ? 'Enabled' : 'Disabled'}*
+                **• Role** \`autorole\`
+                ${
+                    server.autoroleRole
+                        ? `<@&${server.autoroleRole}> *(${server.autoroleRole})*`
+                        : '*Not set*'
+                }
+                `,
+                false
             )
             .addField(
                 '**❯ Command Logging**',

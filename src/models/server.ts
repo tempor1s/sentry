@@ -13,6 +13,12 @@ export class Servers {
     @Column({ type: 'text', default: defaultPrefix })
     prefix!: string;
 
+    @Column({ type: 'bool', default: false })
+    autoroleEnabled!: boolean;
+
+    @Column({ type: 'varchar', nullable: true, length: 22 })
+    autoroleRole!: string;
+
     // Log Channels Enabled
     @Column({ type: 'bool', default: false })
     commandLogEnabled!: boolean;
@@ -33,7 +39,7 @@ export class Servers {
     @Column({ type: 'varchar', nullable: true, length: 22 })
     modLog!: string;
 
-    // Message Log (edits, deletes, image deletes, ghost pings)
+    // Message Log (edits, deletes, image uploads)
     @Column({ type: 'varchar', nullable: true, length: 22 })
     messageLog!: string;
 

@@ -1,5 +1,5 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
-import { Message, Permissions } from 'discord.js';
+import { Message, Permissions, DMChannel } from 'discord.js';
 import { join } from 'path';
 import { owners, dbName, defaultPrefix } from '../config';
 import { Connection } from 'typeorm';
@@ -32,7 +32,11 @@ export default class Client extends AkairoClient {
     public commandHandler: CommandHandler = new CommandHandler(this, {
         directory: join(__dirname, '..', 'commands'),
         // TODO: Add LRU cache to increase speed and reduce queries and also make this not a promise :)
-        prefix: (msg: Message): Promise<string> => {
+        prefix: (msg: Message): Promise<string> | string => {
+            if (msg.channel instanceof DMChannel) {
+                return defaultPrefix;
+            }
+
             let serverRepo: Repository<Servers> = this.db.getRepository(
                 Servers
             );
@@ -53,6 +57,7 @@ export default class Client extends AkairoClient {
 
             return prefix;
         },
+        blockBots: true,
         allowMention: true,
         commandUtil: true,
         ignorePermissions: owners,

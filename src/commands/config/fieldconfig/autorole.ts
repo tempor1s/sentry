@@ -3,13 +3,13 @@ import { Message, Permissions, Role } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 
-export default class MuteRoleConfigCommand extends Command {
+export default class AutoRoleConfigCommand extends Command {
     public constructor() {
-        super('field-muterole', {
-            aliases: ['muterole'],
+        super('field-autorole', {
+            aliases: ['autorole'],
             description: {
-                content: 'Update the mute role in the server.',
-                usage: 'muterole [muterole]',
+                content: 'Update the autorole in the server.',
+                usage: 'autorole [autorole]',
                 examples: ['', '@Role', 'role', '712205605951242273'],
             },
             channel: 'guild',
@@ -33,7 +33,7 @@ export default class MuteRoleConfigCommand extends Command {
 
         if (!role) {
             return msg.util?.send(
-                `The current mute role for the server is <@&${server.mutedRole}> (${server.mutedRole})`
+                `The current autorole for the server is <@&${server.autoroleRole}> (${server.autoroleRole})`
             );
         }
 
@@ -41,23 +41,23 @@ export default class MuteRoleConfigCommand extends Command {
         try {
             await serverRepo.update(
                 { server: msg.guild.id },
-                { mutedRole: role.id }
+                { autoroleRole: role.id }
             );
 
             logger.debug(
-                `Updating muted role in ${msg.guild.name} (${msg.guild.id}) to ${role.name} (${role.id})`
+                `Updating autorole in ${msg.guild.name} (${msg.guild.id}) to ${role.name} (${role.id})`
             );
         } catch (err) {
             logger.error(
-                `Error updating mute role in ${msg.guild.name} (${msg.guild.id}). Error: `,
+                `Error autorole role in ${msg.guild.name} (${msg.guild.id}). Error: `,
                 err
             );
 
-            return msg.util?.send('Error when updating the mute role.');
+            return msg.util?.send('Error when updating autorole.');
         }
 
         return msg.util?.send(
-            `The mute role has been set to ${role.name} (${role.id})`
+            `The autorole has been set to <@&${role.id}> (${role.id})`
         );
     }
 }

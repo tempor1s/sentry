@@ -1,5 +1,5 @@
 import { Listener } from 'discord-akairo';
-import { Message } from 'discord.js';
+import { Message, DMChannel } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 import { logImageUpload } from '../../../structures/logmanager';
@@ -14,7 +14,11 @@ export default class LogImageUploadListener extends Listener {
     }
 
     public async exec(msg: Message) {
-        if (msg.author.bot || msg.attachments.size < 1) {
+        if (
+            msg.author.bot ||
+            msg.attachments.size < 1 ||
+            msg.channel instanceof DMChannel
+        ) {
             return;
         }
 

@@ -14,6 +14,7 @@ export default class Help extends Command {
                 examples: ['help ping', 'help warn'],
             },
             category: 'misc',
+            channel: 'guild',
             args: [
                 {
                     id: 'command',
