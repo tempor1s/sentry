@@ -2,6 +2,8 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import logger from '../../utils/logger';
 import { stripIndents } from 'common-tags';
+import { logNuke } from '../../structures/logmanager';
+import { Servers } from '../../models/server';
 
 export default class NukeCommand extends Command {
     public constructor() {
@@ -51,7 +53,6 @@ export default class NukeCommand extends Command {
         });
     }
 
-    // TODO: Add nuke logging :)
     public async exec(
         msg: Message,
         {
@@ -67,6 +68,13 @@ export default class NukeCommand extends Command {
         // clone the channel and set it to the same position as the old one
         let newChannel = await channel.clone();
         newChannel.setPosition(oldChannel.rawPosition);
+
+        let serverRepo = this.client.db.getRepository(Servers);
+
+        logNuke(serverRepo, newChannel, msg.member);
+        logger.debug(
+            `Nuked channel ${newChannel.name} (${newChannel.id}) in ${newChannel.guild.name} (${newChannel.guild.id})`
+        );
 
         newChannel.send('Channel nuked! :)');
 

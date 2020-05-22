@@ -336,6 +336,29 @@ export async function logRoleClear(
     modLogChannel.send(embed);
 }
 
+export async function logNuke(
+    repo: Repository<Servers>,
+    channel: TextChannel,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: channel.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Channel Nuked')
+        .addField('Channel', `<#${channel.id}>`, true)
+        .addField('Moderator', moderator.user, true);
+
+    let modLogChannel = moderator.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
 export async function logRolesAddAll(
     repo: Repository<Servers>,
     role: Role,
@@ -425,3 +448,4 @@ export async function logLeaveMsg(
 
     joinLeaveLogChannel.send(embed);
 }
+
