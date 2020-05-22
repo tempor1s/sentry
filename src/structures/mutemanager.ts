@@ -14,7 +14,7 @@ export async function mute(
     duration: number
 ) {
     // TODO: Remove all of their current roles before we assign them the muted role.
-    // TODO: Add flag to make it silent and not mute them.
+    // TODO: Add flag to make it silent and not send the muted user a message.
 
     // Add the muted role
     try {
@@ -154,8 +154,6 @@ async function createMutedRole(
         },
         reason: 'Muted role for Sentry',
     });
-
-    // TODO: When a new channel is created, deny muted permissions to it
 
     // deny write permissions for every channel for muted role in server
     server.channels.cache.forEach((channel) => {
