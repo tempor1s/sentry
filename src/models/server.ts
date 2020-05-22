@@ -35,6 +35,14 @@ export class Servers {
     @Column({ type: 'bool', default: false })
     messageLogImagesEnabled!: boolean;
 
+    // User Join message
+    @Column({ type: 'bool', default: false })
+    joinMsgEnabled!: boolean;
+
+    // User Leave message
+    @Column({ type: 'bool', default: false })
+    leaveMsgEnabled!: boolean;
+
     // Mod Log
     @Column({ type: 'varchar', nullable: true, length: 22 })
     modLog!: string;
@@ -46,6 +54,10 @@ export class Servers {
     // Command Executions
     @Column({ type: 'varchar', nullable: true, length: 22 })
     commandLog!: string;
+
+    // Join/Leave log
+    @Column({ type: 'varchar', nullable: true, length: 22 })
+    joinLeaveLog!: string;
 
     // Mute Role
     @Column({ type: 'varchar', nullable: true, length: 22 })

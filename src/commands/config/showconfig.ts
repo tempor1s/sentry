@@ -70,13 +70,7 @@ export default class ShowConfigCommand extends Command {
                 **• Status** \`modlogtoggle\`
                 *${server.modLogEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`modlog\`
-                ${
-                    server.modLog
-                        ? (msg.guild.channels.cache.get(
-                              server.modLog
-                          ) as TextChannel)
-                        : '*Not set*'
-                }`,
+                ${server.modLog ? `<#${server.modLog}>` : '*Not set*'}`,
                 true
             )
             .addField(
@@ -89,14 +83,23 @@ export default class ShowConfigCommand extends Command {
                 **• Images** \`logimages\`
                 *${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`msglog\`
-                ${
-                    server.messageLog
-                        ? (msg.guild.channels.cache.get(
-                              server.modLog
-                          ) as TextChannel)
-                        : '*Not set*'
-                }
+                ${server.messageLog ? `<#${server.messageLog}>` : '*Not set*'}
                 `,
+                true
+            )
+            .addField(
+                '**❯ Join/Leave Messages**',
+                stripIndent`
+                **• Join** \`joinmsg\`
+                *${server.joinMsgEnabled ? 'Enabled' : 'Disabled'}*
+                **• Delete** \`leavemsg\`
+                *${server.leaveMsgEnabled ? 'Enabled' : 'Disabled'}*
+                **• Channel** \`joinleavelog\`
+                ${
+                    server.joinLeaveLog
+                        ? `<#${server.joinLeaveLog}>`
+                        : '*Not set*'
+                }`,
                 true
             )
             .setThumbnail(msg.guild.iconURL() ?? '');

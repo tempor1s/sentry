@@ -381,3 +381,47 @@ export async function logRolesRemoveAll(
 
     modLogChannel.send(embed);
 }
+
+export async function logJoinMsg(
+    repo: Repository<Servers>,
+    member: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    if (!server.joinMsgEnabled && !server.joinLeaveLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('User Joined')
+        .addField('User', member.user, true)
+        .addField('ID', member.id, true);
+
+    let joinLeaveLogChannel = member.guild.channels.cache.get(
+        server.joinLeaveLog
+    ) as TextChannel;
+
+    joinLeaveLogChannel.send(embed);
+}
+
+export async function logLeaveMsg(
+    repo: Repository<Servers>,
+    member: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: member.guild.id } });
+
+    if (!server.leaveMsgEnabled && !server.joinLeaveLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('User Left')
+        .addField('User', member.user, true)
+        .addField('ID', member.id, true);
+
+    let joinLeaveLogChannel = member.guild.channels.cache.get(
+        server.joinLeaveLog
+    ) as TextChannel;
+
+    joinLeaveLogChannel.send(embed);
+}
