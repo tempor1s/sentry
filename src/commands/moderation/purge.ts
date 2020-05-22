@@ -1,7 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import logger from '../../utils/logger';
-import { Collection } from 'typeorm';
 import { logPurge } from '../../structures/logmanager';
 import { Servers } from '../../models/server';
 
