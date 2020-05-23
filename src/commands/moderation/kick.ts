@@ -4,6 +4,7 @@ import logger from '../../utils/logger';
 import { logKick } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
+import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class KickCommand extends Command {
     public constructor() {
@@ -48,15 +49,10 @@ export default class KickCommand extends Command {
         }
 
         // Checks so that you can not kick someone higher than you.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'That member has a higher or equal role to you. You are unable to kick them.'
             );
-        }
 
         let serversRepo = this.client.db.getRepository(Servers);
 

@@ -3,6 +3,7 @@ import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
 import { logNick } from '../../structures/logManager';
 import { Servers } from '../../models/server';
+import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class NickCommand extends Command {
     public constructor() {
@@ -48,14 +49,10 @@ export default class NickCommand extends Command {
         }
 
         // Checks so that you can not nick someone higher than you.
-        if (
-            member.roles.highest.position > msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'That member has a higher role than you. You are unable to change their nickname.'
             );
-        }
 
         let oldNick: string;
         let retMsg: string;
@@ -88,4 +85,3 @@ export default class NickCommand extends Command {
         return msg.util?.send(retMsg);
     }
 }
-

@@ -3,6 +3,7 @@ import { Message, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRolesAddAll } from '../../../structures/logManager';
 import { Servers } from '../../../models/server';
+import { checkHigherRole } from '../../../utils/permissions';
 
 export default class RolesAddAllCommand extends Command {
     public constructor() {
@@ -24,14 +25,10 @@ export default class RolesAddAllCommand extends Command {
             return msg.util?.send('Please specify role to add to everyone.');
         }
 
-        if (
-            role.position >= msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherRole(msg, role))
             return msg.util?.send(
                 'That role is in a higher position than your own. You are unable to assign it to others.'
             );
-        }
 
         try {
             for (const member of msg.guild.members.cache.values()) {

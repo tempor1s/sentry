@@ -1,8 +1,9 @@
+import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
-import logger from '../../../utils/logger';
+import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 
 export default class WarnClearCommand extends Command {
     public constructor() {
@@ -34,16 +35,10 @@ export default class WarnClearCommand extends Command {
             Warnings
         );
 
-        // TODO: Create helper function for permission checking.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util?.send(
                 'This member has a higher or equal role to you. You are unable to clear their warnings.'
             );
-        }
 
         try {
             await warningRepo.delete({
