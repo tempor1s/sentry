@@ -1,4 +1,5 @@
 import { GuildMember, Guild, Permissions, Message } from 'discord.js';
+import { AkairoClient } from 'discord-akairo';
 import { Repository } from 'typeorm';
 import { logUnmute } from '../structures/logManager';
 import logger from '../utils/logger';
@@ -9,13 +10,14 @@ import { Servers } from '../models/server';
 
 export async function unmuteLoop(
     serversRepo: Repository<Servers>,
-    mutesRepo: Repository<Mutes>
+    mutesRepo: Repository<Mutes>,
+    client: AkairoClient
 ) {
     const mutes = await mutesRepo.find();
     mutes
         .filter((m) => m.end <= Date.now())
         .map(async (m) => {
-            let guild = this.client.guilds.cache.get(m.server);
+            let guild = client.guilds.cache.get(m.server);
             let member = guild.members.cache.get(m.user);
             // TODO: This is slow. Optimize with relations or something? :)
             let serverDb = await serversRepo.findOne({
@@ -30,7 +32,7 @@ export async function unmuteLoop(
                 logUnmute(
                     serversRepo,
                     member,
-                    member.guild.members.cache.get(this.client.user.id)
+                    member.guild.members.cache.get(client.user.id)
                 );
 
                 logger.debug(
