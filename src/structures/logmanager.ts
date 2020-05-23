@@ -473,7 +473,7 @@ export async function logAutoPurge(
     }
 
     let embed = getDefaultEmbed()
-        .setTitle('Mass Role Removal')
+        .setTitle('Auto Purge')
         .addField('Deleted Messages', msgCount, true)
         .addField('Channel', channel, true);
 
