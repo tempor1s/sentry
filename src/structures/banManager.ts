@@ -13,6 +13,10 @@ export async function tempUnbanLoop(
     tempBans
         .filter((ban) => ban.end <= Date.now())
         .map(async (ban) => {
+            await tempBanRepo.delete({
+                server: ban.server,
+                user: ban.user,
+            });
             // get the server to remove ban from
             let server = client.guilds.cache.get(ban.server);
             // the bot member in the server
@@ -21,10 +25,5 @@ export async function tempUnbanLoop(
             let user = await server.members.unban(ban.user);
             // log unban
             logUnban(serversRepo, user, botMember, 'Temporary ban expired.');
-
-            tempBanRepo.delete({
-                server: ban.server,
-                user: ban.user,
-            });
         });
 }
