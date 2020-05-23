@@ -527,4 +527,3 @@ export async function logLeaveMsg(
 
     joinLeaveLogChannel.send(embed);
 }
-

@@ -1,5 +1,6 @@
 import { Command, Listener } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
+import { Servers } from '../../models/server';
 import logger from '../../utils/logger';
 
 interface PermissionsIndex {
@@ -37,7 +38,7 @@ const PERMISSIONS: PermissionsIndex = {
     USE_VAD: 'Use voice ativity',
 };
 
-export default class MissingPermissionsListern extends Listener {
+export default class MissingPermissionsListener extends Listener {
     public constructor() {
         super('missingPermissions', {
             emitter: 'commandHandler',
@@ -52,6 +53,16 @@ export default class MissingPermissionsListern extends Listener {
         type: string,
         missing: any
     ) {
+        const serverRepo = this.client.db.getRepository(Servers);
+
+        const server = await serverRepo.findOneOrFail({
+            where: { server: msg.guild.id },
+        });
+
+        if (!server.missingPermissionMessages) {
+            return;
+        }
+
         if (type === 'client') {
             logger.debug(
                 `Missing client permissions for command ${command.aliases[0]}`

@@ -13,9 +13,15 @@ export class Servers {
     @Column({ type: 'text', default: defaultPrefix })
     prefix!: string;
 
+    // Missing permissions messages
+    @Column({ type: 'bool', default: true })
+    missingPermissionMessages: boolean;
+
+    // if we want to enable autorole
     @Column({ type: 'bool', default: false })
     autoroleEnabled!: boolean;
 
+    // set what the autorole is
     @Column({ type: 'varchar', nullable: true, length: 22 })
     autoroleRole!: string;
 

@@ -1,6 +1,6 @@
 import { stripIndent } from 'common-tags';
 import { Command } from 'discord-akairo';
-import { Message, Permissions, TextChannel } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
@@ -27,6 +27,11 @@ export default class ShowConfigCommand extends Command {
         const embed = getDefaultEmbed()
             .setTitle(`Server Config | ${msg.guild.name}`)
             .addField('**❯ Prefix** (prefix)', server.prefix, true)
+            .addField(
+                '**❯ Missing Permission Messages** (permissionmessages)',
+                server.missingPermissionMessages ? 'Enabled' : 'Disabled',
+                true
+            )
             .addField(
                 '**❯ Mute Configuration**',
                 stripIndent`
@@ -74,20 +79,6 @@ export default class ShowConfigCommand extends Command {
                 true
             )
             .addField(
-                '**❯ Message Logging**',
-                stripIndent`
-                **• Deletes** \`logdeletes\`
-                *${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}*
-                **• Edits** \`logedits\`
-                *${server.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}*
-                **• Images** \`logimages\`
-                *${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}*
-                **• Channel** \`msglog\`
-                ${server.messageLog ? `<#${server.messageLog}>` : '*Not set*'}
-                `,
-                true
-            )
-            .addField(
                 '**❯ Join/Leave Messages**',
                 stripIndent`
                 **• Join** \`joinmsg\`
@@ -100,6 +91,20 @@ export default class ShowConfigCommand extends Command {
                         ? `<#${server.joinLeaveLog}>`
                         : '*Not set*'
                 }`,
+                true
+            )
+            .addField(
+                '**❯ Message Logging**',
+                stripIndent`
+                **• Deletes** \`logdeletes\`
+                *${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}*
+                **• Edits** \`logedits\`
+                *${server.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}*
+                **• Images** \`logimages\`
+                *${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}*
+                **• Channel** \`msglog\`
+                ${server.messageLog ? `<#${server.messageLog}>` : '*Not set*'}
+                `,
                 true
             )
             .setThumbnail(msg.guild.iconURL() ?? '');

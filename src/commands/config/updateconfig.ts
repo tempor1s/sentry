@@ -43,6 +43,7 @@ export default class UpdateConfigCommand extends Command {
                 ['field-joinmsg', 'joinmsg'],
                 ['field-leavemsg', 'leavemsg'],
                 ['field-joinleavelog', 'joinleavelog'],
+                ['field-permissionmessages', 'permissionmessages'],
             ],
             otherwise: async (msg: Message) => {
                 let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
