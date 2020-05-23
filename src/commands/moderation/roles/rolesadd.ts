@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRoleAdd } from '../../../structures/logmanager';
+import { logRoleAdd } from '../../../structures/logManager';
 import { Servers } from '../../../models/server';
 
 export default class RolesAddCommand extends Command {

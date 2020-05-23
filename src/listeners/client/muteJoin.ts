@@ -4,7 +4,7 @@ import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
 import { Mutes } from '../../models/mutes';
 import logger from '../../utils/logger';
-import { logMute } from '../../structures/logmanager';
+import { logMute } from '../../structures/logManager';
 
 export default class MuteJoinListener extends Listener {
     public constructor() {

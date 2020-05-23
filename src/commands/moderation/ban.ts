@@ -1,28 +1,28 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logKick } from '../../structures/logManager';
+import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 
-export default class KickCommand extends Command {
+export default class BanCommand extends Command {
     public constructor() {
-        // TODO: Allow the ability to purge messages after a kick
-        super('kick', {
-            aliases: ['kick'],
+        // TODO: Allow the ability to purge messages after a ban
+        super('ban', {
+            aliases: ['ban'],
             description: {
-                content: 'Kick a user from the server.',
-                usage: 'kick <user> [reason]',
+                content: 'Ban a user from the server.',
+                usage: 'ban <user> [reason]',
                 examples: [
-                    'kick @temporis#6402',
-                    'kick temporis ur bad',
-                    'kick 111901076520767488',
+                    'ban @temporis#6402',
+                    'ban temporis ur bad',
+                    'ban 111901076520767488 bad words',
                 ],
             },
             category: 'moderation',
             channel: 'guild',
-            clientPermissions: [Permissions.FLAGS.KICK_MEMBERS],
-            userPermissions: [Permissions.FLAGS.KICK_MEMBERS],
+            clientPermissions: [Permissions.FLAGS.BAN_MEMBERS],
+            userPermissions: [Permissions.FLAGS.BAN_MEMBERS],
             // TODO: Create a silent flag to not send them a message. (maybe dont log??)
             args: [
                 {
@@ -44,45 +44,46 @@ export default class KickCommand extends Command {
         { member, reason }: { member: GuildMember; reason: string }
     ) {
         if (!member) {
-            return msg.util?.send('Please specify a user to kick.');
+            return msg.util?.send('Please specify a user to ban.');
         }
 
-        // Checks so that you can not kick someone higher than you.
+        // Checks so that you can not ban someone higher than you.
         if (
             member.roles.highest.position >=
                 msg.member.roles.highest.position &&
             msg.author.id !== msg.guild.ownerID
         ) {
             return msg.util.send(
-                'That member has a higher or equal role to you. You are unable to kick them.'
+                'That member has a higher or equal role to you. You are unable to ban them.'
             );
         }
 
         let serversRepo = this.client.db.getRepository(Servers);
 
         try {
-            // kick the user and send them a msg
-            await member.kick(reason).then(() => {
+            // ban the user and send them a msg
+            await member.ban({ reason: reason }).then(() => {
                 member.send(
-                    `You have been kicked from ${member.guild.name} for the reason: *${reason}*`
+                    `You have been banned from ${member.guild.name} for the reason: *${reason}*`
                 );
             });
 
-            // log kick
-            logKick(serversRepo, member, reason, msg.member);
+            // log ban
+            logBan(serversRepo, member, reason, msg.member);
 
             logger.debug(
-                `Kicked ${member.user.tag} (${member.id}) for reason: ${reason}`
+                `Banned ${member.user.tag} (${member.id}) for reason: ${reason}`
             );
         } catch (err) {
-            logger.error('Error kicking user. Error: ', err);
-            return msg.util?.send('Error occured when trying to kick user.');
+            logger.error('Error banning user. Error: ', err);
+            return msg.util?.send('Error occured when trying to ban the user.');
         }
 
         const embed = getDefaultEmbed('GREEN')
-            .setTitle('Kicked')
+            .setTitle('Banned')
             .addField('Reason', reason, true)
             .addField('User', member.user, true)
+            .addField('Duration', 'Indefinite')
             .addField('Moderator', msg.member.user, true);
 
         return msg.util?.send(embed);

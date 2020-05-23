@@ -2,7 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
-import { logMsgDelete } from '../../../structures/logmanager';
+import { logMsgDelete } from '../../../structures/logManager';
 
 export default class LogMessageDeleteListener extends Listener {
     public constructor() {

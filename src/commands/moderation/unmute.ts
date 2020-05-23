@@ -4,7 +4,7 @@ import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
 import 'moment-duration-format';
 import { unmute } from '../../structures/muteManager';
-import { logUnmute } from '../../structures/logmanager';
+import { logUnmute } from '../../structures/logManager';
 
 export default class UnmuteCommand extends Command {
     public constructor() {

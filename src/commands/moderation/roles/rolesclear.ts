@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRoleClear } from '../../../structures/logmanager';
+import { logRoleClear } from '../../../structures/logManager';
 import { Servers } from '../../../models/server';
 
 export default class RolesClearCommand extends Command {
