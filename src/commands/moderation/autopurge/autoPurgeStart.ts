@@ -49,16 +49,16 @@ export default class AutoPurgeStartCommand extends Command {
         if (!interval) {
             return msg.util?.send(
                 stripIndents`Please specify an interval to purge the channel at.
-                Min Duration: \`10 minutes\`
+                Min Duration: \`5 minutes\`
                 Max Duration: \`14 days\``
             );
         }
 
-        // less than 10 minutes greater or more than 2 weeks
-        if (interval < 600000 || interval > 1.21e9) {
+        // less than 5 minutes greater or more than 2 weeks
+        if (interval < 300000 || interval > 1.21e9) {
             return msg.util?.send(
                 stripIndents`Specify an interval within the provided range.
-                Min Duration: \`10 minutes\`
+                Min Duration: \`5 minutes\`
                 Max Duration: \`14 days\``
             );
         }

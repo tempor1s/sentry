@@ -32,6 +32,7 @@ export default class AutoPurgeCommand extends Command {
         });
     }
 
+    // TODO: Allow the option to 'nuke' a channel instead of max 2 weeks.
     public *args() {
         const method = yield {
             type: [
