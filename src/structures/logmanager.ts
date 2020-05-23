@@ -6,6 +6,7 @@ import {
     GuildMember,
     Role,
     Collection,
+    User,
 } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
@@ -228,7 +229,7 @@ export async function logKick(
     modLogChannel.send(embed);
 }
 
-// TODO: Log kick through event as well
+// TODO: Log ban through event as well
 export async function logBan(
     repo: Repository<Servers>,
     member: GuildMember,
@@ -251,6 +252,32 @@ export async function logBan(
         .setThumbnail(member.user.displayAvatarURL());
 
     let modLogChannel = member.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+export async function logUnban(
+    repo: Repository<Servers>,
+    user: User,
+    moderator: GuildMember,
+    reason: string
+) {
+    let server = await repo.findOne({ where: { server: moderator.guild.id } });
+
+    // make sure mod log is enabled and a channel is set
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle(`User Unbanned | ${user.tag}`)
+        .addField('Reason', reason, false)
+        .addField('Moderator', moderator.user, true)
+        .setThumbnail(user.displayAvatarURL());
+
+    let modLogChannel = moderator.guild.channels.cache.get(
         server.modLog
     ) as TextChannel;
 

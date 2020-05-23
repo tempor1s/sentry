@@ -102,7 +102,10 @@ export default class ReadyListener extends Listener {
                     // update our time till next purge to be date.now() + the set interval
                     await autoPurgeRepo.update(
                         { server: p.server, channel: p.channel },
-                        { timeUntilNextPurge: p.purgeInterval + Date.now() }
+                        {
+                            timeUntilNextPurge:
+                                Number(p.purgeInterval) + Date.now(),
+                        }
                     );
                 });
         }, 30000);
