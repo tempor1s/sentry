@@ -2,6 +2,7 @@ import { stripIndents } from 'common-tags';
 import { Command, Flag, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 
+// TODO: Premium Only
 export default class AutoPurgeCommand extends Command {
     public constructor() {
         super('autopurge', {
@@ -9,11 +10,11 @@ export default class AutoPurgeCommand extends Command {
             category: 'moderation',
             clientPermissions: [
                 Permissions.FLAGS.MANAGE_MESSAGES,
-                Permissions.FLAGS.MANAGE_ROLES,
+                Permissions.FLAGS.MANAGE_CHANNELS,
             ],
             userPermissions: [
                 Permissions.FLAGS.MANAGE_MESSAGES,
-                Permissions.FLAGS.MANAGE_ROLES,
+                Permissions.FLAGS.MANAGE_CHANNELS,
             ],
             description: {
                 content: stripIndents`Manage channels that are auto purged in the server.

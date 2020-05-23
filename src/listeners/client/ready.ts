@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
-import { unmute } from '../../structures/mutemanager';
+import { unmute } from '../../structures/muteManager';
 import { logUnmute } from '../../structures/logmanager';
 import logger from '../../utils/logger';
 
