@@ -461,6 +461,29 @@ export async function logRolesRemoveAll(
     modLogChannel.send(embed);
 }
 
+export async function logAutoPurge(
+    repo: Repository<Servers>,
+    msgCount: number,
+    channel: TextChannel
+) {
+    let server = await repo.findOne({ where: { server: channel.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Mass Role Removal')
+        .addField('Deleted Messages', msgCount, true)
+        .addField('Channel', channel, true);
+
+    let modLogChannel = channel.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
 export async function logJoinMsg(
     repo: Repository<Servers>,
     member: GuildMember

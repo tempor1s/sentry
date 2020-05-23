@@ -1,9 +1,51 @@
 import { GuildMember, Guild, Permissions, Message } from 'discord.js';
+import { AkairoClient } from 'discord-akairo';
 import { Repository } from 'typeorm';
-import { Mutes } from '../models/mutes';
-import { Servers } from '../models/server';
+import { logUnmute } from '../structures/logManager';
 import logger from '../utils/logger';
 import ms from 'ms';
+
+import { Mutes } from '../models/mutes';
+import { Servers } from '../models/server';
+
+export async function unmuteLoop(
+    serversRepo: Repository<Servers>,
+    mutesRepo: Repository<Mutes>,
+    client: AkairoClient
+) {
+    const mutes = await mutesRepo.find();
+    mutes
+        .filter((m) => m.end <= Date.now())
+        .map(async (m) => {
+            let guild = client.guilds.cache.get(m.server);
+            let member = guild.members.cache.get(m.user);
+            // TODO: This is slow. Optimize with relations or something? :)
+            let serverDb = await serversRepo.findOne({
+                where: { server: m.server },
+            });
+
+            // try to mute the user
+            try {
+                // Unmute the user
+                unmute(mutesRepo, member, serverDb.mutedRole);
+                // Log the unmute
+                logUnmute(
+                    serversRepo,
+                    member,
+                    member.guild.members.cache.get(client.user.id)
+                );
+
+                logger.debug(
+                    `Unmuting user ${member.user.tag} (${member.id}).`
+                );
+            } catch (err) {
+                logger.error(
+                    'Error unmuting user in unmute loop. Reason: ',
+                    err
+                );
+            }
+        });
+}
 
 export async function mute(
     muteRepo: Repository<Mutes>,
