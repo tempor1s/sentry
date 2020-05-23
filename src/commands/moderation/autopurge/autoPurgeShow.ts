@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
-import { Message, Permissions, TextChannel, MessageEmbed } from 'discord.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 import { AutoPurges } from '../../../models/autopurge';
 import { getDefaultEmbed } from '../../../utils/message';
 import ms from 'ms';
@@ -42,10 +42,18 @@ export default class AutoPurgeShowCommand extends Command {
                 embed.addField(
                     '**Auto Purge**',
                     stripIndents`
-                        Time until next Purge: ${ms(
-                            Number(autoPurge.timeUntilNextPurge)
-                        )}
-                        Purge Iterval: ${ms(Number(autoPurge.purgeInterval))}
+                        Time until next Purge: \`${
+                            Number(autoPurge.timeUntilNextPurge) - Date.now() >
+                            0
+                                ? ms(
+                                      Number(autoPurge.timeUntilNextPurge) -
+                                          Date.now()
+                                  )
+                                : 'Purge Imminent'
+                        }\`
+                        Purge Iterval: \`${ms(
+                            Number(autoPurge.purgeInterval)
+                        )}\`
                         `,
                     true
                 );
@@ -74,10 +82,12 @@ export default class AutoPurgeShowCommand extends Command {
                 stripIndents`
                 Channel: ${purgeChannel}
                 Channel ID: \`${purgeChannel.id}\` 
-                Time until next Purge: ${ms(
-                    Number(autoPurge.timeUntilNextPurge)
-                )}
-                Purge Iterval: ${ms(Number(autoPurge.purgeInterval))}
+                Time until next Purge: \`${
+                    Number(autoPurge.timeUntilNextPurge) - Date.now() > 0
+                        ? ms(Number(autoPurge.timeUntilNextPurge) - Date.now())
+                        : 'Purge Imminent'
+                }\`
+                Purge Iterval: \`${ms(Number(autoPurge.purgeInterval))}\`
                 `,
                 true
             );
