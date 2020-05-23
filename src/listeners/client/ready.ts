@@ -1,6 +1,6 @@
 import { Listener } from 'discord-akairo';
 import { TextChannel } from 'discord.js';
-import { unmute } from '../../structures/muteManager';
+import { unmute, unmuteLoop } from '../../structures/muteManager';
 import { logUnmute, logUnban } from '../../structures/logManager';
 import logger from '../../utils/logger';
 
@@ -41,40 +41,8 @@ export default class ReadyListener extends Listener {
         }, 3e5);
 
         // Unmute loop (runs every 30 seconds)
-        // TODO: Move this into mute strcture as a refactor to clean this up
         setInterval(async () => {
-            const mutes = await mutesRepo.find();
-            mutes
-                .filter((m) => m.end <= Date.now())
-                .map(async (m) => {
-                    let guild = this.client.guilds.cache.get(m.server);
-                    let member = guild.members.cache.get(m.user);
-                    // TODO: This is slow. Optimize with relations or something? :)
-                    let serverDb = await serversRepo.findOne({
-                        where: { server: m.server },
-                    });
-
-                    // try to mute the user
-                    try {
-                        // Unmute the user
-                        unmute(mutesRepo, member, serverDb.mutedRole);
-                        // Log the unmute
-                        logUnmute(
-                            serversRepo,
-                            member,
-                            member.guild.members.cache.get(this.client.user.id)
-                        );
-
-                        logger.debug(
-                            `Unmuting user ${member.user.tag} (${member.id}).`
-                        );
-                    } catch (err) {
-                        logger.error(
-                            'Error unmuting user in unmute loop. Reason: ',
-                            err
-                        );
-                    }
-                });
+            unmuteLoop(serversRepo, mutesRepo);
         }, 30000);
 
         // purge auto purged channels (runs every 30 seconds)
