@@ -56,6 +56,11 @@ export default class MuteCommand extends Command {
                     match: 'rest',
                     default: (_: Message) => 'No reason provided.',
                 },
+                {
+                    id: 'silent',
+                    match: 'flag',
+                    flag: ['--silent', '-s'],
+                },
             ],
         });
     }
@@ -66,7 +71,13 @@ export default class MuteCommand extends Command {
             member,
             duration,
             reason,
-        }: { member: GuildMember; duration: number; reason: string }
+            silent,
+        }: {
+            member: GuildMember;
+            duration: number;
+            reason: string;
+            silent: boolean;
+        }
     ) {
         // If they did not specify a member.
         if (!member) {
@@ -107,7 +118,15 @@ export default class MuteCommand extends Command {
         }
 
         // Mute the person
-        await mute(mutesRepo, msg, member, muteRoleId, reason, duration);
+        await mute(
+            mutesRepo,
+            msg,
+            member,
+            muteRoleId,
+            reason,
+            duration,
+            silent
+        );
         // Log the mute
         logMute(serverRepo, member, reason, duration, msg.member);
 

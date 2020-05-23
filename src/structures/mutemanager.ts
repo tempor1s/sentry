@@ -53,7 +53,8 @@ export async function mute(
     member: GuildMember,
     muteRoleId: string,
     reason: string,
-    duration: number
+    duration: number,
+    silent: boolean = false
 ) {
     // TODO: Add flag to make it silent and not send the muted user a message.
     // remove all the roles that are not @everyone
@@ -93,11 +94,13 @@ export async function mute(
         });
 
         // Let the user know we muted them
-        member.send(
-            `You have been muted by ${msg.member.user} in ${
-                msg.guild.name
-            } for \`${ms(duration)}\``
-        );
+        if (!silent) {
+            member.send(
+                `You have been muted by ${msg.member.user} in ${
+                    msg.guild.name
+                } for \`${ms(duration)}\``
+            );
+        }
 
         logger.debug('Mute insert was successful.');
     } catch (err) {

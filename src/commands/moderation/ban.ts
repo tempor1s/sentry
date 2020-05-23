@@ -18,13 +18,13 @@ export default class BanCommand extends Command {
                     'ban @temporis#6402',
                     'ban temporis ur bad',
                     'ban 111901076520767488 bad words',
+                    'ban temporis urbad --silent',
                 ],
             },
             category: 'moderation',
             channel: 'guild',
             clientPermissions: [Permissions.FLAGS.BAN_MEMBERS],
             userPermissions: [Permissions.FLAGS.BAN_MEMBERS],
-            // TODO: Create a silent flag to not send them a message. (maybe dont log??)
             args: [
                 {
                     id: 'member',
@@ -36,13 +36,22 @@ export default class BanCommand extends Command {
                     match: 'rest',
                     default: (_: Message) => 'No reason provided.',
                 },
+                {
+                    id: 'silent',
+                    match: 'flag',
+                    flag: ['--silent', '-s'],
+                },
             ],
         });
     }
 
     public async exec(
         msg: Message,
-        { member, reason }: { member: GuildMember; reason: string }
+        {
+            member,
+            reason,
+            silent,
+        }: { member: GuildMember; reason: string; silent: boolean }
     ) {
         if (!member) {
             return msg.util?.send('Please specify a user to ban.');
@@ -59,9 +68,11 @@ export default class BanCommand extends Command {
         try {
             // ban the user and send them a msg
             await member.ban({ reason: reason }).then(() => {
-                member.send(
-                    `You have been banned from ${member.guild.name} for the reason: *${reason}*`
-                );
+                if (!silent) {
+                    member.send(
+                        `You have been banned from ${member.guild.name} for the reason: *${reason}*`
+                    );
+                }
             });
 
             // log ban
