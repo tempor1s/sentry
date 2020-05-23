@@ -2,7 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Guild } from 'discord.js';
 import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
-import { createMuteOrUpdate } from '../../structures/mutemanager';
+import { createMuteOrUpdate } from '../../structures/muteManager';
 import logger from '../../utils/logger';
 
 export default class BotJoinListener extends Listener {

@@ -3,7 +3,7 @@ import { Message, Permissions, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 import { Servers } from '../../models/server';
 import { Mutes } from '../../models/mutes';
-import { createMuteOrUpdate, mute } from '../../structures/mutemanager';
+import { createMuteOrUpdate, mute } from '../../structures/muteManager';
 import { logMute } from '../../structures/logmanager';
 import ms from 'ms';
 

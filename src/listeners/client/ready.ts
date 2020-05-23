@@ -1,9 +1,12 @@
 import { Listener } from 'discord-akairo';
-import { Mutes } from '../../models/mutes';
-import { Servers } from '../../models/server';
-import { unmute } from '../../structures/mutemanager';
+import { TextChannel } from 'discord.js';
+import { unmute } from '../../structures/muteManager';
 import { logUnmute } from '../../structures/logmanager';
 import logger from '../../utils/logger';
+
+import { Mutes } from '../../models/mutes';
+import { Servers } from '../../models/server';
+import { AutoPurges } from '../../models/autopurge';
 
 export default class ReadyListener extends Listener {
     public constructor() {
@@ -19,6 +22,7 @@ export default class ReadyListener extends Listener {
 
         const mutesRepo = this.client.db.getRepository(Mutes);
         const serversRepo = this.client.db.getRepository(Servers);
+        const autoPurgeRepo = this.client.db.getRepository(AutoPurges);
 
         // Update servers/members every 5 minutes.
         this.client.user.setActivity(
@@ -68,6 +72,38 @@ export default class ReadyListener extends Listener {
                             err
                         );
                     }
+                });
+        }, 30000);
+
+        // purge auto purged channels
+        setInterval(async () => {
+            const autoPurges = await autoPurgeRepo.find();
+            autoPurges
+                .filter((p) => p.timeUntilNextPurge <= Date.now())
+                .map(async (p) => {
+                    // get the channel that we are going to purge
+                    let channel = this.client.channels.cache.get(
+                        p.channel
+                    ) as TextChannel;
+
+                    // get all the messages in the channel
+                    let messages = await channel.messages.fetch();
+                    // filter out all messages that are pinned
+                    let filteredMsgs = messages.filter((msg) => !msg.pinned);
+                    // delete messages that are not pinned
+                    await channel.bulkDelete(filteredMsgs);
+
+                    channel.send('Channel purged! :)');
+
+                    logger.debug(
+                        `Purging ${channel.name} (${channel.id}) in ${channel.guild.name} (${channel.guild.id}) due to auto purge.`
+                    );
+
+                    // update our time till next purge to be date.now() + the set interval
+                    await autoPurgeRepo.update(
+                        { server: p.server, channel: p.channel },
+                        { timeUntilNextPurge: p.purgeInterval + Date.now() }
+                    );
                 });
         }, 30000);
     }

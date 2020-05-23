@@ -65,6 +65,6 @@ export default class WarnListCommand extends Command {
             );
         }
 
-        return msg.util.send(embed);
+        return msg.util?.send(embed);
     }
 }
