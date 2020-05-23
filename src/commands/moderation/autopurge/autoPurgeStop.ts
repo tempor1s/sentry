@@ -1,8 +1,6 @@
 import { Command } from 'discord-akairo';
-import { stripIndents } from 'common-tags';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { AutoPurges } from '../../../models/autopurge';
-import ms from 'ms';
 
 export default class AutoPurgeStopCommand extends Command {
     public constructor() {
@@ -49,7 +47,7 @@ export default class AutoPurgeStopCommand extends Command {
             );
         }
 
-        // add the auto-purge into the db
+        // remove the auto purge from the channel
         await autoPurgeRepo.delete({
             server: msg.guild.id,
             channel: channel.id,

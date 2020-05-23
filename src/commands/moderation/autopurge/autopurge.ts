@@ -22,7 +22,7 @@ export default class AutoPurgeCommand extends Command {
                    Available methods:
                      • start \`<channel>\` \`<duration>\`
                      • stop \`<channel>\`
-                     • show
+                     • show \`<channel>\`
                      • stopall
                 `,
                 usage: 'autopurge <method> <...arguments>',
