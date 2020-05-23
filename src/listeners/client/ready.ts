@@ -135,6 +135,11 @@ export default class ReadyListener extends Listener {
                         botMember,
                         'Temporary ban expired.'
                     );
+
+                    tempBanRepo.delete({
+                        server: ban.server,
+                        user: ban.user,
+                    });
                 });
         }, 3e5);
     }
