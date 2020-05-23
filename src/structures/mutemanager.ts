@@ -1,7 +1,7 @@
 import { GuildMember, Guild, Permissions, Message } from 'discord.js';
 import { AkairoClient } from 'discord-akairo';
 import { Repository } from 'typeorm';
-import { logUnmute, logMute } from '../structures/logManager';
+import { logUnmute } from '../structures/logManager';
 import logger from '../utils/logger';
 import ms from 'ms';
 
@@ -27,7 +27,7 @@ export async function unmuteLoop(
             // try to mute the user
             try {
                 // Unmute the user
-                unmute(mutesRepo, member, serverDb.mutedRole);
+                await unmute(mutesRepo, member, serverDb.mutedRole);
                 // Log the unmute
                 logUnmute(
                     serversRepo,
@@ -138,7 +138,9 @@ export async function unmute(
 
     // add roles that we removed initally
     try {
-        mute.roles.map((id) => member.roles.add(id));
+        if (mute.roles) {
+            mute.roles.map((id) => member.roles.add(id));
+        }
     } catch (err) {
         logger.error(
             `Error adding roles to ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
