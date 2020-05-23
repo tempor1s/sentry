@@ -65,6 +65,18 @@ export default class AutoPurgeStartCommand extends Command {
 
         let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
 
+        let existingPurge = await autoPurgeRepo.findOne({
+            where: { server: msg.guild.id, channel: channel.id },
+        });
+
+        // TODO: Maybe allow multiple purges per channel?
+        // purge already exists on the channel
+        if (existingPurge) {
+            return msg.util?.send(
+                'There is already an existing purge on this channel. Please remove it before adding a new one.'
+            );
+        }
+
         // add the auto-purge into the db
         await autoPurgeRepo.insert({
             server: msg.guild.id,
