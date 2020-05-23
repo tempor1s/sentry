@@ -4,6 +4,7 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
+import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 import { utc } from 'moment';
 import 'moment-duration-format';
 
@@ -34,8 +35,13 @@ export default class WarnListCommand extends Command {
         { member }: { member: GuildMember }
     ): Promise<Message> {
         if (!member) {
-            return msg.util.send('User not specified / found.');
+            return msg.util?.send('User not specified / found.');
         }
+
+        if (await checkHigherOrEqualPermissions(msg, member))
+            return msg.util?.send(
+                'You may not view the warnings of someone with a higher rank than yourselves.'
+            );
 
         const warningRepo: Repository<Warnings> = this.client.db.getRepository(
             Warnings

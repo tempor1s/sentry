@@ -3,6 +3,7 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRoleClear } from '../../../structures/logManager';
 import { Servers } from '../../../models/server';
+import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 
 export default class RolesClearCommand extends Command {
     public constructor() {
@@ -23,15 +24,11 @@ export default class RolesClearCommand extends Command {
             return msg.util?.send('Please specify user to remove role from.');
         }
 
-        // TODO: Create helper function for this.
-        if (
-            member.roles.highest.position > msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        // dont want mods clearing admins roles
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'This member has a higher or equal role to you. You are unable to update their roles.'
             );
-        }
 
         let serverRepo = this.client.db.getRepository(Servers);
 

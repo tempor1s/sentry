@@ -3,6 +3,7 @@ import { Message, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRolesRemoveAll } from '../../../structures/logManager';
 import { Servers } from '../../../models/server';
+import { checkHigherRole } from '../../../utils/permissions';
 
 export default class RolesRemoveAllCommand extends Command {
     public constructor() {
@@ -26,14 +27,10 @@ export default class RolesRemoveAllCommand extends Command {
             );
         }
 
-        if (
-            role.position >= msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherRole(msg, role))
             return msg.util?.send(
                 'That role is in a higher position than your own. You are unable to remove it from others.'
             );
-        }
 
         try {
             for (const member of msg.guild.members.cache.values()) {

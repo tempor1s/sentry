@@ -1,9 +1,10 @@
+import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
-import logger from '../../../utils/logger';
+import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 
 export default class WarnRemoveCommand extends Command {
     public constructor() {
@@ -47,19 +48,10 @@ export default class WarnRemoveCommand extends Command {
         );
 
         // TODO: Create helper function for this.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
-            return msg.util.reply(
-                getDefaultEmbed('RED')
-                    .setTitle('Error')
-                    .setDescription(
-                        'This member has a higher or equal role to you. You are unable to remove warnings from them.'
-                    )
+        if (await checkHigherOrEqualPermissions(msg, member))
+            return msg.util?.reply(
+                'This member has a higher or equal role to you. You are unable to remove warnings from them.'
             );
-        }
 
         try {
             let warning = await warningRepo.delete({

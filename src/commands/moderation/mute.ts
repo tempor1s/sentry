@@ -5,6 +5,7 @@ import { Servers } from '../../models/server';
 import { Mutes } from '../../models/mutes';
 import { createMuteOrUpdate, mute } from '../../structures/muteManager';
 import { logMute } from '../../structures/logManager';
+import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 import ms from 'ms';
 
 export default class MuteCommand extends Command {
@@ -73,15 +74,10 @@ export default class MuteCommand extends Command {
         }
 
         // Check to make sure that we are not muting someone with an equal or higher role
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
-                'This member has a higher or equal role to you. You are unable to mute them.'
+                `That member has a higher or equal role to you. You are unable to mute them.`
             );
-        }
 
         // TODO: Could just swap this over to checking user roles later if we need to optimize DB
         let mutesRepo = this.client.db.getRepository(Mutes);

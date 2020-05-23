@@ -1,9 +1,10 @@
+import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import { Repository } from 'typeorm';
 import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
-import logger from '../../../utils/logger';
+import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 
 export default class WarnAddCommand extends Command {
     public constructor() {
@@ -37,16 +38,11 @@ export default class WarnAddCommand extends Command {
             Warnings
         );
 
-        // TODO: Create helper function for this.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
-            return msg.util.send(
+        // do not want to be able to warn people higher than the executor
+        if (await checkHigherOrEqualPermissions(msg, member))
+            return msg.util?.send(
                 'This member has a higher or equal role to you. You are unable to warn them.'
             );
-        }
 
         try {
             await warningRepo.insert({

@@ -4,6 +4,7 @@ import logger from '../../utils/logger';
 import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
+import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class BanCommand extends Command {
     public constructor() {
@@ -48,15 +49,10 @@ export default class BanCommand extends Command {
         }
 
         // Checks so that you can not ban someone higher than you.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'That member has a higher or equal role to you. You are unable to ban them.'
             );
-        }
 
         let serversRepo = this.client.db.getRepository(Servers);
 

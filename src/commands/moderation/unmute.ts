@@ -2,9 +2,9 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
-import 'moment-duration-format';
 import { unmute } from '../../structures/muteManager';
 import { logUnmute } from '../../structures/logManager';
+import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class UnmuteCommand extends Command {
     public constructor() {
@@ -44,15 +44,10 @@ export default class UnmuteCommand extends Command {
         }
 
         // Check to make sure that we are not muting someone with an equal or higher role
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'This member has a higher or equal role to you. You are unable to unmute them.'
             );
-        }
 
         let mutesRepos = this.client.db.getRepository(Mutes);
         let serverRepo = this.client.db.getRepository(Servers);

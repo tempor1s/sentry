@@ -1,11 +1,12 @@
+import logger from '../../utils/logger';
+import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
-import logger from '../../utils/logger';
 import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
-import ms from 'ms';
 import { TempBans } from '../../models/tempbans';
+import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class TempBanCommand extends Command {
     public constructor() {
@@ -74,16 +75,11 @@ export default class TempBanCommand extends Command {
             );
         }
 
-        // Checks so that you can not temp ban someone higher than you.
-        if (
-            member.roles.highest.position >=
-                msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        // Checks so that you can not temp ban someone higher or equal to you.
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'That member has a higher or equal role to you. You are unable to ban them.'
             );
-        }
 
         let serversRepo = this.client.db.getRepository(Servers);
         let tempBansRepo = this.client.db.getRepository(TempBans);

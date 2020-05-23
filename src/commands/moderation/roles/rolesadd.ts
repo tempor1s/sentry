@@ -3,6 +3,10 @@ import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRoleAdd } from '../../../structures/logManager';
 import { Servers } from '../../../models/server';
+import {
+    checkHigherOrEqualPermissions,
+    checkHigherRole,
+} from '../../../utils/permissions';
 
 export default class RolesAddCommand extends Command {
     public constructor() {
@@ -35,15 +39,17 @@ export default class RolesAddCommand extends Command {
             return msg.util?.send('Please specify a role to give the user.');
         }
 
-        // TODO: Create helper function for this.
-        if (
-            member.roles.highest.position > msg.member.roles.highest.position &&
-            msg.author.id !== msg.guild.ownerID
-        ) {
+        // make sure we can not assign roles higher than us
+        if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
                 'This member has a higher or equal role to you. You are unable to update their roles.'
             );
-        }
+
+        // make sure the role we are assigning is not higher than the users highest role
+        if (await checkHigherRole(msg, role))
+            return msg.util.send(
+                'You can not assign roles that are higher than your own.'
+            );
 
         let serverRepo = this.client.db.getRepository(Servers);
 

@@ -68,6 +68,7 @@ export default class Client extends AkairoClient {
             {
                 ownerID: config.owners,
             },
+            // TODO: Reduce this when the bot grows :)
             { messageCacheMaxSize: 1000, disableMentions: 'everyone' }
         );
 
