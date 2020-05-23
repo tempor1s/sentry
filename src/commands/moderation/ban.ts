@@ -5,10 +5,10 @@ import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
+import ms from 'ms';
 
 export default class BanCommand extends Command {
     public constructor() {
-        // TODO: Allow the ability to purge messages after a ban
         super('ban', {
             aliases: ['ban'],
             description: {
@@ -19,6 +19,7 @@ export default class BanCommand extends Command {
                     'ban temporis ur bad',
                     'ban 111901076520767488 bad words',
                     'ban temporis urbad --silent',
+                    'ban @temporis#6402 racism --days=30d',
                 ],
             },
             category: 'moderation',
@@ -41,6 +42,13 @@ export default class BanCommand extends Command {
                     match: 'flag',
                     flag: ['--silent', '-s'],
                 },
+                {
+                    id: 'days',
+                    type: 'integer',
+                    match: 'flag',
+                    flag: ['--days=', '-d='],
+                    default: 0,
+                },
             ],
         });
     }
@@ -51,7 +59,13 @@ export default class BanCommand extends Command {
             member,
             reason,
             silent,
-        }: { member: GuildMember; reason: string; silent: boolean }
+            days,
+        }: {
+            member: GuildMember;
+            reason: string;
+            silent: boolean;
+            days: number;
+        }
     ) {
         if (!member) {
             return msg.util?.send('Please specify a user to ban.');
@@ -67,7 +81,7 @@ export default class BanCommand extends Command {
 
         try {
             // ban the user and send them a msg
-            await member.ban({ reason: reason }).then(() => {
+            await member.ban({ reason: reason, days: days }).then(() => {
                 if (!silent) {
                     member.send(
                         `You have been banned from ${member.guild.name} for the reason: *${reason}*`

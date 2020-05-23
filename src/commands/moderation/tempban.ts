@@ -52,6 +52,13 @@ export default class TempBanCommand extends Command {
                     match: 'flag',
                     flag: ['--silent', '-s'],
                 },
+                {
+                    id: 'days',
+                    type: 'integer',
+                    match: 'flag',
+                    flag: ['--days=', '-d='],
+                    default: 0,
+                },
             ],
         });
     }
@@ -63,11 +70,13 @@ export default class TempBanCommand extends Command {
             duration,
             reason,
             silent,
+            days,
         }: {
             member: GuildMember;
             duration: number;
             reason: string;
             silent: boolean;
+            days: number;
         }
     ) {
         if (!member) {
@@ -99,7 +108,7 @@ export default class TempBanCommand extends Command {
 
         try {
             // ban the user and send them a msg
-            await member.ban({ reason: reason }).then(() => {
+            await member.ban({ reason: reason, days: days }).then(() => {
                 if (!silent) {
                     member.send(
                         `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`

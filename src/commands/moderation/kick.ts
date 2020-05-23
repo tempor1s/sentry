@@ -5,6 +5,7 @@ import { logKick } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
+import ms from 'ms';
 
 export default class KickCommand extends Command {
     public constructor() {
@@ -18,6 +19,8 @@ export default class KickCommand extends Command {
                     'kick @temporis#6402',
                     'kick temporis ur bad',
                     'kick 111901076520767488',
+                    'kick @temporis#6402 --silent',
+                    'kick @temporis#6402 --purge=1d',
                 ],
             },
             category: 'moderation',
@@ -50,7 +53,11 @@ export default class KickCommand extends Command {
             member,
             reason,
             silent = false,
-        }: { member: GuildMember; reason: string; silent: boolean }
+        }: {
+            member: GuildMember;
+            reason: string;
+            silent: boolean;
+        }
     ) {
         if (!member) {
             return msg.util?.send('Please specify a user to kick.');

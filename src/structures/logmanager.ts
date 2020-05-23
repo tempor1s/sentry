@@ -142,8 +142,8 @@ export async function logMute(
     let embed = getDefaultEmbed()
         .setTitle(`User Muted | ${member.user.tag}`)
         .addField('Reason', reason, false)
-        .addField('Moderator', moderator.user, false)
-        .addField('Duration', ms(duration), false)
+        .addField('Moderator', moderator.user, true)
+        .addField('Duration', ms(duration), true)
         .setThumbnail(member.user.displayAvatarURL());
 
     let modLogChannel = member.guild.channels.cache.get(

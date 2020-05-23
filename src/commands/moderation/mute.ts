@@ -21,7 +21,7 @@ export default class MuteCommand extends Command {
                     'mute @temporis#6402 10m spamming',
                     'mute temporis',
                     'mute 111901076520767488 10h',
-                    'mute @temporis#6402 30s',
+                    'mute @temporis#6402 30s -s',
                 ],
             },
             category: 'moderation',
