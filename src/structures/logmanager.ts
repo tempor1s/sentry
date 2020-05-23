@@ -246,8 +246,8 @@ export async function logBan(
     let embed = getDefaultEmbed()
         .setTitle(`User Banned | ${member.user.tag}`)
         .addField('Reason', reason, false)
-        .addField('Moderator', moderator.user, false)
-        .addField('Duration', duration)
+        .addField('Moderator', moderator.user, true)
+        .addField('Duration', duration, true)
         .setThumbnail(member.user.displayAvatarURL());
 
     let modLogChannel = member.guild.channels.cache.get(

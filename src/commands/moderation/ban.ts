@@ -81,9 +81,9 @@ export default class BanCommand extends Command {
 
         const embed = getDefaultEmbed('GREEN')
             .setTitle('Banned')
-            .addField('Reason', reason, true)
+            .addField('Reason', reason)
             .addField('User', member.user, true)
-            .addField('Duration', 'Indefinite')
+            .addField('Duration', 'Indefinite', true)
             .addField('Moderator', msg.member.user, true);
 
         return msg.util?.send(embed);
