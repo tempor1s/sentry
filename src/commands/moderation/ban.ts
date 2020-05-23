@@ -5,10 +5,10 @@ import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
+import ms from 'ms';
 
 export default class BanCommand extends Command {
     public constructor() {
-        // TODO: Allow the ability to purge messages after a ban
         super('ban', {
             aliases: ['ban'],
             description: {
@@ -18,13 +18,14 @@ export default class BanCommand extends Command {
                     'ban @temporis#6402',
                     'ban temporis ur bad',
                     'ban 111901076520767488 bad words',
+                    'ban temporis urbad --silent',
+                    'ban @temporis#6402 racism --days=30d',
                 ],
             },
             category: 'moderation',
             channel: 'guild',
             clientPermissions: [Permissions.FLAGS.BAN_MEMBERS],
             userPermissions: [Permissions.FLAGS.BAN_MEMBERS],
-            // TODO: Create a silent flag to not send them a message. (maybe dont log??)
             args: [
                 {
                     id: 'member',
@@ -36,13 +37,35 @@ export default class BanCommand extends Command {
                     match: 'rest',
                     default: (_: Message) => 'No reason provided.',
                 },
+                {
+                    id: 'silent',
+                    match: 'flag',
+                    flag: ['--silent', '-s'],
+                },
+                {
+                    id: 'days',
+                    type: 'integer',
+                    match: 'flag',
+                    flag: ['--days=', '-d='],
+                    default: 0,
+                },
             ],
         });
     }
 
     public async exec(
         msg: Message,
-        { member, reason }: { member: GuildMember; reason: string }
+        {
+            member,
+            reason,
+            silent,
+            days,
+        }: {
+            member: GuildMember;
+            reason: string;
+            silent: boolean;
+            days: number;
+        }
     ) {
         if (!member) {
             return msg.util?.send('Please specify a user to ban.');
@@ -58,10 +81,12 @@ export default class BanCommand extends Command {
 
         try {
             // ban the user and send them a msg
-            await member.ban({ reason: reason }).then(() => {
-                member.send(
-                    `You have been banned from ${member.guild.name} for the reason: *${reason}*`
-                );
+            await member.ban({ reason: reason, days: days }).then(() => {
+                if (!silent) {
+                    member.send(
+                        `You have been banned from ${member.guild.name} for the reason: *${reason}*`
+                    );
+                }
             });
 
             // log ban

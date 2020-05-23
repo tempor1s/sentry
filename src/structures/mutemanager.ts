@@ -27,7 +27,7 @@ export async function unmuteLoop(
             // try to mute the user
             try {
                 // Unmute the user
-                unmute(mutesRepo, member, serverDb.mutedRole);
+                await unmute(mutesRepo, member, serverDb.mutedRole);
                 // Log the unmute
                 logUnmute(
                     serversRepo,
@@ -53,10 +53,17 @@ export async function mute(
     member: GuildMember,
     muteRoleId: string,
     reason: string,
-    duration: number
+    duration: number,
+    silent: boolean = false
 ) {
-    // TODO: Remove all of their current roles before we assign them the muted role.
     // TODO: Add flag to make it silent and not send the muted user a message.
+    // remove all the roles that are not @everyone
+    let roles = member.roles.cache
+        .filter((role) => role.name !== '@everyone')
+        .map((role) => {
+            member.roles.remove(role);
+            return role.id;
+        });
 
     // Add the muted role
     try {
@@ -75,28 +82,25 @@ export async function mute(
         );
     }
 
-    // Get the time that the mute will end
-    const end = Date.now() + duration;
-    // get all the roles that the user already has
-    let roles = member.roles.cache.map((role) => role.id);
-
     // Insert the mute into the DB
     try {
         await muteRepo.insert({
             server: member.guild.id,
             user: member.user.id,
-            end: end,
+            end: Date.now() + duration, // when the mute ends
             reason: reason,
             moderator: member.id,
             roles: roles,
         });
 
         // Let the user know we muted them
-        member.send(
-            `You have been muted by ${msg.member.user} in ${
-                msg.guild.name
-            } for \`${ms(duration)}\``
-        );
+        if (!silent) {
+            member.send(
+                `You have been muted by ${msg.member.user} in ${
+                    msg.guild.name
+                } for \`${ms(duration)}\``
+            );
+        }
 
         logger.debug('Mute insert was successful.');
     } catch (err) {
@@ -117,7 +121,6 @@ export async function unmute(
     member: GuildMember,
     muteRoleId: string
 ) {
-    // TODO: Add back all the roles we removed from them.
     // remove the muted role
     try {
         await member.roles.remove(muteRoleId, 'Unmuted');
@@ -126,6 +129,23 @@ export async function unmute(
         );
     } catch (err) {
         logger.error(`Unable to remove mute role. Reason ${err}`);
+    }
+
+    // add back all the roles that we removed from them
+    let mute = await muteRepo.findOne({
+        where: { server: member.guild.id, user: member.id },
+    });
+
+    // add roles that we removed initally
+    try {
+        if (mute.roles) {
+            mute.roles.map((id) => member.roles.add(id));
+        }
+    } catch (err) {
+        logger.error(
+            `Error adding roles to ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
+            err
+        );
     }
 
     try {

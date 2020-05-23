@@ -65,7 +65,7 @@ export default class UnmuteCommand extends Command {
             return msg.util?.send('That user is not muted.');
         }
 
-        unmute(mutesRepos, member, server.mutedRole);
+        await unmute(mutesRepos, member, server.mutedRole);
         logUnmute(serverRepo, member, msg.member);
 
         return msg.util?.send(`Unmuted ${member.user}.`);

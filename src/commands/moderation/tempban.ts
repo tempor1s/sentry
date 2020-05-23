@@ -15,18 +15,18 @@ export default class TempBanCommand extends Command {
             aliases: ['tempban'],
             description: {
                 content: 'Temporarily ban a user from the server.',
-                usage: 'tempban <user> <duration> [reason]',
+                usage: 'tempban <user> <duration> [reason] [--silent]',
                 examples: [
                     'tempban @temporis#6402 1d',
                     'tempban temporis 10d spamming',
                     'tempban 111901076520767488 30d bad words',
+                    'tempban temporis 5d memer --silent',
                 ],
             },
             category: 'moderation',
             channel: 'guild',
             clientPermissions: [Permissions.FLAGS.BAN_MEMBERS],
             userPermissions: [Permissions.FLAGS.BAN_MEMBERS],
-            // TODO: Create a silent flag to not send them a message. (maybe dont log??)
             args: [
                 {
                     id: 'member',
@@ -47,6 +47,18 @@ export default class TempBanCommand extends Command {
                     match: 'rest',
                     default: (_: Message) => 'No reason provided.',
                 },
+                {
+                    id: 'silent',
+                    match: 'flag',
+                    flag: ['--silent', '-s'],
+                },
+                {
+                    id: 'days',
+                    type: 'integer',
+                    match: 'flag',
+                    flag: ['--days=', '-d='],
+                    default: 0,
+                },
             ],
         });
     }
@@ -57,7 +69,15 @@ export default class TempBanCommand extends Command {
             member,
             duration,
             reason,
-        }: { member: GuildMember; duration: number; reason: string }
+            silent,
+            days,
+        }: {
+            member: GuildMember;
+            duration: number;
+            reason: string;
+            silent: boolean;
+            days: number;
+        }
     ) {
         if (!member) {
             return msg.util?.send('Please specify a user to temporarily ban.');
@@ -88,10 +108,12 @@ export default class TempBanCommand extends Command {
 
         try {
             // ban the user and send them a msg
-            await member.ban({ reason: reason }).then(() => {
-                member.send(
-                    `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`
-                );
+            await member.ban({ reason: reason, days: days }).then(() => {
+                if (!silent) {
+                    member.send(
+                        `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`
+                    );
+                }
             });
 
             // so that we can unban people later :)

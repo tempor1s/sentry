@@ -21,7 +21,7 @@ export default class MuteCommand extends Command {
                     'mute @temporis#6402 10m spamming',
                     'mute temporis',
                     'mute 111901076520767488 10h',
-                    'mute @temporis#6402 30s',
+                    'mute @temporis#6402 30s -s',
                 ],
             },
             category: 'moderation',
@@ -56,6 +56,11 @@ export default class MuteCommand extends Command {
                     match: 'rest',
                     default: (_: Message) => 'No reason provided.',
                 },
+                {
+                    id: 'silent',
+                    match: 'flag',
+                    flag: ['--silent', '-s'],
+                },
             ],
         });
     }
@@ -66,7 +71,13 @@ export default class MuteCommand extends Command {
             member,
             duration,
             reason,
-        }: { member: GuildMember; duration: number; reason: string }
+            silent,
+        }: {
+            member: GuildMember;
+            duration: number;
+            reason: string;
+            silent: boolean;
+        }
     ) {
         // If they did not specify a member.
         if (!member) {
@@ -107,7 +118,15 @@ export default class MuteCommand extends Command {
         }
 
         // Mute the person
-        await mute(mutesRepo, msg, member, muteRoleId, reason, duration);
+        await mute(
+            mutesRepo,
+            msg,
+            member,
+            muteRoleId,
+            reason,
+            duration,
+            silent
+        );
         // Log the mute
         logMute(serverRepo, member, reason, duration, msg.member);
 

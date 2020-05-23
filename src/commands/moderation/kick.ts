@@ -5,6 +5,7 @@ import { logKick } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
+import ms from 'ms';
 
 export default class KickCommand extends Command {
     public constructor() {
@@ -18,13 +19,14 @@ export default class KickCommand extends Command {
                     'kick @temporis#6402',
                     'kick temporis ur bad',
                     'kick 111901076520767488',
+                    'kick @temporis#6402 --silent',
+                    'kick @temporis#6402 --purge=1d',
                 ],
             },
             category: 'moderation',
             channel: 'guild',
             clientPermissions: [Permissions.FLAGS.KICK_MEMBERS],
             userPermissions: [Permissions.FLAGS.KICK_MEMBERS],
-            // TODO: Create a silent flag to not send them a message. (maybe dont log??)
             args: [
                 {
                     id: 'member',
@@ -36,13 +38,26 @@ export default class KickCommand extends Command {
                     match: 'rest',
                     default: (_: Message) => 'No reason provided.',
                 },
+                {
+                    id: 'silent',
+                    match: 'flag',
+                    flag: ['--silent', '-s'],
+                },
             ],
         });
     }
 
     public async exec(
         msg: Message,
-        { member, reason }: { member: GuildMember; reason: string }
+        {
+            member,
+            reason,
+            silent = false,
+        }: {
+            member: GuildMember;
+            reason: string;
+            silent: boolean;
+        }
     ) {
         if (!member) {
             return msg.util?.send('Please specify a user to kick.');
@@ -59,9 +74,11 @@ export default class KickCommand extends Command {
         try {
             // kick the user and send them a msg
             await member.kick(reason).then(() => {
-                member.send(
-                    `You have been kicked from ${member.guild.name} for the reason: *${reason}*`
-                );
+                if (!silent) {
+                    member.send(
+                        `You have been kicked from ${member.guild.name} for the reason: *${reason}*`
+                    );
+                }
             });
 
             // log kick
