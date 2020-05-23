@@ -5,6 +5,7 @@ import { Warnings } from '../models/warnings';
 import { Servers } from '../models/server';
 import { Mutes } from '../models/mutes';
 import { AutoPurges } from '../models/autopurge';
+import { TempBans } from '../models/tempbans';
 
 const connectionManager: ConnectionManager = new ConnectionManager();
 
@@ -18,7 +19,7 @@ connectionManager.create({
     database: 'sentry',
     synchronize: true, // TODO: Disable this for production through use of env variable
     logging: false,
-    entities: [Warnings, Servers, Mutes, AutoPurges],
+    entities: [Warnings, Servers, Mutes, AutoPurges, TempBans],
 });
 
 export default connectionManager;

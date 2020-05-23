@@ -1,12 +1,13 @@
 import { Listener } from 'discord-akairo';
 import { TextChannel } from 'discord.js';
 import { unmute } from '../../structures/muteManager';
-import { logUnmute } from '../../structures/logManager';
+import { logUnmute, logUnban } from '../../structures/logManager';
 import logger from '../../utils/logger';
 
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
 import { AutoPurges } from '../../models/autopurge';
+import { TempBans } from '../../models/tempbans';
 
 export default class ReadyListener extends Listener {
     public constructor() {
@@ -23,6 +24,7 @@ export default class ReadyListener extends Listener {
         const mutesRepo = this.client.db.getRepository(Mutes);
         const serversRepo = this.client.db.getRepository(Servers);
         const autoPurgeRepo = this.client.db.getRepository(AutoPurges);
+        const tempBanRepo = this.client.db.getRepository(TempBans);
 
         // Update servers/members every 5 minutes.
         this.client.user.setActivity(
@@ -38,7 +40,7 @@ export default class ReadyListener extends Listener {
             );
         }, 3e5);
 
-        // Unmute loop
+        // Unmute loop (runs every 30 seconds)
         // TODO: Move this into mute strcture as a refactor to clean this up
         setInterval(async () => {
             const mutes = await mutesRepo.find();
@@ -75,7 +77,8 @@ export default class ReadyListener extends Listener {
                 });
         }, 30000);
 
-        // purge auto purged channels
+        // purge auto purged channels (runs every 30 seconds)
+        // TODO: Refactor this out into a seperate manager with other other purge related commands :)
         setInterval(async () => {
             const autoPurges = await autoPurgeRepo.find();
             autoPurges
@@ -109,5 +112,30 @@ export default class ReadyListener extends Listener {
                     );
                 });
         }, 30000);
+
+        // unban users that are past the interval
+        // TODO: Refactor this out into a ban manager?
+        setInterval(async () => {
+            const tempBans = await tempBanRepo.find();
+            tempBans
+                .filter((ban) => ban.end <= Date.now())
+                .map(async (ban) => {
+                    // get the server to remove ban from
+                    let server = this.client.guilds.cache.get(ban.server);
+                    // the bot member in the server
+                    let botMember = server.members.cache.get(
+                        this.client.user.id
+                    );
+                    // remove ban
+                    let user = await server.members.unban(ban.user);
+                    // log unban
+                    logUnban(
+                        serversRepo,
+                        user,
+                        botMember,
+                        'Temporary ban expired.'
+                    );
+                });
+        }, 3e5);
     }
 }
