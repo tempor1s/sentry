@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { AutoPurges } from '../../../models/autopurge';
-import { getDefaultEmbed } from '../../../utils/message';
 import ms from 'ms';
 
 export default class AutoPurgeStartCommand extends Command {
@@ -73,5 +72,9 @@ export default class AutoPurgeStartCommand extends Command {
             timeUntilNextPurge: interval + Date.now(),
             purgeInterval: interval,
         });
+
+        return msg.util?.send(
+            `Auto purge started with an interval of \`${ms(interval)}\``
+        );
     }
 }
