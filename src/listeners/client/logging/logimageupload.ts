@@ -2,7 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Message, DMChannel } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
-import { logImageUpload } from '../../../structures/logmanager';
+import { logImageUpload } from '../../../structures/logManager';
 
 export default class LogImageUploadListener extends Listener {
     public constructor() {

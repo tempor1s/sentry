@@ -3,7 +3,7 @@ import { GuildMember } from 'discord.js';
 import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
 import logger from '../../utils/logger';
-import { logJoinMsg } from '../../structures/logmanager';
+import { logJoinMsg } from '../../structures/logManager';
 
 export default class JoinMsgListener extends Listener {
     public constructor() {

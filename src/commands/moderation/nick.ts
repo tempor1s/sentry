@@ -1,9 +1,8 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logNick } from '../../structures/logmanager';
+import { logNick } from '../../structures/logManager';
 import { Servers } from '../../models/server';
-import { getDefaultEmbed } from '../../utils/message';
 
 export default class NickCommand extends Command {
     public constructor() {

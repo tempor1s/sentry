@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { TextChannel } from 'discord.js';
 import { unmute } from '../../structures/muteManager';
-import { logUnmute } from '../../structures/logmanager';
+import { logUnmute } from '../../structures/logManager';
 import logger from '../../utils/logger';
 
 import { Mutes } from '../../models/mutes';

@@ -4,7 +4,7 @@ import { getDefaultEmbed } from '../../utils/message';
 import { Servers } from '../../models/server';
 import { Mutes } from '../../models/mutes';
 import { createMuteOrUpdate, mute } from '../../structures/muteManager';
-import { logMute } from '../../structures/logmanager';
+import { logMute } from '../../structures/logManager';
 import ms from 'ms';
 
 export default class MuteCommand extends Command {

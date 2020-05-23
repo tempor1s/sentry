@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import logger from '../../utils/logger';
-import { logPurge } from '../../structures/logmanager';
+import { logPurge } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 
 export default class PurgeCommand extends Command {

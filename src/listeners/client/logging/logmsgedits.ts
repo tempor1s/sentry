@@ -2,7 +2,7 @@ import { Listener } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
-import { logMsgEdit } from '../../../structures/logmanager';
+import { logMsgEdit } from '../../../structures/logManager';
 
 export default class LogMessageEditListener extends Listener {
     public constructor() {
