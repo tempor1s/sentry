@@ -5,7 +5,6 @@ import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
-import ms from 'ms';
 
 export default class BanCommand extends Command {
     public constructor() {

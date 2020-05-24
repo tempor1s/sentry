@@ -10,7 +10,6 @@ import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class TempBanCommand extends Command {
     public constructor() {
-        // TODO: Allow the ability to purge messages after a ban
         super('tempban', {
             aliases: ['tempban'],
             description: {
