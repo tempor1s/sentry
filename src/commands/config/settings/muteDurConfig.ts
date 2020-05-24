@@ -7,7 +7,6 @@ import ms from 'ms';
 export default class MuteDurationConfigCommand extends Command {
     public constructor() {
         super('config-muteduration', {
-            aliases: ['muteduration'],
             description: {
                 content: 'Update the duration of the mute in the server.',
                 usage: 'muteduration [muteduration]',

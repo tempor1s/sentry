@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class LogImagesConfigCommand extends Command {
     public constructor() {
         super('config-logimages', {
-            aliases: ['logimages'],
             description: {
                 content:
                     'Enable/Disable the logging of uploaded images in the server.',

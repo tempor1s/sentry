@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class ModLogToggleConfigCommand extends Command {
     public constructor() {
         super('config-modlogtoggle', {
-            aliases: ['modlogtoggle'],
             description: {
                 content: 'Enable/Disable mod action logging on the server.',
                 usage: 'modlogtoggle',

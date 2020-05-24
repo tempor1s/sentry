@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class CommandLogConfigCommand extends Command {
     public constructor() {
         super('config-commandlog', {
-            aliases: ['commandlog'],
             description: {
                 content: 'Update the command log channel in the server.',
                 usage: 'commandlog [channel]',

@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class LogEditsConfigCommand extends Command {
     public constructor() {
         super('config-logedits', {
-            aliases: ['logedits'],
             description: {
                 content:
                     'Enable/Disable the logging of edited messages in the server.',

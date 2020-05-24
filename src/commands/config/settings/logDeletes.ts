@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class LogDeletesConfigCommand extends Command {
     public constructor() {
         super('config-logdeletes', {
-            aliases: ['logdeletes'],
             description: {
                 content:
                     'Enable/Disable the logging of deleted messages in the server.',

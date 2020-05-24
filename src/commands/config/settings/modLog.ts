@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class ModLogConfigCommand extends Command {
     public constructor() {
         super('config-modlog', {
-            aliases: ['modlog'],
             description: {
                 content: 'Update the modlog channel in the server.',
                 usage: 'modlog [channel]',

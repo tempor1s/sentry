@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class JoinMessageConfigCommand extends Command {
     public constructor() {
         super('config-joinmsg', {
-            aliases: ['joinmsg'],
             description: {
                 content:
                     'Enable/Disable logging for when a user joins the server.',

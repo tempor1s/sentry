@@ -6,7 +6,6 @@ import logger from '../../../utils/logger';
 export default class AutoRoleConfigCommand extends Command {
     public constructor() {
         super('config-autorole', {
-            aliases: ['autorole'],
             description: {
                 content: 'Update the autorole in the server.',
                 usage: 'autorole [autorole]',

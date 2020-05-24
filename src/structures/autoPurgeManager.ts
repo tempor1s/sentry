@@ -22,7 +22,7 @@ export async function autoPurgeLoop(
             // get all the messages in the channel
             let messages = await channel.messages.fetch(
                 {
-                    limit: 100000000,
+                    limit: 100,
                 },
                 false
             );
