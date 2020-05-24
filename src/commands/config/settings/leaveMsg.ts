@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class LeaveMessageConfigCommand extends Command {
     public constructor() {
-        super('field-leavemsg', {
-            aliases: ['leavemsg'],
+        super('config-leavemsg', {
             description: {
                 content:
                     'Enable/Disable logging for when a user leaves the server.',

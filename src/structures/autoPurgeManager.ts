@@ -20,7 +20,12 @@ export async function autoPurgeLoop(
             let channel = client.channels.cache.get(p.channel) as TextChannel;
 
             // get all the messages in the channel
-            let messages = await channel.messages.fetch();
+            let messages = await channel.messages.fetch(
+                {
+                    limit: 100,
+                },
+                false
+            );
             // filter out all messages that are pinned
             let filteredMsgs = messages.filter((msg) => !msg.pinned);
             // delete messages that are not pinned

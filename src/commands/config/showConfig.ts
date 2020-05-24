@@ -26,10 +26,10 @@ export default class ShowConfigCommand extends Command {
 
         const embed = getDefaultEmbed()
             .setTitle(`Server Config | ${msg.guild.name}`)
-            .addField('**❯ Prefix** (prefix)', server.prefix, true)
+            .addField('**❯ Prefix** (prefix)', `*${server.prefix}*`, true)
             .addField(
                 '**❯ Missing Permission Messages** (permissionmessages)',
-                server.missingPermissionMessages ? 'Enabled' : 'Disabled',
+                server.missingPermissionMessages ? '*Enabled*' : '*Disabled*',
                 true
             )
             .addField(
@@ -58,7 +58,7 @@ export default class ShowConfigCommand extends Command {
                         : '*Not set*'
                 }
                 `,
-                false
+                true
             )
             .addField(
                 '**❯ Command Logging**',

@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class JoinLeaveLogConfigCommand extends Command {
     public constructor() {
-        super('field-joinleavelog', {
-            aliases: ['joinleavelog'],
+        super('config-joinleavelog', {
             description: {
                 content:
                     'Update the channel for join/leave logging in the server.',

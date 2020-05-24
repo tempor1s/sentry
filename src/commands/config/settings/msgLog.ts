@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class MessageLogConfigCommand extends Command {
     public constructor() {
-        super('field-msglog', {
-            aliases: ['msglog'],
+        super('config-msglog', {
             description: {
                 content: 'Update the msglog channel in the server.',
                 usage: 'msglog [channel]',

@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class MuteRoleConfigCommand extends Command {
     public constructor() {
-        super('field-muterole', {
-            aliases: ['muterole'],
+        super('config-muterole', {
             description: {
                 content: 'Update the mute role in the server.',
                 usage: 'muterole [muterole]',

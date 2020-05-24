@@ -25,7 +25,7 @@ export default class RolesCommand extends Command {
                     'remove temporis Moderator',
                     'addall Member',
                     'removeall Member',
-                    'clear',
+                    'clear @temporis#6402',
                 ],
             },
             channel: 'guild',

@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class AutoRoleToggleConfigCommand extends Command {
     public constructor() {
-        super('field-autoroletoggle', {
-            aliases: ['autoroletoggle'],
+        super('config-autoroletoggle', {
             description: {
                 content: 'Enable/Disable auto role in the server.',
                 usage: 'autoroletoggle',

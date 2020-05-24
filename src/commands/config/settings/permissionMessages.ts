@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class PermissionMessagesConfigCommand extends Command {
     public constructor() {
-        super('field-permissionmessages', {
-            aliases: ['permissionmessages'],
+        super('config-permissionmessages', {
             description: {
                 content:
                     'Enable/Disable messages for when a user does not have permissions to run a command.',

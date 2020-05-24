@@ -5,8 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class CommandLogToggleConfigCommand extends Command {
     public constructor() {
-        super('field-commandlogtoggle', {
-            aliases: ['commandlogtoggle'],
+        super('config-commandlogtoggle', {
             description: {
                 content: 'Enable/Disable command logging in the server.',
                 usage: 'commandlogtoggle',
