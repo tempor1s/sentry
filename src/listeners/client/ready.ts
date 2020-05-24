@@ -2,12 +2,14 @@ import { Listener } from 'discord-akairo';
 import { unmuteLoop } from '../../structures/muteManager';
 import { autoPurgeLoop } from '../../structures/autoPurgeManager';
 import { tempUnbanLoop } from '../../structures/banManager';
+import { unlockChannelLoop } from '../../structures/lockManager';
 import logger from '../../utils/logger';
 
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
 import { AutoPurges } from '../../models/autopurge';
 import { TempBans } from '../../models/tempbans';
+import { ChannelLocks } from '../../models/channelLocks';
 
 export default class ReadyListener extends Listener {
     public constructor() {
@@ -25,6 +27,7 @@ export default class ReadyListener extends Listener {
         const serversRepo = this.client.db.getRepository(Servers);
         const autoPurgeRepo = this.client.db.getRepository(AutoPurges);
         const tempBanRepo = this.client.db.getRepository(TempBans);
+        const channelLockrepo = this.client.db.getRepository(ChannelLocks);
 
         // Update servers/members every 5 minutes.
         this.client.user.setActivity(
@@ -53,10 +56,15 @@ export default class ReadyListener extends Listener {
         );
 
         // unban users that are past the interval
-        // TODO: Refactor this out into a ban manager?
         setInterval(
             async () => tempUnbanLoop(tempBanRepo, serversRepo, this.client),
             3e5
+        );
+
+        // check if we need to unlock any channels :) (runs every minute)
+        setInterval(
+            async () => unlockChannelLoop(channelLockrepo, this.client),
+            10000
         );
     }
 }

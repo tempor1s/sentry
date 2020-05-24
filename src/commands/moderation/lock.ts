@@ -42,7 +42,6 @@ export default class LockCommand extends Command {
                         }
                         return 0;
                     },
-                    default: (_: Message) => 0,
                 },
             ],
         });
@@ -52,6 +51,7 @@ export default class LockCommand extends Command {
         msg: Message,
         { channel, duration }: { channel: TextChannel; duration: number }
     ) {
+        console.log(duration);
         // get the ChannelLocks repo
         const channelLocksRepo = this.client.db.getRepository(ChannelLocks);
         // try to lock the channel

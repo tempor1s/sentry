@@ -1,9 +1,37 @@
+import { AkairoClient } from 'discord-akairo';
 import { TextChannel } from 'discord.js';
 import logger from '../utils/logger';
 import { ChannelLocks } from '../models/channelLocks';
 import { Repository } from 'typeorm';
 
-// "locks" given channel by disabling j
+export async function unlockChannelLoop(
+    locksRepo: Repository<ChannelLocks>,
+    client: AkairoClient
+) {
+    const channelLocks = await locksRepo.find();
+    channelLocks
+        .filter(
+            (channel) =>
+                channel.end <= Date.now() && channel.indefinite === false
+        )
+        .map(async (channel) => {
+            await locksRepo.delete({
+                server: channel.server,
+                channel: channel.server,
+            });
+            // get the server to remove ban from
+            let lockedChan = client.channels.cache.get(
+                channel.channel
+            ) as TextChannel;
+
+            let unlocked = unlockChannel(locksRepo, lockedChan);
+            if (!unlocked) lockedChan.send('Failed to unlock channel.');
+
+            // TODO: log this
+        });
+}
+
+// "locks" given channel by disabling
 export async function lockChannel(
     locksRepo: Repository<ChannelLocks>,
     channel: TextChannel,
@@ -39,7 +67,7 @@ export async function lockChannel(
         server: channel.guild.id,
         channel: channel.id,
         end: Date.now() + duration,
-        indefinite: duration ? false : true,
+        indefinite: duration === 0 ? true : false,
     });
 
     return true;
