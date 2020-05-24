@@ -1,6 +1,6 @@
-import { stripIndents } from 'common-tags';
 import { Command, Flag, PrefixSupplier } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
+import { ConfigFields } from '../../utils/config';
 
 export default class UpdateConfigCommand extends Command {
     public constructor() {
@@ -25,25 +25,7 @@ export default class UpdateConfigCommand extends Command {
 
     public *args() {
         const method = yield {
-            type: [
-                ['config-prefix', 'prefix'],
-                ['config-muterole', 'muterole'],
-                ['config-muteduration', 'muteduration'],
-                ['config-commandlogtoggle', 'commandlogtoggle'],
-                ['config-commandlog', 'commandlog'],
-                ['config-modlogtoggle', 'modlogtoggle'],
-                ['config-modlog', 'modlog'],
-                ['config-logdeletes', 'logdeletes'],
-                ['config-logedits', 'logedits'],
-                ['config-logimages', 'logedits'],
-                ['config-msglog', 'msglog'],
-                ['config-autoroletoggle', 'autoroletoggle'],
-                ['config-autorole', 'autorole'],
-                ['config-joinmsg', 'joinmsg'],
-                ['config-leavemsg', 'leavemsg'],
-                ['config-joinleavelog', 'joinleavelog'],
-                ['config-permissionmessages', 'permissionmessages'],
-            ],
+            type: ConfigFields,
             otherwise: async (msg: Message) => {
                 let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
                 return `Invalid field. Check \`${prefix}help config\` for more information.`;

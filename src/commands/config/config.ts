@@ -16,6 +16,7 @@ export default class ConfigCommand extends Command {
                      • show 
                      • update \`<field>\` \`<value>\`
                      • reset \`[field]\`
+                     • fields
                 `,
                 usage: 'config <method> <...arguments>',
                 examples: [
@@ -24,6 +25,7 @@ export default class ConfigCommand extends Command {
                     'update muterole @Mute',
                     'reset',
                     'reset prefix',
+                    'fields',
                 ],
             },
             channel: 'guild',
@@ -36,6 +38,7 @@ export default class ConfigCommand extends Command {
                 ['config-update', 'update'],
                 ['config-show', 'show'],
                 ['config-reset', 'reset'],
+                ['config-fields', 'fields'],
             ],
             otherwise: async (msg: Message) => {
                 let prefix = await (this.handler.prefix as PrefixSupplier)(msg);
