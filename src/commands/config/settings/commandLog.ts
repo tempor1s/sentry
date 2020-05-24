@@ -3,14 +3,19 @@ import { Message, Permissions, TextChannel } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 
-export default class ModLogConfigCommand extends Command {
+export default class CommandLogConfigCommand extends Command {
     public constructor() {
-        super('config-modlog', {
-            aliases: ['modlog'],
+        super('config-commandlog', {
+            aliases: ['commandlog'],
             description: {
-                content: 'Update the modlog channel in the server.',
-                usage: 'modlog [channel]',
-                examples: ['', '#modlog', 'modlog', '712205605951242273'],
+                content: 'Update the command log channel in the server.',
+                usage: 'commandlog [channel]',
+                examples: [
+                    '',
+                    '#commandlog',
+                    'commandlog',
+                    '712205605951242273',
+                ],
             },
             channel: 'guild',
             category: 'config',
@@ -32,33 +37,37 @@ export default class ModLogConfigCommand extends Command {
         });
 
         if (!channel) {
-            if (server.modLog) {
+            if (server.commandLog) {
                 let oldChannel = msg.guild.channels.cache.get(server.modLog);
                 return msg.util?.send(
-                    `The current modlog channel is ${oldChannel.name} (${oldChannel.id})`
+                    `The current command log channel is ${oldChannel.name} (${oldChannel.id})`
                 );
             }
 
-            return msg.util?.send('There is no modlog channel currently set.');
+            return msg.util?.send(
+                'There is no command log channel currently set.'
+            );
         }
 
         // update the command log channel
         try {
             await serverRepo.update(
                 { server: msg.guild.id },
-                { modLog: channel.id }
+                { commandLog: channel.id }
             );
 
             logger.debug(
-                `Updating modlog channel in ${msg.guild.name} (${msg.guild.id}) to ${channel.name} (${channel.id})`
+                `Updating command log channel in ${msg.guild.name} (${msg.guild.id}) to ${channel.name} (${channel.id})`
             );
         } catch (err) {
             logger.error(
-                `Error updating modlog channel in ${msg.guild.name} (${msg.guild.id}). Error: `,
+                `Error updating command log channel in ${msg.guild.name} (${msg.guild.id}). Error: `,
                 err
             );
 
-            return msg.util?.send('Error when updating the modlog channel.');
+            return msg.util?.send(
+                'Error when updating the command log channel.'
+            );
         }
 
         return msg.util?.send(
