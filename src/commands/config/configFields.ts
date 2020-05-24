@@ -19,7 +19,7 @@ export default class ConfigFieldsCommand extends Command {
             .setDescription(
                 ConfigFields.map(
                     (field) =>
-                        stripIndents`❯ \`${field[1]}\`\n${
+                        stripIndents`❯ \`${field[1]}\` -- ${
                             ConfigDescription[field[1]]
                         }`
                 ).join('\n')

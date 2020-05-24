@@ -18,6 +18,7 @@ export default class AutoPurgeStopCommand extends Command {
                 {
                     id: 'channel',
                     type: 'channel',
+                    default: (msg: Message) => msg.channel,
                 },
             ],
         });
@@ -27,12 +28,6 @@ export default class AutoPurgeStopCommand extends Command {
     // TODO: Error handling :)
     public async exec(msg: Message, { channel }: { channel: TextChannel }) {
         // no channel specified
-        if (!channel) {
-            return msg.util?.send(
-                'Please specify a channel to remove auto purge from.'
-            );
-        }
-
         let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
 
         let existingPurge = await autoPurgeRepo.findOne({
