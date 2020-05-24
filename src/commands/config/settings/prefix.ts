@@ -7,7 +7,7 @@ import logger from '../../../utils/logger';
 
 export default class PrefixConfigCommand extends Command {
     public constructor() {
-        super('field-prefix', {
+        super('config-prefix', {
             aliases: ['prefix'],
             description: {
                 content: 'View or update the prefix of the bot.',

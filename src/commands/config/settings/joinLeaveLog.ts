@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class JoinLeaveLogConfigCommand extends Command {
     public constructor() {
-        super('field-joinleavelog', {
+        super('config-joinleavelog', {
             aliases: ['joinleavelog'],
             description: {
                 content:

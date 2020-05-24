@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class PermissionMessagesConfigCommand extends Command {
     public constructor() {
-        super('field-permissionmessages', {
+        super('config-permissionmessages', {
             aliases: ['permissionmessages'],
             description: {
                 content:

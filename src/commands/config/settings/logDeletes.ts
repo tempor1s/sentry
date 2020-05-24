@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class LogDeletesConfigCommand extends Command {
     public constructor() {
-        super('field-logdeletes', {
+        super('config-logdeletes', {
             aliases: ['logdeletes'],
             description: {
                 content:

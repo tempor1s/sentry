@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class JoinMessageConfigCommand extends Command {
     public constructor() {
-        super('field-joinmsg', {
+        super('config-joinmsg', {
             aliases: ['joinmsg'],
             description: {
                 content:

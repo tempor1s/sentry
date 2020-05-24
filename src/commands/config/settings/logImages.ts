@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class LogImagesConfigCommand extends Command {
     public constructor() {
-        super('field-logimages', {
+        super('config-logimages', {
             aliases: ['logimages'],
             description: {
                 content:

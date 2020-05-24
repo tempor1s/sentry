@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class LogEditsConfigCommand extends Command {
     public constructor() {
-        super('field-logedits', {
+        super('config-logedits', {
             aliases: ['logedits'],
             description: {
                 content:

@@ -5,7 +5,7 @@ import logger from '../../../utils/logger';
 
 export default class LeaveMessageConfigCommand extends Command {
     public constructor() {
-        super('field-leavemsg', {
+        super('config-leavemsg', {
             aliases: ['leavemsg'],
             description: {
                 content:
