@@ -71,6 +71,12 @@ export default class BanCommand extends Command {
             return msg.util?.send('Please specify a user to ban.');
         }
 
+        // check to make sure they are not a higher role
+        if (await checkHigherOrEqualPermissions(msg, member))
+            return msg.util.send(
+                `That member has a higher or equal role to you. You are unable to ban them.`
+            );
+
         let serversRepo = this.client.db.getRepository(Servers);
 
         try {
