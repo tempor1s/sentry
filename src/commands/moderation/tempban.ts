@@ -107,6 +107,11 @@ export default class TempBanCommand extends Command {
         let msDuration = ms(duration);
 
         try {
+            // check to make sure they are not already banned
+            if (await member.guild.fetchBan(member)) {
+                return msg.util?.send('That user is already banned.');
+            }
+
             // ban the user and send them a msg
             await member.ban({ reason: reason, days: days }).then(() => {
                 if (!silent) {
