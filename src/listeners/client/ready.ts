@@ -63,7 +63,8 @@ export default class ReadyListener extends Listener {
 
         // check if we need to unlock any channels :) (runs every minute)
         setInterval(
-            async () => unlockChannelLoop(channelLockrepo, this.client),
+            async () =>
+                unlockChannelLoop(serversRepo, channelLockrepo, this.client),
             10000
         );
     }

@@ -3,8 +3,13 @@ import { TextChannel } from 'discord.js';
 import logger from '../utils/logger';
 import { ChannelLocks } from '../models/channelLocks';
 import { Repository } from 'typeorm';
+import { logChannelUnlock } from './logManager';
+import { Servers } from '../models/server';
+import { getDefaultEmbed } from '../utils/message';
+import ms from 'ms';
 
 export async function unlockChannelLoop(
+    serversRepo: Repository<Servers>,
     locksRepo: Repository<ChannelLocks>,
     client: AkairoClient
 ) {
@@ -24,10 +29,14 @@ export async function unlockChannelLoop(
                 channel.channel
             ) as TextChannel;
 
-            let unlocked = unlockChannel(locksRepo, lockedChan);
+            let clientMember = lockedChan.guild.members.cache.get(
+                client.user.id
+            );
+
+            let unlocked = await unlockChannel(locksRepo, lockedChan);
             if (!unlocked) lockedChan.send('Failed to unlock channel.');
 
-            // TODO: log this
+            logChannelUnlock(serversRepo, lockedChan, clientMember);
         });
 }
 
@@ -61,7 +70,11 @@ export async function lockChannel(
         `Locked channel ${channel.name} (${channel.id}) in ${channel.guild.name} (${channel.guild.id})`
     );
 
-    channel.send('Channel locked! :)');
+    channel.send(
+        getDefaultEmbed()
+            .setTitle('Channel Locked')
+            .addField('Duration', duration ? ms(duration) : 'Indefinite', true)
+    );
 
     await locksRepo.insert({
         server: channel.guild.id,
