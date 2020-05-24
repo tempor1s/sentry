@@ -484,6 +484,54 @@ export async function logAutoPurge(
     modLogChannel.send(embed);
 }
 
+export async function logChannelLock(
+    repo: Repository<Servers>,
+    duration: number,
+    channel: TextChannel,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: channel.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Channel Locked')
+        .addField('Channel', channel, true)
+        .addField('Moderator', moderator, true)
+        .addField('Duration', duration ? ms(duration) : 'Indefinite', true);
+
+    let modLogChannel = channel.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
+export async function logChannelUnlock(
+    repo: Repository<Servers>,
+    channel: TextChannel,
+    moderator: GuildMember
+) {
+    let server = await repo.findOne({ where: { server: channel.guild.id } });
+
+    if (!server.modLogEnabled && !server.modLog) {
+        return;
+    }
+
+    let embed = getDefaultEmbed()
+        .setTitle('Channel Unlocked')
+        .addField('Channel', channel, true)
+        .addField('Moderator', moderator, true);
+
+    let modLogChannel = channel.guild.channels.cache.get(
+        server.modLog
+    ) as TextChannel;
+
+    modLogChannel.send(embed);
+}
+
 export async function logJoinMsg(
     repo: Repository<Servers>,
     member: GuildMember

@@ -71,15 +71,20 @@ export default class BanCommand extends Command {
             return msg.util?.send('Please specify a user to ban.');
         }
 
-        // Checks so that you can not ban someone higher than you.
+        // check to make sure they are not a higher role
         if (await checkHigherOrEqualPermissions(msg, member))
             return msg.util.send(
-                'That member has a higher or equal role to you. You are unable to ban them.'
+                `That member has a higher or equal role to you. You are unable to ban them.`
             );
 
         let serversRepo = this.client.db.getRepository(Servers);
 
         try {
+            // check to make sure they are not already banned
+            if (await member.guild.fetchBan(member)) {
+                return msg.util?.send('That user is already banned.');
+            }
+
             // ban the user and send them a msg
             await member.ban({ reason: reason, days: days }).then(() => {
                 if (!silent) {
