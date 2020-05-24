@@ -29,6 +29,10 @@ export async function lockChannel(
         channel.updateOverwrite(overwriteChanId, { SEND_MESSAGES: false });
     });
 
+    logger.debug(
+        `Locked channel ${channel.name} (${channel.id}) in ${channel.guild.name} (${channel.guild.id})`
+    );
+
     channel.send('Channel locked! :)');
 
     await locksRepo.insert({
@@ -41,6 +45,42 @@ export async function lockChannel(
     return true;
 }
 
-export async function unlockChannel(channel: TextChannel) {
-    let guild = channel.guild;
+export async function unlockChannel(
+    locksRepo: Repository<ChannelLocks>,
+    channel: TextChannel
+): Promise<boolean> {
+    // get the channels lock
+    let channelLock = await locksRepo.findOne({
+        where: { server: channel.guild.id, channel: channel.id },
+    });
+    if (!channelLock) return false;
+
+    let everyoneRole = channel.guild.roles.cache.find(
+        (role) => role.name === '@everyone'
+    );
+
+    // overwrite @everyone role
+    channel.updateOverwrite(everyoneRole.id, { SEND_MESSAGES: null });
+
+    // overwrite all permissions of CURRENT overwrites besides MUTE role
+    channel.permissionOverwrites.map((overwrite) => {
+        let overwriteRole = channel.guild.roles.cache.get(overwrite.id);
+        // check to make sure we are not modifying the muted role overrides
+        if (!overwriteRole.name.toLowerCase().includes('mute')) {
+            channel.updateOverwrite(overwrite.id, { SEND_MESSAGES: null });
+        }
+    });
+
+    logger.debug(
+        `Unlocked channel ${channel.name} (${channel.id}) in ${channel.guild.name} ${channel.guild.id}`
+    );
+
+    channel.send('Channel unlocked! :)');
+
+    await locksRepo.delete({
+        server: channel.guild.id,
+        channel: channel.id,
+    });
+
+    return true;
 }

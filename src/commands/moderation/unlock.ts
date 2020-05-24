@@ -1,21 +1,22 @@
 import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { lockChannel } from '../../structures/lockManager';
+import { unlockChannel } from '../../structures/lockManager';
 import { ChannelLocks } from '../../models/channelLocks';
 
-export default class LockCommand extends Command {
+export default class UnlockCommand extends Command {
     public constructor() {
-        super('lock', {
-            aliases: ['lock', 'lockdown'],
+        super('unlock', {
+            aliases: ['unlock'],
             description: {
-                content: 'Stop the sending of all messages in the channel.',
-                usage: 'lock [channel] [duration]',
+                content:
+                    'Resume the ability to send messages in a channel after a lock.',
+                usage: 'unlock [channel] [duration]',
                 examples: [
-                    'lock',
-                    'lock #general',
-                    'lock #general 2h',
-                    'lock general 10m',
+                    'unlock',
+                    'unlock #general',
+                    'unlock #general 2h',
+                    'unlock general 10m',
                 ],
             },
             category: 'moderation',
@@ -34,31 +35,18 @@ export default class LockCommand extends Command {
                     type: 'channel',
                     default: (msg: Message) => msg.channel,
                 },
-                {
-                    id: 'duration',
-                    type: (_: Message, str: string) => {
-                        if (str) {
-                            return Number(ms(str));
-                        }
-                        return 0;
-                    },
-                    default: (_: Message) => 0,
-                },
             ],
         });
     }
 
-    public async exec(
-        msg: Message,
-        { channel, duration }: { channel: TextChannel; duration: number }
-    ) {
+    public async exec(msg: Message, { channel }: { channel: TextChannel }) {
         // get the ChannelLocks repo
         const channelLocksRepo = this.client.db.getRepository(ChannelLocks);
         // try to lock the channel
-        let locked = await lockChannel(channelLocksRepo, channel, duration);
+        let unlocked = await unlockChannel(channelLocksRepo, channel);
 
-        if (!locked)
-            return msg.util?.send('Channel is already locked or lock failed.');
+        if (!unlocked)
+            return msg.util?.send('Channel is not locked or unlock failed.');
 
         if (msg.channel.id !== channel.id)
             return msg.util?.send('Channel locked! :)');
