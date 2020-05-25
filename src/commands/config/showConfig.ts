@@ -7,115 +7,115 @@ import { getDefaultEmbed } from '../../utils/message';
 import ms from 'ms';
 
 export default class ShowConfigCommand extends Command {
-    public constructor() {
-        super('config-show', {
-            category: 'config',
-            clientPermissions: [Permissions.FLAGS.MANAGE_GUILD],
-            userPermissions: [Permissions.FLAGS.MANAGE_GUILD],
-        });
-    }
+  public constructor() {
+    super('config-show', {
+      category: 'config',
+      clientPermissions: [Permissions.FLAGS.MANAGE_GUILD],
+      userPermissions: [Permissions.FLAGS.MANAGE_GUILD],
+    });
+  }
 
-    public async exec(msg: Message) {
-        const serversRepo: Repository<Servers> = this.client.db.getRepository(
-            Servers
-        );
+  public async exec(msg: Message) {
+    const serversRepo: Repository<Servers> = this.client.db.getRepository(
+      Servers
+    );
 
-        let server = await serversRepo.findOne({
-            where: { server: msg.guild.id },
-        });
+    let server = await serversRepo.findOne({
+      where: { server: msg.guild.id },
+    });
 
-        const embed = getDefaultEmbed()
-            .setTitle(`Server Config | ${msg.guild.name}`)
-            .addField('**❯ Prefix** (prefix)', `*${server.prefix}*`, true)
-            .addField(
-                '**❯ Missing Permission Messages** (permissionmessages)',
-                server.missingPermissionMessages ? '*Enabled*' : '*Disabled*',
-                true
-            )
-            .addField(
-                '**❯ Mute Configuration**',
-                stripIndent`
+    const embed = getDefaultEmbed()
+      .setTitle(`Server Config | ${msg.guild.name}`)
+      .addField('**❯ Prefix** (prefix)', `*${server.prefix}*`, true)
+      .addField(
+        '**❯ Missing Permission Messages** (permissionmessages)',
+        server.missingPermissionMessages ? '*Enabled*' : '*Disabled*',
+        true
+      )
+      .addField(
+        '**❯ Mute Configuration**',
+        stripIndent`
                 **• Role** \`muterole\`
                 ${
-                    server.mutedRole
-                        ? `<@&${server.mutedRole}> *(${server.mutedRole})*`
-                        : '*Not set*'
+                  server.mutedRole
+                    ? `<@&${server.mutedRole}> *(${server.mutedRole})*`
+                    : '*Not set*'
                 }
                 **• Duration** \`muteduration\`
                 *${ms(server.muteDuration)}*
                 `,
-                true
-            )
-            .addField(
-                '**❯ Welcome Message**',
-                stripIndent`
+        true
+      )
+      .addField(
+        '**❯ Welcome Message**',
+        stripIndent`
                 **• Status ** \`welcomemsgtoggle\`
                 *${server.welcomeMessageEnabled ? 'Enabled' : 'Disabled'}*
                 **• Message** \`welcomemsg\`
                 *${server.welcomeMessage ? server.welcomeMessage : 'Not set'}*
                 **• Channel** \`welcomemsgchannel\`
                 ${
-                    server.welcomeChannel
-                        ? `<#${server.welcomeChannel}>`
-                        : `*Not set*`
+                  server.welcomeChannel
+                    ? `<#${server.welcomeChannel}>`
+                    : `*Not set*`
                 }
                 **• Send as Embed** \`welcomemsgembed\`
                 *${server.welcomeMessageEmbeded ? 'Enabled' : 'Disabled'}*
                 **• Send in DM** \`welcomemsgdm\`
                 *${server.welcomeMessageSendDM ? 'Enabled' : 'Disabled'}*
                 `,
-                false
-            )
-            .addField(
-                '**❯ Auto Role**',
-                stripIndent`
+        false
+      )
+      .addField(
+        '**❯ Auto Role**',
+        stripIndent`
                 **• Status ** \`autoroletoggle\`
                 *${server.autoroleEnabled ? 'Enabled' : 'Disabled'}*
                 **• Role** \`autorole\`
                 ${
-                    server.autoroleRole
-                        ? `<@&${server.autoroleRole}> *(${server.autoroleRole})*`
-                        : '*Not set*'
+                  server.autoroleRole
+                    ? `<@&${server.autoroleRole}> *(${server.autoroleRole})*`
+                    : '*Not set*'
                 }
                 `,
-                true
-            )
-            .addField(
-                '**❯ Command Logging**',
-                stripIndent`
+        true
+      )
+      .addField(
+        '**❯ Command Logging**',
+        stripIndent`
                 • **Status** \`commandlogtoggle\`
                 *${server.commandLogEnabled ? 'Enabled' : 'Disabled'}*
                 • **Channel** \`commandlog\`
                 ${server.commandLog ? `<#${server.commandLog}>` : '*Not set*'}`,
-                true
-            )
-            .addField(
-                '**❯ Mod Action Logging**',
-                stripIndent`
+        true
+      )
+      .addField(
+        '**❯ Mod Action Logging**',
+        stripIndent`
                 **• Status** \`modlogtoggle\`
                 *${server.modLogEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`modlog\`
                 ${server.modLog ? `<#${server.modLog}>` : '*Not set*'}`,
-                true
-            )
-            .addField(
-                '**❯ Join/Leave Messages**',
-                stripIndent`
+        true
+      )
+      .addField(
+        '**❯ Join/Leave Messages**',
+        stripIndent`
                 **• Join** \`joinmsg\`
                 *${server.joinMsgEnabled ? 'Enabled' : 'Disabled'}*
                 **• Delete** \`leavemsg\`
                 *${server.leaveMsgEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`joinleavelog\`
                 ${
-                    server.joinLeaveLog
-                        ? `<#${server.joinLeaveLog}>`
-                        : '*Not set*'
+                  server.joinLeaveLog
+                    ? `<#${server.joinLeaveLog}>`
+                    : '*Not set*'
                 }`,
-                true
-            )
-            .addField(
-                '**❯ Message Logging**',
-                stripIndent`
+        true
+      )
+      .addField(
+        '**❯ Message Logging**',
+        stripIndent`
                 **• Deletes** \`logdeletes\`
                 *${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}*
                 **• Edits** \`logedits\`
@@ -125,10 +125,10 @@ export default class ShowConfigCommand extends Command {
                 **• Channel** \`msglog\`
                 ${server.messageLog ? `<#${server.messageLog}>` : '*Not set*'}
                 `,
-                true
-            )
-            .setThumbnail(msg.guild.iconURL() ?? '');
+        true
+      )
+      .setThumbnail(msg.guild.iconURL() ?? '');
 
-        return msg.util?.send(embed);
-    }
+    return msg.util?.send(embed);
+  }
 }

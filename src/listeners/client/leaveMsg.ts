@@ -6,27 +6,27 @@ import logger from '../../utils/logger';
 import { logLeaveMsg } from '../../structures/logManager';
 
 export default class LeaveMsgListener extends Listener {
-    public constructor() {
-        super('leaveMsgListener', {
-            emitter: 'client',
-            event: 'guildMemberRemove',
-        });
-    }
+  public constructor() {
+    super('leaveMsgListener', {
+      emitter: 'client',
+      event: 'guildMemberRemove',
+    });
+  }
 
-    public async exec(member: GuildMember) {
-        const serversRepo: Repository<Servers> = this.client.db.getRepository(
-            Servers
-        );
+  public async exec(member: GuildMember) {
+    const serversRepo: Repository<Servers> = this.client.db.getRepository(
+      Servers
+    );
 
-        // Add the muted role
-        try {
-            // log join
-            logLeaveMsg(serversRepo, member);
-        } catch (err) {
-            logger.error(
-                `Error logging member leave in ${member.guild.name} (${member.guild.id}). Reason: `,
-                err
-            );
-        }
+    // Add the muted role
+    try {
+      // log join
+      logLeaveMsg(serversRepo, member);
+    } catch (err) {
+      logger.error(
+        `Error logging member leave in ${member.guild.name} (${member.guild.id}). Reason: `,
+        err
+      );
     }
+  }
 }

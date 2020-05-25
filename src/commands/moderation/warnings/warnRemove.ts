@@ -7,81 +7,81 @@ import { getDefaultEmbed } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 
 export default class WarnRemoveCommand extends Command {
-    public constructor() {
-        super('warn-remove', {
-            category: 'moderation',
-            clientPermissions: [
-                Permissions.FLAGS.MANAGE_MESSAGES,
-                Permissions.FLAGS.MANAGE_ROLES,
-            ],
-            userPermissions: [
-                Permissions.FLAGS.MANAGE_MESSAGES,
-                Permissions.FLAGS.MANAGE_ROLES,
-            ],
-            args: [
-                {
-                    id: 'member',
-                    type: 'member',
-                },
-                {
-                    id: 'id',
-                    type: 'number',
-                },
-            ],
-        });
+  public constructor() {
+    super('warn-remove', {
+      category: 'moderation',
+      clientPermissions: [
+        Permissions.FLAGS.MANAGE_MESSAGES,
+        Permissions.FLAGS.MANAGE_ROLES,
+      ],
+      userPermissions: [
+        Permissions.FLAGS.MANAGE_MESSAGES,
+        Permissions.FLAGS.MANAGE_ROLES,
+      ],
+      args: [
+        {
+          id: 'member',
+          type: 'member',
+        },
+        {
+          id: 'id',
+          type: 'number',
+        },
+      ],
+    });
+  }
+
+  public async exec(
+    msg: Message,
+    { member, id }: { member: GuildMember; id: number }
+  ) {
+    if (!member) {
+      return msg.util?.send('User not specified / found.');
     }
 
-    public async exec(
-        msg: Message,
-        { member, id }: { member: GuildMember; id: number }
-    ) {
-        if (!member) {
-            return msg.util?.send('User not specified / found.');
-        }
+    if (!id) {
+      return msg.util?.send('Please specify a warning ID to remove.');
+    }
 
-        if (!id) {
-            return msg.util?.send('Please specify a warning ID to remove.');
-        }
+    const warningRepo: Repository<Warnings> = this.client.db.getRepository(
+      Warnings
+    );
 
-        const warningRepo: Repository<Warnings> = this.client.db.getRepository(
-            Warnings
+    // TODO: Create helper function for this.
+    if (await checkHigherOrEqualPermissions(msg, member))
+      return msg.util?.reply(
+        'This member has a higher or equal role to you. You are unable to remove warnings from them.'
+      );
+
+    try {
+      let warning = await warningRepo.delete({
+        server: msg.guild.id,
+        user: member.id,
+        id: id,
+      });
+
+      if (warning.affected > 0) {
+        logger.debug(
+          `Removed warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id})`
         );
 
-        // TODO: Create helper function for this.
-        if (await checkHigherOrEqualPermissions(msg, member))
-            return msg.util?.reply(
-                'This member has a higher or equal role to you. You are unable to remove warnings from them.'
-            );
+        const embed = getDefaultEmbed()
+          .setTitle('Removed Warning')
+          .addField('ID', id, true)
+          .addField('User', member.user, true)
+          .addField('Moderator', msg.member.user, true);
 
-        try {
-            let warning = await warningRepo.delete({
-                server: msg.guild.id,
-                user: member.id,
-                id: id,
-            });
+        return msg.util?.send(embed);
+      }
 
-            if (warning.affected > 0) {
-                logger.debug(
-                    `Removed warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id})`
-                );
+      return msg.util?.send('Warning does not exist.');
+    } catch (err) {
+      logger.error(
+        `Error removing warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
+        err
+      );
 
-                const embed = getDefaultEmbed()
-                    .setTitle('Removed Warning')
-                    .addField('ID', id, true)
-                    .addField('User', member.user, true)
-                    .addField('Moderator', msg.member.user, true);
-
-                return msg.util?.send(embed);
-            }
-
-            return msg.util?.send('Warning does not exist.');
-        } catch (err) {
-            logger.error(
-                `Error removing warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id}). Error: `,
-                err
-            );
-
-            return msg.util?.send('Failed to remove warning.');
-        }
+      return msg.util?.send('Failed to remove warning.');
     }
+  }
 }
