@@ -23,11 +23,11 @@ export default class MemberJoinListener extends Listener {
             where: { server: member.guild.id },
         });
 
-        // Add the muted role
         try {
             // log join
             logJoinMsg(server, member);
 
+            // TODO: Refactor out possibly
             // send welcome message if enabled
             if (server.welcomeMessageEnabled) {
                 let channel = member.guild.channels.cache.get(
@@ -40,12 +40,31 @@ export default class MemberJoinListener extends Listener {
                     .replace('{server}', member.guild.name);
 
                 if (server.welcomeMessageEmbeded) {
-                    channel.send(
-                        getDefaultEmbed()
-                            .setTitle('Welcome!')
-                            .setDescription(welcomeMessage)
-                    );
+                    let embed = getDefaultEmbed()
+                        .setTitle('Welcome!')
+                        .setDescription(welcomeMessage);
+                    if (server.welcomeMessageSendDM) {
+                        try {
+                            await member.send(embed);
+                            return;
+                        } catch (err) {
+                            await channel.send(embed);
+                            return;
+                        }
+                    }
+
+                    await channel.send(embed);
                     return;
+                }
+
+                if (server.welcomeMessageSendDM) {
+                    try {
+                        await member.send(welcomeMessage);
+                        return;
+                    } catch (err) {
+                        await channel.send(welcomeMessage);
+                        return;
+                    }
                 }
 
                 channel.send(welcomeMessage);

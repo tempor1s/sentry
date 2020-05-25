@@ -20,6 +20,7 @@ export const ConfigFields = [
     ['config-welcomemsg', 'welcomemsg'],
     ['config-welcomemsgchan', 'welcomemsgchan'],
     ['config-welcomemsgembed', 'welcomemsgembed'],
+    ['config-welcomemsgdm', 'welcomemsgdm'],
 ];
 
 interface ConfigDescriptionInterface {
@@ -50,4 +51,6 @@ export const ConfigDescription: ConfigDescriptionInterface = {
     welcomemsg: 'Change the welcome message in the server.',
     welcomemsgchan: 'Change the channel to send the welcome message to.',
     welcomemsgembed: 'Enable/Disable to send the welcome message in an embed.',
+    welcomemsgdm:
+        "Enable/Disable if the bot DM's the welcome message to the user if possible.",
 };
