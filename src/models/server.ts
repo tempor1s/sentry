@@ -1,8 +1,6 @@
 import { Column, PrimaryColumn, Entity, CreateDateColumn } from 'typeorm';
 import { defaultPrefix } from '../config';
 
-// TODO: Server config
-
 @Entity('servers')
 export class Servers {
     // Server ID
