@@ -1,7 +1,13 @@
-import { stripIndents } from 'common-tags';
+import {
+  Message,
+  Permissions,
+  BitFieldResolvable,
+  PermissionString,
+} from 'discord.js';
 import { Command, PrefixSupplier } from 'discord-akairo';
-import { Message } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
+import { stripIndents } from 'common-tags';
+import { PERMISSIONS } from '../../utils/permissions';
 
 export default class Help extends Command {
   public constructor() {
@@ -37,12 +43,20 @@ export default class Help extends Command {
       );
 
       for (const category of this.handler.categories.values()) {
+        let availableCommands = category.filter(
+          (cmd) =>
+            cmd.aliases.length > 0 &&
+            msg.member.hasPermission(
+              new Permissions(
+                cmd.userPermissions as BitFieldResolvable<PermissionString>
+              )
+            )
+        );
         embed.addField(
           `❯ ${category.id.replace(/(\b\w)/gi, (lc) => lc.toUpperCase())}`,
-          `${category
-            .filter((cmd) => cmd.aliases.length > 0)
-            .map((cmd) => `\`${cmd.aliases[0]}\``)
-            .join(' ')}`
+          availableCommands.size > 0
+            ? availableCommands.map((cmd) => `\`${cmd.aliases[0]}\``).join(' ')
+            : `No commands available for your permission level.`
         );
       }
 
@@ -62,6 +76,15 @@ export default class Help extends Command {
           `\`\n\`${prefix}${command.aliases[0]} `
         )}\``,
         true
+      );
+    if (command.userPermissions)
+      embed.addField(
+        '❯ Required Permissions',
+        new Permissions(
+          command.userPermissions as BitFieldResolvable<PermissionString>
+        )
+          .toArray(true)
+          .map((permission) => `❯ **${PERMISSIONS[permission]}**`)
       );
 
     embed.addField('❯ Legend', `Required: \`<>\` | Optional: \`[]\``);

@@ -22,6 +22,11 @@ export default class UnmuteCommand extends Command {
         Permissions.FLAGS.MANAGE_ROLES,
         Permissions.FLAGS.MANAGE_MESSAGES,
       ],
+      userPermissions: [
+        Permissions.FLAGS.MUTE_MEMBERS,
+        Permissions.FLAGS.MANAGE_ROLES,
+        Permissions.FLAGS.MANAGE_MESSAGES,
+      ],
       args: [
         {
           id: 'member',
