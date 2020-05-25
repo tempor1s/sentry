@@ -10,6 +10,8 @@ import {
 } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
+import { utc } from 'moment';
+import 'moment-duration-format';
 
 // TODO: Use raw events to log old message deletes
 export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
@@ -186,7 +188,8 @@ export async function logUnmute(
 export async function logPurge(
     repo: Repository<Servers>,
     moderator: GuildMember,
-    count: number
+    count: number,
+    msgs: Collection<string, Message>
 ) {
     let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
@@ -195,11 +198,29 @@ export async function logPurge(
         return;
     }
 
+    const output = msgs.reduce((out, msg) => {
+        const attachment = msg.attachments.first();
+        out += `[${utc(msg.createdTimestamp).format('MM/DD/YYYY hh:mm:ss')}] ${
+            msg.author.tag
+        } (${msg.author.id}): ${
+            msg.cleanContent ? msg.cleanContent.replace(/\n/g, '\r\n') : ''
+        }${attachment ? `\r\n${attachment.url}` : ''}\r\n`;
+        return out;
+    }, '');
+
     let embed = getDefaultEmbed()
         .setTitle(`Messages Purged`)
         .addField('Moderator', moderator.user, true)
+        .addField(
+            'Logs',
+            'See attachment file for full logs (possibly about this embed)'
+        )
         .addField('Purged Count', count, true)
         .setThumbnail(moderator.user.displayAvatarURL());
+
+    embed.attachFiles([
+        { attachment: Buffer.from(output, 'utf8'), name: 'logs.txt' },
+    ]);
 
     let modLogChannel = moderator.guild.channels.cache.get(
         server.modLog

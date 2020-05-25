@@ -47,7 +47,7 @@ export default class PurgeCommand extends Command {
             try {
                 const msgs = await msg.channel.bulkDelete(amount, true);
                 purgeSize = msgs.size;
-                logPurge(serverRepo, msg.member, purgeSize);
+                logPurge(serverRepo, msg.member, purgeSize, msgs);
 
                 logger.debug(
                     `Purging ${msgs.size} messages in ${msg.guild.name} (${msg.guild.id})`
