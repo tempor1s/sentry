@@ -4,55 +4,53 @@ import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 
 export default class AutoRoleToggleConfigCommand extends Command {
-    public constructor() {
-        super('config-autoroletoggle', {
-            description: {
-                content: 'Enable/Disable auto role in the server.',
-                usage: 'autoroletoggle',
-            },
-            channel: 'guild',
-            category: 'config',
-            clientPermissions: [Permissions.FLAGS.MANAGE_GUILD],
-            userPermissions: [Permissions.FLAGS.MANAGE_GUILD],
-        });
+  public constructor() {
+    super('config-autoroletoggle', {
+      description: {
+        content: 'Enable/Disable auto role in the server.',
+        usage: 'autoroletoggle',
+      },
+      channel: 'guild',
+      category: 'config',
+      clientPermissions: [Permissions.FLAGS.MANAGE_GUILD],
+      userPermissions: [Permissions.FLAGS.MANAGE_GUILD],
+    });
+  }
+
+  public async exec(msg: Message) {
+    let serverRepo = this.client.db.getRepository(Servers);
+    let server = await serverRepo.findOne({
+      where: { server: msg.guild.id },
+    });
+
+    let flag: boolean;
+    if (server.autoroleEnabled) {
+      flag = false;
+    } else {
+      flag = true;
     }
 
-    public async exec(msg: Message) {
-        let serverRepo = this.client.db.getRepository(Servers);
-        let server = await serverRepo.findOne({
-            where: { server: msg.guild.id },
-        });
+    // update the muterole
+    try {
+      await serverRepo.update(
+        { server: msg.guild.id },
+        { autoroleEnabled: flag }
+      );
 
-        let flag: boolean;
-        if (server.autoroleEnabled) {
-            flag = false;
-        } else {
-            flag = true;
-        }
+      logger.debug(
+        `Set autorole in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+      );
+    } catch (err) {
+      logger.error(
+        `Error toggling autorole in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        err
+      );
 
-        // update the muterole
-        try {
-            await serverRepo.update(
-                { server: msg.guild.id },
-                { autoroleEnabled: flag }
-            );
-
-            logger.debug(
-                `Set autorole in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
-            );
-        } catch (err) {
-            logger.error(
-                `Error toggling autorole in ${msg.guild.name} (${msg.guild.id}). Error: `,
-                err
-            );
-
-            return msg.util?.send(
-                'Error when toggling autorole. Please try again.'
-            );
-        }
-
-        return msg.util?.send(
-            `Successfully ${flag ? 'enabled' : 'disabled'} autorole.`
-        );
+      return msg.util?.send('Error when toggling autorole. Please try again.');
     }
+
+    return msg.util?.send(
+      `Successfully ${flag ? 'enabled' : 'disabled'} autorole.`
+    );
+  }
 }

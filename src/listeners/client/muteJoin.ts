@@ -7,58 +7,56 @@ import logger from '../../utils/logger';
 import { logMute } from '../../structures/logManager';
 
 export default class MuteJoinListener extends Listener {
-    public constructor() {
-        super('muteJoinListener', {
-            emitter: 'client',
-            event: 'guildMemberAdd',
-        });
+  public constructor() {
+    super('muteJoinListener', {
+      emitter: 'client',
+      event: 'guildMemberAdd',
+    });
+  }
+
+  public async exec(member: GuildMember) {
+    const serversRepo: Repository<Servers> = this.client.db.getRepository(
+      Servers
+    );
+    const mutesRepo: Repository<Mutes> = this.client.db.getRepository(Mutes);
+
+    let muted = await mutesRepo.findOne({
+      where: { server: member.guild.id, user: member.id },
+    });
+
+    if (!muted) {
+      return;
     }
 
-    public async exec(member: GuildMember) {
-        const serversRepo: Repository<Servers> = this.client.db.getRepository(
-            Servers
-        );
-        const mutesRepo: Repository<Mutes> = this.client.db.getRepository(
-            Mutes
-        );
+    let server = await serversRepo.findOne({
+      where: { server: member.guild.id },
+    });
 
-        let muted = await mutesRepo.findOne({
-            where: { server: member.guild.id, user: member.id },
-        });
+    // Add the muted role
+    try {
+      await member.roles.add(
+        server.mutedRole,
+        `Muted | Reason: Left and rejoined while muted.`
+      );
 
-        if (!muted) {
-            return;
-        }
+      logger.info(
+        `Remuted ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) because they left and rejoined while muted.`
+      );
 
-        let server = await serversRepo.findOne({
-            where: { server: member.guild.id },
-        });
+      await member.send('Nice try mute evading...');
 
-        // Add the muted role
-        try {
-            await member.roles.add(
-                server.mutedRole,
-                `Muted | Reason: Left and rejoined while muted.`
-            );
-
-            logger.info(
-                `Remuted ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) because they left and rejoined while muted.`
-            );
-
-            await member.send('Nice try mute evading...');
-
-            logMute(
-                serversRepo,
-                member,
-                'Mute Evading | Remute',
-                muted.end - Date.now(),
-                member.guild.members.cache.get(this.client.user.id)
-            );
-        } catch (err) {
-            logger.error(
-                `Error occured when remuting ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) when they rejoined. Reason: `,
-                err
-            );
-        }
+      logMute(
+        serversRepo,
+        member,
+        'Mute Evading | Remute',
+        muted.end - Date.now(),
+        member.guild.members.cache.get(this.client.user.id)
+      );
+    } catch (err) {
+      logger.error(
+        `Error occured when remuting ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) when they rejoined. Reason: `,
+        err
+      );
     }
+  }
 }

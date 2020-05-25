@@ -5,26 +5,26 @@ import logger from '../../../utils/logger';
 import { logImageUpload } from '../../../structures/logManager';
 
 export default class LogImageUploadListener extends Listener {
-    public constructor() {
-        super('logImageUpload', {
-            emitter: 'client',
-            event: 'message',
-            category: 'client',
-        });
+  public constructor() {
+    super('logImageUpload', {
+      emitter: 'client',
+      event: 'message',
+      category: 'client',
+    });
+  }
+
+  public async exec(msg: Message) {
+    if (
+      msg.author.bot ||
+      msg.attachments.size < 1 ||
+      msg.channel instanceof DMChannel
+    ) {
+      return;
     }
 
-    public async exec(msg: Message) {
-        if (
-            msg.author.bot ||
-            msg.attachments.size < 1 ||
-            msg.channel instanceof DMChannel
-        ) {
-            return;
-        }
+    logger.debug(`Image uploaded in ${msg.guild.name} (${msg.guild.id})`);
 
-        logger.debug(`Image uploaded in ${msg.guild.name} (${msg.guild.id})`);
-
-        let serversRepo = this.client.db.getRepository(Servers);
-        await logImageUpload(serversRepo, msg);
-    }
+    let serversRepo = this.client.db.getRepository(Servers);
+    await logImageUpload(serversRepo, msg);
+  }
 }
