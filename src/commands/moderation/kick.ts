@@ -5,7 +5,6 @@ import { logKick } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
-import ms from 'ms';
 
 export default class KickCommand extends Command {
   public constructor() {
@@ -42,6 +41,7 @@ export default class KickCommand extends Command {
           id: 'silent',
           match: 'flag',
           flag: ['--silent', '-s'],
+          default: false,
         },
       ],
     });
@@ -52,7 +52,7 @@ export default class KickCommand extends Command {
     {
       member,
       reason,
-      silent = false,
+      silent,
     }: {
       member: GuildMember;
       reason: string;

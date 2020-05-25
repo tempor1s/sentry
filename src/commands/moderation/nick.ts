@@ -13,16 +13,15 @@ export default class NickCommand extends Command {
         content: 'Change or reset the nickname of a user in a server.',
         usage: 'nick <user> [nick - leave out to reset]',
         examples: [
-          'nick @temporis#6402',
-          'nick @temporis#6402 Nerd',
-          'nick 111901076520767488 Bot',
+          '@temporis#6402',
+          '@temporis#6402 Nerd',
+          '111901076520767488 Bot',
         ],
       },
       category: 'moderation',
       channel: 'guild',
       clientPermissions: [Permissions.FLAGS.MANAGE_NICKNAMES],
       userPermissions: [Permissions.FLAGS.MANAGE_NICKNAMES],
-      // TODO: Create a silent flag to not send them a message. (maybe dont log??)
       args: [
         {
           id: 'member',
@@ -40,7 +39,7 @@ export default class NickCommand extends Command {
 
   public async exec(
     msg: Message,
-    { member, nick }: { member: GuildMember; nick: string }
+    { member, nick }: { member: GuildMember; nick: string; silent: boolean }
   ) {
     if (!member) {
       return msg.util?.send('Please specify a user to change nickname for.');

@@ -16,14 +16,15 @@ export default class WarnCommand extends Command {
         Permissions.FLAGS.MANAGE_ROLES,
       ],
       description: {
-        content: stripIndents`Manage warnings.
+        content: stripIndents`
+        Manage warnings.
 
-                   Available methods:
-                     • add \`<member>\` \`[reason]\`
-                     • remove \`<member>\` \`<id>\`
-                     • list \`<member>\`
-                     • clear \`<member>\`
-                `,
+           Available methods:
+             • add \`<member>\` \`[reason]\`
+             • remove \`<member>\` \`<id>\`
+             • list \`<member>\`
+             • clear \`<member>\`
+        `,
         usage: 'warn <method> <...arguments>',
         examples: [
           'add temporis bad boy!',

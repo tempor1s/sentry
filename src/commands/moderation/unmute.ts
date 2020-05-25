@@ -13,12 +13,7 @@ export default class UnmuteCommand extends Command {
       description: {
         content: 'Unmute a user in the discord server.',
         usage: 'unmute <user>',
-        examples: [
-          'unmute @temporis#6402',
-          'unmute temporis',
-          'unmute 111901076520767488',
-          'unmute temp',
-        ],
+        examples: ['@temporis#6402', 'temporis', '111901076520767488', 'temp'],
       },
       category: 'moderation',
       channel: 'guild',
@@ -31,7 +26,6 @@ export default class UnmuteCommand extends Command {
         {
           id: 'member',
           type: 'member',
-          match: 'content',
         },
       ],
     });

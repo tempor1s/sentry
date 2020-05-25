@@ -11,8 +11,8 @@ export default class UnbanCommand extends Command {
       aliases: ['unban'],
       description: {
         content: 'Unban a user from the server.',
-        usage: 'ban <user> [reason]',
-        examples: ['unban 111901076520767488'],
+        usage: 'unban <user> [reason]',
+        examples: ['111901076520767488'],
       },
       category: 'moderation',
       channel: 'guild',

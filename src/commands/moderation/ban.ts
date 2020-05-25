@@ -41,7 +41,7 @@ export default class BanCommand extends Command {
           type: 'integer',
           match: 'option',
           flag: ['--days=', '-d='],
-          default: 7,
+          default: 0,
         },
         {
           id: 'silent',

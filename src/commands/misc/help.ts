@@ -11,7 +11,7 @@ export default class Help extends Command {
         content:
           'Displays a list of available commands, or detailed information for a specified command.',
         usage: ['help'],
-        examples: ['help ping', 'help warn'],
+        examples: ['ping', 'warn'],
       },
       category: 'misc',
       channel: 'guild',

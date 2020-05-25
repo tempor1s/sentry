@@ -52,7 +52,7 @@ export default class TempBanCommand extends Command {
           type: 'integer',
           match: 'option',
           flag: ['--days=', '-d='],
-          default: 7,
+          default: 0,
         },
         {
           id: 'silent',

@@ -30,7 +30,7 @@ export default class AutoPurgeStopAllCommand extends Command {
     return msg.util?.send(
       removedPurges.affected
         ? `Stopped \`${removedPurges.affected}\` auto purge(s) from the server.`
-        : 'There are no channel auto-purges in this server.'
+        : 'There are no channel auto purges in this server.'
     );
   }
 }

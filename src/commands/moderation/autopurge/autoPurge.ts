@@ -17,14 +17,14 @@ export default class AutoPurgeCommand extends Command {
         Permissions.FLAGS.MANAGE_CHANNELS,
       ],
       description: {
-        content: stripIndents`Manage channels that are auto purged in the server.
-
-                   Available methods:
-                     • start \`<channel>\` \`<duration>\`
-                     • stop \`<channel>\`
-                     • show \`<channel>\`
-                     • stopall
-                `,
+        content: stripIndents`
+        Manage channels that are auto purged in the server.
+           Available methods:
+             • start \`<channel>\` \`<duration>\`
+             • stop \`<channel>\`
+             • show \`<channel>\`
+             • stopall
+        `,
         usage: 'autopurge <method> <...arguments>',
         examples: ['start #spam 3d', 'stop #spam', 'show', 'stopall'],
       },

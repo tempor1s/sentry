@@ -12,7 +12,12 @@ export default class WelcomeCommand extends Command {
       description: {
         content: 'Send a message to a channel whenever a user joins!',
         usage: 'welcome <channel> <message>',
-        examples: ['welcome #welcome Hello, {name}. Welcome to {server}!'],
+        examples: [
+          '#welcome Hello, {name}. Welcome to {server}!',
+          '#welcome Welcome {name} to the server!',
+          '#welcome Welcome to {server}',
+          '#welcome Welcome! Please read the rules.',
+        ],
       },
       category: 'misc',
       channel: 'guild',
