@@ -59,6 +59,10 @@ export default class ShowConfigCommand extends Command {
                         ? `<#${server.welcomeChannel}>`
                         : `*Not set*`
                 }
+                **• Send as Embed** \`welcomemsgembed\`
+                *${server.welcomeMessageEmbeded ? 'Enabled' : 'Disabled'}*
+                **• Send in DM** \`welcomemsgdm\`
+                *${server.welcomeMessageSendDM ? 'Enabled' : 'Disabled'}*
                 `,
                 false
             )

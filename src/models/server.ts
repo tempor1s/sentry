@@ -51,6 +51,14 @@ export class Servers {
     @Column({ type: 'text', nullable: true })
     welcomeMessage!: string;
 
+    // welcome message embeded?
+    @Column({ type: 'bool', default: false })
+    welcomeMessageEmbeded!: boolean;
+
+    // welcome message send in dm if possible
+    @Column({ type: 'bool', default: false })
+    welcomeMessageSendDM!: boolean;
+
     // User Join message
     @Column({ type: 'bool', default: false })
     joinMsgEnabled!: boolean;

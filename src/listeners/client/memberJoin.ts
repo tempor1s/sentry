@@ -4,6 +4,7 @@ import { Servers } from '../../models/server';
 import { Repository } from 'typeorm';
 import logger from '../../utils/logger';
 import { logJoinMsg } from '../../structures/logManager';
+import { getDefaultEmbed } from '../../utils/message';
 
 export default class MemberJoinListener extends Listener {
     public constructor() {
@@ -37,6 +38,15 @@ export default class MemberJoinListener extends Listener {
                 let welcomeMessage = server.welcomeMessage
                     .replace('{name}', `${member.user}`)
                     .replace('{server}', member.guild.name);
+
+                if (server.welcomeMessageEmbeded) {
+                    channel.send(
+                        getDefaultEmbed()
+                            .setTitle('Welcome!')
+                            .setDescription(welcomeMessage)
+                    );
+                    return;
+                }
 
                 channel.send(welcomeMessage);
             }
