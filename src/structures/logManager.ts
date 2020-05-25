@@ -26,10 +26,15 @@ export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
     let embed = getDefaultEmbed()
         .setTitle('Message Deleted')
         .addField('Content', msg.content, false)
+        .addField('Message', `[Context](${msg.url})`, true)
         .addField('ID', msg.id, true)
         .addField('Channel', msg.channel, true)
         .addField('Executor', msg.member.user, true)
         .setThumbnail(msg.member.user.displayAvatarURL());
+
+    // add attachments
+    let attachment = msg.attachments.first();
+    if (attachment) embed.addField('Attachment(s)', attachment.url);
 
     let channel = msg.guild.channels.cache.get(
         server.messageLog
@@ -60,6 +65,7 @@ export async function logMsgEdit(
         .setTitle('Message Edited')
         .addField('Before', oldMsg.cleanContent, false)
         .addField('After', newMsg.cleanContent, false)
+        .addField('Message', `[Context](${newMsg.url})`)
         .addField('ID', newMsg.id, true)
         .addField('Channel', newMsg.channel, true)
         .addField('Executor', newMsg.member.user, true)
