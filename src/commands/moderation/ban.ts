@@ -37,16 +37,17 @@ export default class BanCommand extends Command {
                     default: (_: Message) => 'No reason provided.',
                 },
                 {
+                    id: 'days',
+                    type: 'integer',
+                    match: 'option',
+                    flag: ['--days=', '-d='],
+                    default: 7,
+                },
+                {
                     id: 'silent',
                     match: 'flag',
                     flag: ['--silent', '-s'],
-                },
-                {
-                    id: 'days',
-                    type: 'integer',
-                    match: 'flag',
-                    flag: ['--days=', '-d='],
-                    default: 0,
+                    default: false,
                 },
             ],
         });
@@ -57,17 +58,19 @@ export default class BanCommand extends Command {
         {
             member,
             reason,
-            silent,
             days,
+            silent,
         }: {
             member: GuildMember;
             reason: string;
-            silent: boolean;
             days: number;
+            silent: boolean;
         }
     ) {
         if (!member) {
-            return msg.util?.send('Please specify a user to ban.');
+            return msg.util?.send(
+                'Please specify a user to ban / user not found.'
+            );
         }
 
         // check to make sure they are not a higher role
@@ -80,7 +83,7 @@ export default class BanCommand extends Command {
 
         try {
             // check to make sure they are not already banned
-            if (await member.guild.fetchBan(member)) {
+            if (await member.guild.fetchBan(member).catch(() => {})) {
                 return msg.util?.send('That user is already banned.');
             }
 
