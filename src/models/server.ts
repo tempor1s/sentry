@@ -41,6 +41,18 @@ export class Servers {
     @Column({ type: 'bool', default: false })
     messageLogImagesEnabled!: boolean;
 
+    // welcome message enabled
+    @Column({ type: 'bool', default: false })
+    welcomeMessageEnabled!: boolean;
+
+    // welcome channel
+    @Column({ type: 'varchar', nullable: true, length: 22 })
+    welcomeChannel!: string;
+
+    // welcome message
+    @Column({ type: 'text', nullable: true })
+    welcomeMessage!: string;
+
     // User Join message
     @Column({ type: 'bool', default: false })
     joinMsgEnabled!: boolean;
