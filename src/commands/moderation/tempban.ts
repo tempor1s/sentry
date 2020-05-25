@@ -19,7 +19,8 @@ export default class TempBanCommand extends Command {
                     '@temporis#6402 1d',
                     'temporis 10d spamming',
                     '111901076520767488 30d bad words',
-                    'temporis 5d memer --silent',
+                    'temporis 5d memer --silent --days=7',
+                    '@temporis#6402 racism --days=30d',
                 ],
             },
             category: 'moderation',
@@ -47,16 +48,16 @@ export default class TempBanCommand extends Command {
                     default: (_: Message) => 'No reason provided.',
                 },
                 {
+                    id: 'days',
+                    type: 'integer',
+                    match: 'option',
+                    flag: ['--days=', '-d='],
+                    default: 7,
+                },
+                {
                     id: 'silent',
                     match: 'flag',
                     flag: ['--silent', '-s'],
-                },
-                {
-                    id: 'days',
-                    type: 'integer',
-                    match: 'flag',
-                    flag: ['--days=', '-d='],
-                    default: 0,
                 },
             ],
         });
@@ -68,18 +69,20 @@ export default class TempBanCommand extends Command {
             member,
             duration,
             reason,
-            silent,
             days,
+            silent,
         }: {
             member: GuildMember;
             duration: number;
             reason: string;
-            silent: boolean;
             days: number;
+            silent: boolean;
         }
     ) {
         if (!member) {
-            return msg.util?.send('Please specify a user to temporarily ban.');
+            return msg.util?.send(
+                'Please specify a user to temporarily ban / user not found.'
+            );
         }
 
         if (!duration) {

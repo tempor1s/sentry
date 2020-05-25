@@ -47,9 +47,13 @@ export default class UnbanCommand extends Command {
         let serversRepo = this.client.db.getRepository(Servers);
 
         try {
+            // check to make sure the user is not already unbanned or not banned
+            if (!(await msg.guild.fetchBan(user).catch(() => {}))) {
+                return msg.util?.send('User is not banned.');
+            }
+
             // log unban
             logUnban(serversRepo, user, msg.member, reason);
-
             await msg.guild.members.unban(user, reason);
 
             logger.debug(
