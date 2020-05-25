@@ -3,13 +3,13 @@ import { Message, Permissions, TextChannel } from 'discord.js';
 import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 
-export default class ModLogConfigCommand extends Command {
+export default class WelcomeMsgChanConfigCommand extends Command {
     public constructor() {
-        super('config-modlog', {
+        super('config-welcomemsgchan', {
             description: {
                 content: 'Update the modlog channel in the server.',
-                usage: 'modlog [channel]',
-                examples: ['', '#modlog', 'modlog', '712205605951242273'],
+                usage: 'welcomemsgchan <channel>',
+                examples: ['', '#welcome', 'welcome', '712205605951242273'],
             },
             channel: 'guild',
             category: 'config',
@@ -31,37 +31,43 @@ export default class ModLogConfigCommand extends Command {
         });
 
         if (!channel) {
-            if (server.modLog) {
-                let oldChannel = msg.guild.channels.cache.get(server.modLog);
+            if (server.welcomeChannel) {
+                let oldChannel = msg.guild.channels.cache.get(
+                    server.welcomeChannel
+                );
                 return msg.util?.send(
-                    `The current modlog channel is ${oldChannel} (${oldChannel.id})`
+                    `The current channel the welcome message will be sent to is ${oldChannel} (${oldChannel.id})`
                 );
             }
 
-            return msg.util?.send('There is no modlog channel currently set.');
+            return msg.util?.send(
+                'The channel to send the welcome message to is not configured.'
+            );
         }
 
         // update the command log channel
         try {
             await serverRepo.update(
                 { server: msg.guild.id },
-                { modLog: channel.id }
+                { welcomeChannel: channel.id }
             );
 
             logger.debug(
-                `Updating modlog channel in ${msg.guild.name} (${msg.guild.id}) to ${channel.name} (${channel.id})`
+                `Updating welcome message channel in ${msg.guild.name} (${msg.guild.id}) to ${channel.name} (${channel.id})`
             );
         } catch (err) {
             logger.error(
-                `Error updating modlog channel in ${msg.guild.name} (${msg.guild.id}). Error: `,
+                `Error updating welcome message channel in ${msg.guild.name} (${msg.guild.id}). Error: `,
                 err
             );
 
-            return msg.util?.send('Error when updating the modlog channel.');
+            return msg.util?.send(
+                'Error when updating the welcome message channel.'
+            );
         }
 
         return msg.util?.send(
-            `The command log channel has been set to ${channel} (${channel.id})`
+            `The channel to send the welcome message to has been set to ${channel} (${channel.id})`
         );
     }
 }
