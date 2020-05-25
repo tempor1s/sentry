@@ -1,8 +1,6 @@
 import { Column, PrimaryColumn, Entity, CreateDateColumn } from 'typeorm';
 import { defaultPrefix } from '../config';
 
-// TODO: Server config
-
 @Entity('servers')
 export class Servers {
     // Server ID
@@ -40,6 +38,26 @@ export class Servers {
 
     @Column({ type: 'bool', default: false })
     messageLogImagesEnabled!: boolean;
+
+    // welcome message enabled
+    @Column({ type: 'bool', default: false })
+    welcomeMessageEnabled!: boolean;
+
+    // welcome channel
+    @Column({ type: 'varchar', nullable: true, length: 22 })
+    welcomeChannel!: string;
+
+    // welcome message
+    @Column({ type: 'text', nullable: true })
+    welcomeMessage!: string;
+
+    // welcome message embeded?
+    @Column({ type: 'bool', default: false })
+    welcomeMessageEmbeded!: boolean;
+
+    // welcome message send in dm if possible
+    @Column({ type: 'bool', default: false })
+    welcomeMessageSendDM!: boolean;
 
     // User Join message
     @Column({ type: 'bool', default: false })

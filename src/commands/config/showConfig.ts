@@ -44,6 +44,26 @@ export default class ShowConfigCommand extends Command {
                 **• Duration** \`muteduration\`
                 *${ms(server.muteDuration)}*
                 `,
+                true
+            )
+            .addField(
+                '**❯ Welcome Message**',
+                stripIndent`
+                **• Status ** \`welcomemsgtoggle\`
+                *${server.welcomeMessageEnabled ? 'Enabled' : 'Disabled'}*
+                **• Message** \`welcomemsg\`
+                *${server.welcomeMessage ? server.welcomeMessage : 'Not set'}*
+                **• Channel** \`welcomemsgchannel\`
+                ${
+                    server.welcomeChannel
+                        ? `<#${server.welcomeChannel}>`
+                        : `*Not set*`
+                }
+                **• Send as Embed** \`welcomemsgembed\`
+                *${server.welcomeMessageEmbeded ? 'Enabled' : 'Disabled'}*
+                **• Send in DM** \`welcomemsgdm\`
+                *${server.welcomeMessageSendDM ? 'Enabled' : 'Disabled'}*
+                `,
                 false
             )
             .addField(

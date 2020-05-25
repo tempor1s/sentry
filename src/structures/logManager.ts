@@ -532,12 +532,7 @@ export async function logChannelUnlock(
     modLogChannel.send(embed);
 }
 
-export async function logJoinMsg(
-    repo: Repository<Servers>,
-    member: GuildMember
-) {
-    let server = await repo.findOne({ where: { server: member.guild.id } });
-
+export async function logJoinMsg(server: Servers, member: GuildMember) {
     if (!server.joinMsgEnabled && !server.joinLeaveLog) {
         return;
     }

@@ -16,6 +16,11 @@ export const ConfigFields = [
     ['config-joinmsg', 'joinmsg'],
     ['config-leavemsg', 'leavemsg'],
     ['config-joinleavelog', 'joinleavelog'],
+    ['config-welcomemsgtoggle', 'welcomemsgtoggle'],
+    ['config-welcomemsg', 'welcomemsg'],
+    ['config-welcomemsgchan', 'welcomemsgchan'],
+    ['config-welcomemsgembed', 'welcomemsgembed'],
+    ['config-welcomemsgdm', 'welcomemsgdm'],
 ];
 
 interface ConfigDescriptionInterface {
@@ -41,4 +46,11 @@ export const ConfigDescription: ConfigDescriptionInterface = {
     joinmsg: 'Enable/Disable logging for when a user joins the server.',
     leavemsg: 'Enable/Disable logging for when a user leaves the server.',
     joinleavelog: 'Update the channel for join/leave logging in the server.',
+    welcomemsgtoggle:
+        'Enable/Disable a welcome message to new members in the server.',
+    welcomemsg: 'Change the welcome message in the server.',
+    welcomemsgchan: 'Change the channel to send the welcome message to.',
+    welcomemsgembed: 'Enable/Disable to send the welcome message in an embed.',
+    welcomemsgdm:
+        "Enable/Disable if the bot DM's the welcome message to the user if possible.",
 };
