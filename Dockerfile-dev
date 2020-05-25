@@ -11,6 +11,4 @@ RUN npm install
 
 COPY . ./ 
 
-RUN chmod +x scripts/wait-for-it.sh
-
 CMD ["npm", "run", "start:dev"]
