@@ -19,7 +19,7 @@ export default class AutoPurgeStartCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
         },
         {
           id: 'interval',

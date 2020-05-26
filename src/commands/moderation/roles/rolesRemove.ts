@@ -21,7 +21,6 @@ export default class RolesRemoveCommand extends Command {
         {
           id: 'role',
           type: 'role',
-          match: 'rest',
         },
       ],
     });

@@ -10,15 +10,16 @@ export default class RolesCommand extends Command {
       clientPermissions: [Permissions.FLAGS.MANAGE_ROLES],
       userPermissions: [Permissions.FLAGS.MANAGE_ROLES],
       description: {
-        content: stripIndents`Manage roles.
+        content: stripIndents`
+        Manage roles.
 
-                   Available methods:
-                     • add \`<user>\` \`<role>\`
-                     • remove \`<user>\` \`<role>\`
-                     • addall \`<role>\`
-                     • removeall \`<role>\`
-                     • clear \`<user>\`
-                `,
+           Available methods:
+             • add \`<user>\` \`<role>\`
+             • remove \`<user>\` \`<role>\`
+             • addall \`<role>\`
+             • removeall \`<role>\`
+             • clear \`<user>\`
+        `,
         usage: 'roles <method> <...arguments>',
         examples: [
           'add @temporis#6402 Member',

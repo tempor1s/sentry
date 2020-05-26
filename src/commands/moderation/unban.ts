@@ -11,8 +11,8 @@ export default class UnbanCommand extends Command {
       aliases: ['unban'],
       description: {
         content: 'Unban a user from the server.',
-        usage: 'ban <user> [reason]',
-        examples: ['unban 111901076520767488'],
+        usage: 'unban <user> [reason]',
+        examples: ['111901076520767488'],
       },
       category: 'moderation',
       channel: 'guild',
@@ -53,8 +53,9 @@ export default class UnbanCommand extends Command {
       }
 
       // log unban
-      logUnban(serversRepo, user, msg.member, reason);
       await msg.guild.members.unban(user, reason);
+
+      logUnban(serversRepo, user, msg.member, reason);
 
       logger.debug(
         `Unbanned ${user.tag} (${user.id}) in server ${msg.guild.name} (${msg.guild.id})`

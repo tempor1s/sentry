@@ -21,7 +21,6 @@ export default class RolesAddCommand extends Command {
         {
           id: 'role',
           type: 'role',
-          match: 'rest',
         },
       ],
     });
@@ -41,13 +40,13 @@ export default class RolesAddCommand extends Command {
 
     // make sure we can not assign roles higher than us
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         'This member has a higher or equal role to you. You are unable to update their roles.'
       );
 
     // make sure the role we are assigning is not higher than the users highest role
     if (await checkHigherRole(msg, role))
-      return msg.util.send(
+      return msg.util?.send(
         'You can not assign roles that are higher than your own.'
       );
 

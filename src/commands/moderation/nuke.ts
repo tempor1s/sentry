@@ -11,9 +11,9 @@ export default class NukeCommand extends Command {
       aliases: ['nuke'],
       description: {
         content:
-          'Nuke an entire channel. This removes the channel and creates it again. THIS IS NOT REVERSABLE.',
+          'Nuke an entire channel. This removes the channel and creates it again. THIS IS  IRREVERSIBLE.',
         usage: 'nuke <channel>',
-        examples: ['nuke #logs', 'nuke logs'],
+        examples: ['', '#logs', 'logs'],
       },
       category: 'moderation',
       channel: 'guild',
@@ -28,7 +28,7 @@ export default class NukeCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
           prompt: {
             start: (_: Message) =>
               stripIndents`Which channel do you want to nuke?
@@ -38,13 +38,14 @@ export default class NukeCommand extends Command {
             ) => stripIndents`Please specify an actual channel.
                             \`cancel\` to cancel`,
           },
+          default: (msg: Message) => msg.channel,
         },
         {
           id: 'confirmPrompt',
           type: 'string',
           prompt: {
             start: (_: Message) =>
-              stripIndents`Are you **sure** you want to nuke this channel? This is **irreversable**. Continue: \`confirm\`
+              stripIndents`Are you **sure** you want to nuke this channel? This is **irreversible**. Continue: \`confirm\`
                             \`cancel\` to cancel`,
             cancel: (_: Message) => 'Command terminated.',
           },
@@ -75,6 +76,6 @@ export default class NukeCommand extends Command {
 
     newChannel.send('Channel nuked! :)');
 
-    return msg.util?.send(`Channel <#${newChannel.id}> has been nuked.`);
+    return msg.util?.send(`Channel ${newChannel} has been nuked.`);
   }
 }

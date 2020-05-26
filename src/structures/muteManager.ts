@@ -1,4 +1,4 @@
-import { GuildMember, Guild, Permissions, Message } from 'discord.js';
+import { GuildMember, Guild, Permissions, Message, Role } from 'discord.js';
 import { AkairoClient } from 'discord-akairo';
 import { Repository } from 'typeorm';
 import { logUnmute } from '../structures/logManager';
@@ -51,7 +51,6 @@ export async function mute(
   duration: number,
   silent: boolean = false
 ) {
-  // TODO: Add flag to make it silent and not send the muted user a message.
   // remove all the roles that are not @everyone
   let roles = member.roles.cache
     .filter((role) => role.name !== '@everyone')
@@ -192,6 +191,16 @@ export async function createMuteOrUpdate(
   return muteRoleId;
 }
 
+export async function getMutedRole(
+  serverRepo: Repository<Servers>,
+  guild: Guild
+): Promise<Role> {
+  let server = await serverRepo.findOne({ where: { server: guild.id } });
+  let mutedRole = guild.roles.cache.get(server.mutedRole);
+
+  return mutedRole;
+}
+
 async function createMutedRole(
   serverRepo: Repository<Servers>,
   server: Guild
@@ -215,9 +224,11 @@ async function createMutedRole(
     logger.debug(
       `Creating permissions overrides for ${channel.name} (${channel.id})`
     );
-    channel.overwritePermissions(
-      [{ id: role.id, deny: [Permissions.FLAGS.SEND_MESSAGES] }],
-      'Mute role overrides.'
+    // deny send message permissions
+    channel.updateOverwrite(
+      role,
+      { SEND_MESSAGES: false, SPEAK: false },
+      'Mute role overrides'
     );
   });
 

@@ -1,4 +1,5 @@
 import { Repository } from 'typeorm';
+import { AkairoClient } from 'discord-akairo';
 import { Servers } from '../models/server';
 import {
   Message,
@@ -43,7 +44,33 @@ export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
   channel.send(embed);
 }
 
-// TODO: Use raw events to log old message edits
+// TODO: Type event data
+export async function logUncachedMsgDelete(
+  repo: Repository<Servers>,
+  client: AkairoClient,
+  eventData: any
+) {
+  let server = await repo.findOne({ where: { server: eventData.guild_id } });
+
+  if (!server.messageLogEditsEnabled || !server.messageLog) return;
+
+  let embed = getDefaultEmbed()
+    .setTitle('Old Message Deleted')
+    .addField('Content', '*N/A*', false)
+    .addField(
+      'Message',
+      `[Context](https://discordapp.com/channels/${eventData.guild_id}/${eventData.channel_id}/${eventData.id})`,
+      true
+    )
+    .addField('ID', eventData.id, true)
+    .addField('Channel', `<#${eventData.channel_id}>`, true)
+    .addField('Executor', '*N/A*', true);
+
+  let channel = client.channels.cache.get(server.messageLog) as TextChannel;
+
+  channel.send(embed);
+}
+
 export async function logMsgEdit(
   repo: Repository<Servers>,
   oldMsg: Message,
@@ -53,19 +80,14 @@ export async function logMsgEdit(
     where: { server: newMsg.member.guild.id },
   });
 
-  if (
-    !server.messageLogEditsEnabled ||
-    !server.messageLog ||
-    newMsg.author.bot
-  ) {
+  if (!server.messageLogEditsEnabled || !server.messageLog || newMsg.author.bot)
     return;
-  }
 
   let embed = getDefaultEmbed()
     .setTitle('Message Edited')
     .addField('Before', oldMsg.cleanContent, false)
     .addField('After', newMsg.cleanContent, false)
-    .addField('Message', `[Context](${newMsg.url})`)
+    .addField('Message', `[Context](${newMsg.url})`, true)
     .addField('ID', newMsg.id, true)
     .addField('Channel', newMsg.channel, true)
     .addField('Executor', newMsg.member.user, true)
@@ -78,14 +100,50 @@ export async function logMsgEdit(
   channel.send(embed);
 }
 
+// TODO: Type the event data
+export async function logUncachedMsgEdit(
+  repo: Repository<Servers>,
+  client: AkairoClient,
+  eventData: any
+) {
+  let server = await repo.findOne({ where: { server: eventData.guild_id } });
+
+  if (!server.messageLogEditsEnabled || !server.messageLog) return;
+
+  let embed = getDefaultEmbed()
+    .setTitle('Old Message Edited')
+    .addField('Before', '*N/A*', false)
+    .addField('After', eventData.content, false)
+    .addField(
+      'Message',
+      `[Context](https://discordapp.com/channels/${eventData.guild_id}/${eventData.channel_id}/${eventData.id})`,
+      true
+    )
+    .addField('ID', eventData.id, true)
+    .addField('Channel', `<#${eventData.channel_id}>`, true)
+    .addField(
+      'Executor',
+      `${eventData.author.username + '#' + eventData.author.discriminator} (${
+        eventData.author.id
+      })`,
+      true
+    )
+    .setThumbnail(
+      `https://cdn.discordapp.com/avatars/${eventData.author.id}/${eventData.author.avatar}`
+    );
+
+  let channel = client.channels.cache.get(server.messageLog) as TextChannel;
+
+  channel.send(embed);
+}
+
 export async function logImageUpload(repo: Repository<Servers>, msg: Message) {
   let server = await repo.findOne({
     where: { server: msg.member.guild.id },
   });
 
-  if (!server.messageLogImagesEnabled || !server.messageLog || msg.author.bot) {
+  if (!server.messageLogImagesEnabled || !server.messageLog || msg.author.bot)
     return;
-  }
 
   let embed = getDefaultEmbed()
     .setTitle('Image Uploaded')
@@ -249,12 +307,12 @@ export async function logKick(
 // TODO: Log ban through event as well
 export async function logBan(
   repo: Repository<Servers>,
-  member: GuildMember,
+  user: User,
   reason: string,
   moderator: GuildMember,
   duration: string = 'Indefinite'
 ) {
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
   // make sure mod log is enabled and a channel is set
   if (!server.modLogEnabled && !server.modLog) {
@@ -262,13 +320,13 @@ export async function logBan(
   }
 
   let embed = getDefaultEmbed()
-    .setTitle(`User Banned | ${member.user.tag}`)
+    .setTitle(`User Banned | ${user.tag}`)
     .addField('Reason', reason, false)
     .addField('Moderator', moderator.user, true)
     .addField('Duration', duration, true)
-    .setThumbnail(member.user.displayAvatarURL());
+    .setThumbnail(user.displayAvatarURL());
 
-  let modLogChannel = member.guild.channels.cache.get(
+  let modLogChannel = moderator.guild.channels.cache.get(
     server.modLog
   ) as TextChannel;
 

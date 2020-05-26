@@ -15,7 +15,6 @@ export default class InviteCommand extends Command {
   }
 
   public async exec(msg: Message) {
-    // TODO: Cache this on the instance? :)
     return msg.util?.send(
       getDefaultEmbed().setDescription(
         `**[Add Sentry to your server!](${this.client.invite})**`

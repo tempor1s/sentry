@@ -14,12 +14,7 @@ export default class LockCommand extends Command {
       description: {
         content: 'Stop the sending of all messages in the channel.',
         usage: 'lock [channel] [duration]',
-        examples: [
-          'lock',
-          'lock #general',
-          'lock #general 2h',
-          'lock general 10m',
-        ],
+        examples: ['', '#general', '#general 2h', 'general 10m'],
       },
       category: 'moderation',
       channel: 'guild',
@@ -34,7 +29,7 @@ export default class LockCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
           default: (msg: Message) => msg.channel,
         },
         {

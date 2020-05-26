@@ -26,7 +26,7 @@ export default class RolesClearCommand extends Command {
 
     // dont want mods clearing admins roles
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         'This member has a higher or equal role to you. You are unable to update their roles.'
       );
 

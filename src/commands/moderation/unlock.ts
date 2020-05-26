@@ -14,12 +14,7 @@ export default class UnlockCommand extends Command {
         content:
           'Resume the ability to send messages in a channel after a lock.',
         usage: 'unlock [channel] [duration]',
-        examples: [
-          'unlock',
-          'unlock #general',
-          'unlock #general 2h',
-          'unlock general 10m',
-        ],
+        examples: ['', '#general', '#general 2h', 'general 10m'],
       },
       category: 'moderation',
       channel: 'guild',
@@ -34,7 +29,7 @@ export default class UnlockCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
           default: (msg: Message) => msg.channel,
         },
       ],

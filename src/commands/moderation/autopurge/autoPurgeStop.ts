@@ -17,7 +17,7 @@ export default class AutoPurgeStopCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
           default: (msg: Message) => msg.channel,
         },
       ],
@@ -27,14 +27,12 @@ export default class AutoPurgeStopCommand extends Command {
   // TODO: Refactor into other file
   // TODO: Error handling :)
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
-    // no channel specified
     let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
 
     let existingPurge = await autoPurgeRepo.findOne({
       where: { server: msg.guild.id, channel: channel.id },
     });
 
-    // TODO: Maybe allow multiple purges per channel?
     // purge already exists on the channel
     if (!existingPurge) {
       return msg.util?.send('There is no auto purge enabled for this channel.');

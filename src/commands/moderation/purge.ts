@@ -12,7 +12,7 @@ export default class PurgeCommand extends Command {
       description: {
         content: 'Purge messages from a channel',
         usage: 'purge <amount>',
-        examples: ['purge 10', 'purge 100'],
+        examples: ['10', '100'],
       },
       category: 'moderation',
       channel: 'guild',
