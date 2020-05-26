@@ -29,7 +29,7 @@ export default class UnlockCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
           default: (msg: Message) => msg.channel,
         },
       ],

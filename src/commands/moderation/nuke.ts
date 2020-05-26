@@ -28,7 +28,7 @@ export default class NukeCommand extends Command {
       args: [
         {
           id: 'channel',
-          type: 'channel',
+          type: 'textChannel',
           prompt: {
             start: (_: Message) =>
               stripIndents`Which channel do you want to nuke?

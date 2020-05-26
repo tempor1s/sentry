@@ -29,7 +29,7 @@ export default class ChannelInfoCommand extends Command {
 
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
     const embed = getDefaultEmbed()
-      .setTitle(`#${channel.name}`)
+      .setTitle(channel.type === 'text' ? `#${channel.name}` : channel.name)
       .addField('ID', channel.id, false)
       .addField('Type', channel.type, true)
       .addField('Topic', channel.topic || 'None', true)
