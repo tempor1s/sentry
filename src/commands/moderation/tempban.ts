@@ -112,14 +112,14 @@ export default class TempBanCommand extends Command {
         return msg.util?.send('That user is already banned.');
       }
 
+      if (!silent) {
+        await member.send(
+          `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`
+        );
+      }
+
       // ban the user and send them a msg
-      await member.ban({ reason: reason, days: days }).then(() => {
-        if (!silent) {
-          member.send(
-            `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`
-          );
-        }
-      });
+      await member.ban({ reason: reason, days: days });
 
       // so that we can unban people later :)
       await tempBansRepo.insert({
@@ -131,7 +131,7 @@ export default class TempBanCommand extends Command {
       });
 
       // log ban
-      logBan(serversRepo, member, reason, msg.member, msDuration);
+      logBan(serversRepo, member.user, reason, msg.member, msDuration);
 
       logger.debug(
         `Temp banned ${member.user.tag} (${member.id}) for ${msDuration} for reason: ${reason}`

@@ -15,7 +15,6 @@ export default class ChannelCreateListener extends Listener {
 
   public async exec(channel: DMChannel | GuildChannel) {
     // ignore dm channels
-    logger.debug(`New Channel Created: `, channel);
     if (channel instanceof DMChannel) return;
 
     const serversRepo: Repository<Servers> = this.client.db.getRepository(

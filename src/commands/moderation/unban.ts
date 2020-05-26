@@ -53,8 +53,9 @@ export default class UnbanCommand extends Command {
       }
 
       // log unban
-      logUnban(serversRepo, user, msg.member, reason);
       await msg.guild.members.unban(user, reason);
+
+      logUnban(serversRepo, user, msg.member, reason);
 
       logger.debug(
         `Unbanned ${user.tag} (${user.id}) in server ${msg.guild.name} (${msg.guild.id})`

@@ -307,12 +307,12 @@ export async function logKick(
 // TODO: Log ban through event as well
 export async function logBan(
   repo: Repository<Servers>,
-  member: GuildMember,
+  user: User,
   reason: string,
   moderator: GuildMember,
   duration: string = 'Indefinite'
 ) {
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
   // make sure mod log is enabled and a channel is set
   if (!server.modLogEnabled && !server.modLog) {
@@ -320,13 +320,13 @@ export async function logBan(
   }
 
   let embed = getDefaultEmbed()
-    .setTitle(`User Banned | ${member.user.tag}`)
+    .setTitle(`User Banned | ${user.tag}`)
     .addField('Reason', reason, false)
     .addField('Moderator', moderator.user, true)
     .addField('Duration', duration, true)
-    .setThumbnail(member.user.displayAvatarURL());
+    .setThumbnail(user.displayAvatarURL());
 
-  let modLogChannel = member.guild.channels.cache.get(
+  let modLogChannel = moderator.guild.channels.cache.get(
     server.modLog
   ) as TextChannel;
 

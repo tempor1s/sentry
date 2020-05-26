@@ -47,7 +47,6 @@ export default class BanCommand extends Command {
           id: 'silent',
           match: 'flag',
           flag: ['--silent', '-s'],
-          default: false,
         },
       ],
     });
@@ -85,17 +84,17 @@ export default class BanCommand extends Command {
         return msg.util?.send('That user is already banned.');
       }
 
+      if (!silent) {
+        await member.send(
+          `You have been banned from ${member.guild.name} for the reason: *${reason}*`
+        );
+      }
+
       // ban the user and send them a msg
-      await member.ban({ reason: reason, days: days }).then(() => {
-        if (!silent) {
-          member.send(
-            `You have been banned from ${member.guild.name} for the reason: *${reason}*`
-          );
-        }
-      });
+      await member.ban({ reason: reason, days: days });
 
       // log ban
-      logBan(serversRepo, member, reason, msg.member);
+      logBan(serversRepo, member.user, reason, msg.member);
 
       logger.debug(
         `Banned ${member.user.tag} (${member.id}) for reason: ${reason}`
