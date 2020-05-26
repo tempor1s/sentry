@@ -51,7 +51,6 @@ export async function mute(
   duration: number,
   silent: boolean = false
 ) {
-  // TODO: Add flag to make it silent and not send the muted user a message.
   // remove all the roles that are not @everyone
   let roles = member.roles.cache
     .filter((role) => role.name !== '@everyone')
