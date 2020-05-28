@@ -54,7 +54,7 @@ export default class RolesAddCommand extends Command {
 
     try {
       await member.roles.add(role).then(() => {
-        logRoleAdd(serverRepo, member, msg.member, role);
+        logRoleAdd(serverRepo, member, msg.member!, role);
       });
 
       logger.debug(

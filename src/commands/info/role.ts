@@ -30,6 +30,7 @@ export default class RoleInfoCommand extends Command {
 
   public async exec(msg: Message, { role }: { role: Role }) {
     const permissions = Object.keys(PERMISSIONS).filter(
+      // @ts-ignore
       (permission) => role.permissions.serialize()[permission]
     );
     const embed = getDefaultEmbed()

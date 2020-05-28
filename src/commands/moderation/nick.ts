@@ -47,7 +47,7 @@ export default class NickCommand extends Command {
 
     // Checks so that you can not nick someone higher than you.
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         'That member has a higher role than you. You are unable to change their nickname.'
       );
 
@@ -56,7 +56,7 @@ export default class NickCommand extends Command {
 
     try {
       // Bleh
-      oldNick = member.nickname;
+      oldNick = member.nickname!;
       if (!nick && oldNick) {
         retMsg = `${member.user}'s nickname has been reset.`;
         await member.setNickname(member.user.username);
@@ -77,7 +77,7 @@ export default class NickCommand extends Command {
     let serversRepo = this.client.db.getRepository(Servers);
 
     // log that we updated the nickname
-    logNick(serversRepo, member, msg.member, oldNick, member.nickname);
+    logNick(serversRepo, member, msg.member!, oldNick, member.nickname!);
 
     return msg.util?.send(retMsg);
   }

@@ -20,29 +20,24 @@ export default class ModLogToggleConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.modLogEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.modLogEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { modLogEnabled: flag }
       );
 
       logger.debug(
-        `Set mod action logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set mod action logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling mod action logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling mod action logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -52,7 +47,7 @@ export default class ModLogToggleConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} mod action logging.`
+      `${flag ? 'Enabled' : 'Disabled'} mod action logging.`
     );
   }
 }

@@ -30,7 +30,7 @@ export default class RolesRemoveAllCommand extends Command {
       );
 
     try {
-      for (const member of msg.guild.members.cache.values()) {
+      for (const member of msg.guild!.members.cache.values()) {
         member.roles.remove(role);
 
         logger.debug(
@@ -39,7 +39,7 @@ export default class RolesRemoveAllCommand extends Command {
       }
     } catch (err) {
       logger.error(
-        `Error removing roles from everyone in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error removing roles from everyone in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -47,7 +47,7 @@ export default class RolesRemoveAllCommand extends Command {
     }
 
     let serverRepo = this.client.db.getRepository(Servers);
-    logRolesRemoveAll(serverRepo, role, msg.member);
+    logRolesRemoveAll(serverRepo, role, msg.member!);
 
     return msg.util?.send(`Removed <@&${role.id}> from everyone.`);
   }

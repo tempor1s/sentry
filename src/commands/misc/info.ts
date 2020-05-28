@@ -21,7 +21,7 @@ export default class InfoCommand extends Command {
     let owner = this.client.users.cache.get(this.client.ownerID[0]);
     const embed = getDefaultEmbed()
       .setTitle('Sentry')
-      .addField('❯ Bot Owner', `${owner.tag} (${owner.id})`, false)
+      .addField('❯ Bot Owner', `${owner!.tag} (${owner!.id})`, false)
       .addField(
         '❯ Uptime',
         duration(this.client.uptime ?? 0).format('d[d ]h[h ]m[m ]s[s]'),

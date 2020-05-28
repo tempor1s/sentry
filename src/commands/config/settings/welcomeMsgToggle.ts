@@ -20,7 +20,7 @@ export default class WelcomeMsgToggleConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     let flag = server.welcomeMessageEnabled ? false : true;
@@ -28,16 +28,16 @@ export default class WelcomeMsgToggleConfigCommand extends Command {
     // update if welcome message is enabled
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { welcomeMessageEnabled: flag }
       );
 
       logger.debug(
-        `Set welcome message in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling welcome message in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling welcome message in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -46,8 +46,6 @@ export default class WelcomeMsgToggleConfigCommand extends Command {
       );
     }
 
-    return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} welcome message.`
-    );
+    return msg.util?.send(`${flag ? 'Enabled' : 'Disabled'} welcome message.`);
   }
 }

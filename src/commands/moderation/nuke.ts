@@ -69,7 +69,7 @@ export default class NukeCommand extends Command {
 
     let serverRepo = this.client.db.getRepository(Servers);
 
-    logNuke(serverRepo, newChannel, msg.member);
+    logNuke(serverRepo, newChannel, msg.member!);
     logger.debug(
       `Nuked channel ${newChannel.name} (${newChannel.id}) in ${newChannel.guild.name} (${newChannel.guild.id})`
     );

@@ -31,7 +31,7 @@ export default class RolesAddAllCommand extends Command {
       );
 
     try {
-      for (const member of msg.guild.members.cache.values()) {
+      for (const member of msg.guild!.members.cache.values()) {
         member.roles.add(role);
 
         logger.debug(
@@ -40,7 +40,7 @@ export default class RolesAddAllCommand extends Command {
       }
     } catch (err) {
       logger.error(
-        `Error adding roles to everyone in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error adding roles to everyone in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -49,7 +49,7 @@ export default class RolesAddAllCommand extends Command {
 
     let serverRepo = this.client.db.getRepository(Servers);
 
-    logRolesAddAll(serverRepo, role, msg.member);
+    logRolesAddAll(serverRepo, role, msg.member!);
 
     return msg.util?.send(`Added <@&${role.id}> to everyone.`);
   }

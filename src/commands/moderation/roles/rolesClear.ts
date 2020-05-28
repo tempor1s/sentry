@@ -48,7 +48,7 @@ export default class RolesClearCommand extends Command {
         );
       }
 
-      logRoleClear(serverRepo, member, msg.member, roles);
+      logRoleClear(serverRepo, member, msg.member!, roles);
     } catch (err) {
       logger.error(
         `Error clearing roles from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}). Error: `,

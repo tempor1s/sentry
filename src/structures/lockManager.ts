@@ -28,12 +28,12 @@ export async function unlockChannelLoop(
         channel.channel
       ) as TextChannel;
 
-      let clientMember = lockedChan.guild.members.cache.get(client.user.id);
+      let clientMember = lockedChan.guild.members.cache.get(client.user!.id);
 
       let unlocked = await unlockChannel(locksRepo, lockedChan);
       if (!unlocked) lockedChan.send('Failed to unlock channel.');
 
-      logChannelUnlock(serversRepo, lockedChan, clientMember);
+      logChannelUnlock(serversRepo, lockedChan, clientMember!);
     });
 }
 
@@ -54,7 +54,7 @@ export async function lockChannel(
   );
 
   // overwrite @everyone role
-  channel.updateOverwrite(everyoneRole.id, { SEND_MESSAGES: false });
+  channel.updateOverwrite(everyoneRole!.id, { SEND_MESSAGES: false });
 
   // overwrite all permissions of CURRENT overwrites
   channel.permissionOverwrites.map((overwrite) => {
@@ -98,13 +98,13 @@ export async function unlockChannel(
   );
 
   // overwrite @everyone role
-  channel.updateOverwrite(everyoneRole.id, { SEND_MESSAGES: null });
+  channel.updateOverwrite(everyoneRole!.id, { SEND_MESSAGES: null });
 
   // overwrite all permissions of CURRENT overwrites besides MUTE role
   channel.permissionOverwrites.map((overwrite) => {
     let overwriteRole = channel.guild.roles.cache.get(overwrite.id);
     // check to make sure we are not modifying the muted role overrides
-    if (!overwriteRole.name.toLowerCase().includes('mute')) {
+    if (!overwriteRole?.name.toLowerCase().includes('mute')) {
       channel.updateOverwrite(overwrite.id, { SEND_MESSAGES: null });
     }
   });

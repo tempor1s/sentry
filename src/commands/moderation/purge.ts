@@ -47,14 +47,14 @@ export default class PurgeCommand extends Command {
       try {
         const msgs = await msg.channel.bulkDelete(amount, true);
         purgeSize = msgs.size;
-        logPurge(serverRepo, msg.member, purgeSize, msgs);
+        logPurge(serverRepo, msg.member!, purgeSize, msgs);
 
         logger.debug(
-          `Purging ${msgs.size} messages in ${msg.guild.name} (${msg.guild.id})`
+          `Purging ${msgs.size} messages in ${msg.guild?.name} (${msg.guild?.id})`
         );
       } catch (err) {
         logger.error(
-          `Error purging messages in ${msg.guild.id} (${msg.guild.id})`
+          `Error purging messages in ${msg.guild?.id} (${msg.guild?.id})`
         );
 
         return msg.util?.send('Error purging messages.');

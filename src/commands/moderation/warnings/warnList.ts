@@ -30,10 +30,7 @@ export default class WarnListCommand extends Command {
     });
   }
 
-  public async exec(
-    msg: Message,
-    { member }: { member: GuildMember }
-  ): Promise<Message> {
+  public async exec(msg: Message, { member }: { member: GuildMember }) {
     if (!member) {
       return msg.util?.send('User not specified / found.');
     }
@@ -54,7 +51,7 @@ export default class WarnListCommand extends Command {
     const embed = getDefaultEmbed().setTitle(`Warnings for ${member.user.tag}`);
 
     for (const warning of warnings) {
-      let moderator = msg.guild.members.cache.get(warning.moderator);
+      let moderator = msg.guild!.members.cache.get(warning.moderator);
       // TODO: Localize date time
       embed.addField(
         '**Warning**',

@@ -43,8 +43,8 @@ export async function checkHigherOrEqualPermissions(
   other: GuildMember
 ): Promise<boolean> {
   if (
-    other.roles.highest.position >= modMsg.member.roles.highest.position &&
-    modMsg.author.id !== modMsg.guild.ownerID
+    other.roles.highest.position >= modMsg.member!.roles.highest.position &&
+    modMsg.author.id !== modMsg.guild!.ownerID
   ) {
     return true;
   }
@@ -57,8 +57,8 @@ export async function checkHigherRole(
   role: Role
 ): Promise<boolean> {
   if (
-    msg.member.roles.highest.position <= role.position &&
-    msg.author.id !== msg.guild.ownerID
+    msg.member!.roles.highest.position <= role.position &&
+    msg.author.id !== msg.guild!.ownerID
   ) {
     return true;
   }

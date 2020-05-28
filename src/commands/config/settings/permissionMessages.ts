@@ -21,29 +21,23 @@ export default class PermissionMessagesConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.missingPermissionMessages) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.missingPermissionMessages ? false : true;
 
-    // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { missingPermissionMessages: flag }
       );
 
       logger.debug(
-        `Set permission messsages in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set permission messsages in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling permission messages in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling permission messages in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -53,9 +47,7 @@ export default class PermissionMessagesConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${
-        flag ? 'enabled' : 'disabled'
-      } missing permission messsages.`
+      `${flag ? 'Enabled' : 'Disabled'} missing permission messsages.`
     );
   }
 }

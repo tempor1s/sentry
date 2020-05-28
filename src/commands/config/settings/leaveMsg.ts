@@ -20,29 +20,23 @@ export default class LeaveMessageConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild?.id },
     });
 
-    let flag: boolean;
-    if (server.leaveMsgEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.leaveMsgEnabled ? false : true;
 
-    // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild?.id },
         { leaveMsgEnabled: flag }
       );
 
       logger.debug(
-        `Set member leave logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set member leave logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling member leave logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling member leave logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -52,7 +46,7 @@ export default class LeaveMessageConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} member leave logging.`
+      `${flag ? 'Enabled' : 'Disabled'} logging for when a member leaves.`
     );
   }
 }

@@ -27,15 +27,13 @@ export default class WelcomeMsgChanConfigCommand extends Command {
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     if (!channel) {
-      if (server.welcomeChannel) {
-        let oldChannel = msg.guild.channels.cache.get(server.welcomeChannel);
-        return msg.util?.send(
-          `The current channel the welcome message will be sent to is ${oldChannel} (${oldChannel.id})`
-        );
+      if (server?.welcomeChannel) {
+        let oldChannel = msg.guild!.channels.cache.get(server.welcomeChannel);
+        return msg.util?.send(`Current Welcome Channel: ${oldChannel}`);
       }
 
       return msg.util?.send(
@@ -46,24 +44,22 @@ export default class WelcomeMsgChanConfigCommand extends Command {
     // update the command log channel
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { welcomeChannel: channel.id }
       );
 
       logger.debug(
-        `Updating welcome message channel in ${msg.guild.name} (${msg.guild.id}) to ${channel.name} (${channel.id})`
+        `Updating welcome message channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
       );
     } catch (err) {
       logger.error(
-        `Error updating welcome message channel in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error updating welcome message channel in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
       return msg.util?.send('Error when updating the welcome message channel.');
     }
 
-    return msg.util?.send(
-      `The channel to send the welcome message to has been set to ${channel} (${channel.id})`
-    );
+    return msg.util?.send(`Updated Welcome Channel: ${channel}`);
   }
 }

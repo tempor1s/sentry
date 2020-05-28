@@ -58,7 +58,7 @@ export default class LockCommand extends Command {
     if (!locked)
       return msg.util?.send('Channel is already locked or lock failed.');
 
-    logChannelLock(serversRepo, duration, channel, msg.member);
+    logChannelLock(serversRepo, duration, channel, msg.member!);
 
     if (msg.channel.id !== channel.id)
       msg.util?.send(

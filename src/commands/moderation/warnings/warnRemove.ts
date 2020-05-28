@@ -55,12 +55,12 @@ export default class WarnRemoveCommand extends Command {
 
     try {
       let warning = await warningRepo.delete({
-        server: msg.guild.id,
+        server: msg.guild!.id,
         user: member.id,
         id: id,
       });
 
-      if (warning.affected > 0) {
+      if (warning && warning.affected! > 0) {
         logger.debug(
           `Removed warning for ${member.user.tag} (${member.id}) in ${member.guild.name} (${member.guild.id})`
         );
@@ -69,7 +69,7 @@ export default class WarnRemoveCommand extends Command {
           .setTitle('Removed Warning')
           .addField('ID', id, true)
           .addField('User', member.user, true)
-          .addField('Moderator', msg.member.user, true);
+          .addField('Moderator', msg.member!.user, true);
 
         return msg.util?.send(embed);
       }

@@ -20,29 +20,24 @@ export default class JoinMessageConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.joinMsgEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.joinMsgEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { joinMsgEnabled: flag }
       );
 
       logger.debug(
-        `Set member join logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set member join logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling member join logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling member join logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -52,7 +47,7 @@ export default class JoinMessageConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} member join logging.`
+      `${flag ? 'Enabled' : 'Disabled'} member join logging.`
     );
   }
 }

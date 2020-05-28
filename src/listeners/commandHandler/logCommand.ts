@@ -19,7 +19,7 @@ export default class LogCommandExecuteListener extends Listener {
     logCommandExecute(serverRepo, msg);
 
     logger.debug(
-      `Command: '${msg.content}' -- Executor: '${msg.member.user.tag} (${msg.member.id})'`
+      `Command: '${msg.content}' -- Executor: '${msg.member?.user.tag} (${msg.member?.id})'`
     );
   }
 }

@@ -1,5 +1,5 @@
 import { Command } from 'discord-akairo';
-import { Message, Permissions } from 'discord.js';
+import { Message } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
 
 export default class InviteCommand extends Command {

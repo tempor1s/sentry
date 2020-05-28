@@ -65,20 +65,20 @@ export default class AutoPurgeShowCommand extends Command {
 
     // multi-channel
     let autoPurges = await autoPurgeRepo.find({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     // create embed and add all purges
     const embed = getDefaultEmbed().setTitle(
-      `Auto Purged Channels | ${msg.guild.name}`
+      `Auto Purged Channels | ${msg.guild!.name}`
     );
     for (const autoPurge of autoPurges) {
-      let purgeChannel = msg.guild.channels.cache.get(autoPurge.channel);
+      let purgeChannel = msg.guild!.channels.cache.get(autoPurge.channel);
       embed.addField(
         `**Channel**`,
         stripIndents`
                 Channel: ${purgeChannel}
-                Channel ID: \`${purgeChannel.id}\` 
+                Channel ID: \`${purgeChannel?.id}\` 
                 Time until next Purge: \`${
                   Number(autoPurge.timeUntilNextPurge) - Date.now() > 0
                     ? ms(Number(autoPurge.timeUntilNextPurge) - Date.now())

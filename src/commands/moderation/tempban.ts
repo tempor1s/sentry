@@ -92,12 +92,12 @@ export default class TempBanCommand extends Command {
     }
 
     if (duration > 2.592e9) {
-      return msg.util.send('Please specify a duration less than 30 days.');
+      return msg.util?.send('Please specify a duration less than 30 days.');
     }
 
     // Checks so that you can not temp ban someone higher or equal to you.
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         'That member has a higher or equal role to you. You are unable to ban them.'
       );
 
@@ -123,15 +123,15 @@ export default class TempBanCommand extends Command {
 
       // so that we can unban people later :)
       await tempBansRepo.insert({
-        server: msg.guild.id,
+        server: msg.guild!.id,
         user: member.id,
         end: Date.now() + duration,
         reason: reason,
-        moderator: msg.member.id,
+        moderator: msg.member!.id,
       });
 
       // log ban
-      logBan(serversRepo, member.user, reason, msg.member, msDuration);
+      logBan(serversRepo, member.user, reason, msg.member!, msDuration);
 
       logger.debug(
         `Temp banned ${member.user.tag} (${member.id}) for ${msDuration} for reason: ${reason}`
@@ -146,7 +146,7 @@ export default class TempBanCommand extends Command {
       .addField('Reason', reason)
       .addField('User', member.user, true)
       .addField('Duration', msDuration, true)
-      .addField('Moderator', msg.member.user, true);
+      .addField('Moderator', msg.member!.user, true);
 
     return msg.util?.send(embed);
   }

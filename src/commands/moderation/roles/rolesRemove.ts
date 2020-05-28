@@ -55,7 +55,7 @@ export default class RolesRemoveCommand extends Command {
     try {
       if (member.roles.cache.has(role.id)) {
         await member.roles.remove(role).then(() => {
-          logRoleRemove(serverRepo, member, msg.member, role);
+          logRoleRemove(serverRepo, member, msg.member!, role);
         });
       } else {
         return msg.util?.send('User does not have that role.');

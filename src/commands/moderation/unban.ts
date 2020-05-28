@@ -48,17 +48,19 @@ export default class UnbanCommand extends Command {
 
     try {
       // check to make sure the user is not already unbanned or not banned
-      if (!(await msg.guild.fetchBan(user).catch(() => {}))) {
+      if (!(await msg.guild!.fetchBan(user).catch(() => {}))) {
         return msg.util?.send('User is not banned.');
       }
 
       // log unban
-      await msg.guild.members.unban(user, reason);
+      await msg.guild!.members.unban(user, reason);
 
-      logUnban(serversRepo, user, msg.member, reason);
+      logUnban(serversRepo, user, msg.member!, reason);
 
       logger.debug(
-        `Unbanned ${user.tag} (${user.id}) in server ${msg.guild.name} (${msg.guild.id})`
+        `Unbanned ${user.tag} (${user.id}) in server ${msg.guild!.name} (${
+          msg.guild!.id
+        })`
       );
     } catch (err) {
       logger.error('Error unbanning user. Error: ', err);

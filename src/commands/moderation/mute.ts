@@ -87,14 +87,14 @@ export default class MuteCommand extends Command {
 
     // Check to make sure that we are not muting someone with an equal or higher role
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         `That member has a higher or equal role to you. You are unable to mute them.`
       );
 
     // TODO: Could just swap this over to checking user roles later if we need to optimize DB
     let mutesRepo = this.client.db.getRepository(Mutes);
     let mutedUser = await mutesRepo.findOne({
-      where: { server: msg.guild.id, user: member.id },
+      where: { server: msg.guild!.id, user: member.id },
     });
 
     if (mutedUser) {
@@ -104,30 +104,30 @@ export default class MuteCommand extends Command {
     // Get the guild that we are going to be getting info for
     let serverRepo = this.client.db.getRepository(Servers);
     let guild = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     // If no user defined duration, then use servers default mute duration.
     if (!duration) {
-      duration = guild.muteDuration;
+      duration = guild!.muteDuration;
     }
 
     // Get the ID of the 'muted' role.
-    let muteRoleId = guild.mutedRole;
+    let muteRoleId = guild?.mutedRole;
     if (!muteRoleId) {
-      muteRoleId = await createMuteOrUpdate(serverRepo, msg.guild);
+      muteRoleId = await createMuteOrUpdate(serverRepo, msg.guild!);
     }
 
     // Mute the person
     await mute(mutesRepo, msg, member, muteRoleId, reason, duration, silent);
     // Log the mute
-    logMute(serverRepo, member, reason, duration, msg.member);
+    logMute(serverRepo, member, reason, duration, msg.member!);
 
     // Info sent to the channel for when the person is muted
     const embed = getDefaultEmbed('GREEN')
       .setTitle(`Muted ${member.user.tag}`)
       .addField('Reason', reason, true)
-      .addField('Moderator', msg.member.user, true)
+      .addField('Moderator', msg.member!.user, true)
       .addField('Mute Duration', ms(duration), true);
 
     return msg.util?.send(embed);

@@ -21,15 +21,15 @@ export default class ShowConfigCommand extends Command {
     );
 
     let server = await serversRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     const embed = getDefaultEmbed()
-      .setTitle(`Server Config | ${msg.guild.name}`)
-      .addField('**❯ Prefix** (prefix)', `*${server.prefix}*`, true)
+      .setTitle(`Server Config | ${msg.guild!.name}`)
+      .addField('**❯ Prefix** (prefix)', `*${server?.prefix}*`, true)
       .addField(
         '**❯ Missing Permission Messages** (permissionmessages)',
-        server.missingPermissionMessages ? '*Enabled*' : '*Disabled*',
+        server?.missingPermissionMessages ? '*Enabled*' : '*Disabled*',
         true
       )
       .addField(
@@ -37,12 +37,12 @@ export default class ShowConfigCommand extends Command {
         stripIndent`
                 **• Role** \`muterole\`
                 ${
-                  server.mutedRole
-                    ? `<@&${server.mutedRole}> *(${server.mutedRole})*`
+                  server?.mutedRole
+                    ? `<@&${server?.mutedRole}> *(${server.mutedRole})*`
                     : '*Not set*'
                 }
                 **• Duration** \`muteduration\`
-                *${ms(server.muteDuration)}*
+                *${ms(server!.muteDuration)}*
                 `,
         true
       )
@@ -50,19 +50,19 @@ export default class ShowConfigCommand extends Command {
         '**❯ Welcome Message**',
         stripIndent`
                 **• Status ** \`welcomemsgtoggle\`
-                *${server.welcomeMessageEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.welcomeMessageEnabled ? 'Enabled' : 'Disabled'}*
                 **• Message** \`welcomemsg\`
-                *${server.welcomeMessage ? server.welcomeMessage : 'Not set'}*
+                *${server?.welcomeMessage ? server.welcomeMessage : 'Not set'}*
                 **• Channel** \`welcomemsgchannel\`
                 ${
-                  server.welcomeChannel
+                  server?.welcomeChannel
                     ? `<#${server.welcomeChannel}>`
                     : `*Not set*`
                 }
                 **• Send as Embed** \`welcomemsgembed\`
-                *${server.welcomeMessageEmbeded ? 'Enabled' : 'Disabled'}*
+                *${server?.welcomeMessageEmbeded ? 'Enabled' : 'Disabled'}*
                 **• Send in DM** \`welcomemsgdm\`
-                *${server.welcomeMessageSendDM ? 'Enabled' : 'Disabled'}*
+                *${server?.welcomeMessageSendDM ? 'Enabled' : 'Disabled'}*
                 `,
         false
       )
@@ -70,10 +70,10 @@ export default class ShowConfigCommand extends Command {
         '**❯ Auto Role**',
         stripIndent`
                 **• Status ** \`autoroletoggle\`
-                *${server.autoroleEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.autoroleEnabled ? 'Enabled' : 'Disabled'}*
                 **• Role** \`autorole\`
                 ${
-                  server.autoroleRole
+                  server?.autoroleRole
                     ? `<@&${server.autoroleRole}> *(${server.autoroleRole})*`
                     : '*Not set*'
                 }
@@ -84,30 +84,32 @@ export default class ShowConfigCommand extends Command {
         '**❯ Command Logging**',
         stripIndent`
                 • **Status** \`commandlogtoggle\`
-                *${server.commandLogEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.commandLogEnabled ? 'Enabled' : 'Disabled'}*
                 • **Channel** \`commandlog\`
-                ${server.commandLog ? `<#${server.commandLog}>` : '*Not set*'}`,
+                ${
+                  server?.commandLog ? `<#${server.commandLog}>` : '*Not set*'
+                }`,
         true
       )
       .addField(
         '**❯ Mod Action Logging**',
         stripIndent`
                 **• Status** \`modlogtoggle\`
-                *${server.modLogEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.modLogEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`modlog\`
-                ${server.modLog ? `<#${server.modLog}>` : '*Not set*'}`,
+                ${server?.modLog ? `<#${server.modLog}>` : '*Not set*'}`,
         true
       )
       .addField(
         '**❯ Join/Leave Messages**',
         stripIndent`
                 **• Join** \`joinmsg\`
-                *${server.joinMsgEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.joinMsgEnabled ? 'Enabled' : 'Disabled'}*
                 **• Delete** \`leavemsg\`
-                *${server.leaveMsgEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.leaveMsgEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`joinleavelog\`
                 ${
-                  server.joinLeaveLog
+                  server?.joinLeaveLog
                     ? `<#${server.joinLeaveLog}>`
                     : '*Not set*'
                 }`,
@@ -117,17 +119,17 @@ export default class ShowConfigCommand extends Command {
         '**❯ Message Logging**',
         stripIndent`
                 **• Deletes** \`logdeletes\`
-                *${server.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.messageLogDeletesEnabled ? 'Enabled' : 'Disabled'}*
                 **• Edits** \`logedits\`
-                *${server.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.messageLogEditsEnabled ? 'Enabled' : 'Disabled'}*
                 **• Images** \`logimages\`
-                *${server.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}*
+                *${server?.messageLogImagesEnabled ? 'Enabled' : 'Disabled'}*
                 **• Channel** \`msglog\`
-                ${server.messageLog ? `<#${server.messageLog}>` : '*Not set*'}
+                ${server?.messageLog ? `<#${server.messageLog}>` : '*Not set*'}
                 `,
         true
       )
-      .setThumbnail(msg.guild.iconURL() ?? '');
+      .setThumbnail(msg.guild?.iconURL() ?? '');
 
     return msg.util?.send(embed);
   }

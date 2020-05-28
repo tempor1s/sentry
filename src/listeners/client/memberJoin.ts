@@ -25,11 +25,11 @@ export default class MemberJoinListener extends Listener {
 
     try {
       // log join
-      logJoinMsg(server, member);
+      logJoinMsg(server!, member);
 
       // TODO: Refactor out possibly
       // send welcome message if enabled
-      if (server.welcomeMessageEnabled) {
+      if (server?.welcomeMessageEnabled) {
         let channel = member.guild.channels.cache.get(
           server.welcomeChannel
         ) as TextChannel;
