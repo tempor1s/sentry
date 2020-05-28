@@ -13,7 +13,7 @@ export class Servers {
 
   // Missing permissions messages
   @Column({ type: 'bool', default: true })
-  missingPermissionMessages: boolean;
+  missingPermissionMessages!: boolean;
 
   // if we want to enable autorole
   @Column({ type: 'bool', default: false })

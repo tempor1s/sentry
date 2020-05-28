@@ -1,5 +1,5 @@
 import { Command } from 'discord-akairo';
-import { Message, Permissions, TextChannel } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { AutoPurges } from '../../../models/autopurge';
 
 export default class AutoPurgeStopAllCommand extends Command {
@@ -24,7 +24,7 @@ export default class AutoPurgeStopAllCommand extends Command {
 
     // remove all purges for the given server
     let removedPurges = await autoPurgeRepo.delete({
-      server: msg.guild.id,
+      server: msg.guild!.id,
     });
 
     return msg.util?.send(

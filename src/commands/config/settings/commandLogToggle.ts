@@ -20,29 +20,24 @@ export default class CommandLogToggleConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.commandLogEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.commandLogEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { commandLogEnabled: flag }
       );
 
       logger.debug(
-        `Set command logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set command logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling command logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling command logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -51,8 +46,6 @@ export default class CommandLogToggleConfigCommand extends Command {
       );
     }
 
-    return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} command logging.`
-    );
+    return msg.util?.send(`${flag ? 'Enabled' : 'Disabled'} command logging.`);
   }
 }

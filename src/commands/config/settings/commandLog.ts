@@ -27,41 +27,38 @@ export default class CommandLogConfigCommand extends Command {
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     if (!channel) {
-      if (server.commandLog) {
-        let oldChannel = msg.guild.channels.cache.get(server.modLog);
-        return msg.util?.send(
-          `The current command log channel is ${oldChannel.name} (${oldChannel.id})`
-        );
+      if (!server?.commandLog) {
+        return msg.util?.send('Current Command Log Channel: *Not Set*');
       }
 
-      return msg.util?.send('There is no command log channel currently set.');
+      let oldChannel = msg.guild!.channels.cache.get(server.commandLog);
+
+      return msg.util?.send(`Current Command Log Channel: ${oldChannel}`);
     }
 
     // update the command log channel
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { commandLog: channel.id }
       );
 
       logger.debug(
-        `Updating command log channel in ${msg.guild.name} (${msg.guild.id}) to ${channel.name} (${channel.id})`
+        `Updating command log channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
       );
     } catch (err) {
       logger.error(
-        `Error updating command log channel in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error updating command log channel in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
       return msg.util?.send('Error when updating the command log channel.');
     }
 
-    return msg.util?.send(
-      `The command log channel has been set to ${channel} (${channel.id})`
-    );
+    return msg.util?.send(`Updated Command Log Channel: ${channel}`);
   }
 }

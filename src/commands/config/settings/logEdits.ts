@@ -20,29 +20,24 @@ export default class LogEditsConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild?.id },
     });
 
-    let flag: boolean;
-    if (server.messageLogEditsEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.messageLogEditsEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild?.id },
         { messageLogEditsEnabled: flag }
       );
 
       logger.debug(
-        `Set message edit logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set message edit logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling message edit logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling message edit logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -52,7 +47,7 @@ export default class LogEditsConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} message edit logging.`
+      `${flag ? 'Enabled' : 'Disabled'} logging of message edits.`
     );
   }
 }

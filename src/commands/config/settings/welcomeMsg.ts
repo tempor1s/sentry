@@ -36,16 +36,16 @@ export default class WelcomeMsgConfigCommand extends Command {
     // update the welcome message
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { welcomeMessage: message }
       );
 
       logger.debug(
-        `Set welcome message in ${msg.guild.name} (${msg.guild.id}) to: *${message}*`
+        `Set welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: *${message}*`
       );
     } catch (err) {
       logger.error(
-        `Error changing welcome message in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error changing welcome message in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -54,6 +54,6 @@ export default class WelcomeMsgConfigCommand extends Command {
       );
     }
 
-    return msg.util?.send(`Successfully changed welcome message.`);
+    return msg.util?.send(`Changed Welcome Message: \`${message}\``);
   }
 }

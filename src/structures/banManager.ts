@@ -20,10 +20,10 @@ export async function tempUnbanLoop(
       // get the server to remove ban from
       let server = client.guilds.cache.get(ban.server);
       // the bot member in the server
-      let botMember = server.members.cache.get(client.user.id);
+      let botMember = server!.members.cache.get(client.user!.id);
       // remove ban
-      let user = await server.members.unban(ban.user);
+      let user = await server!.members.unban(ban.user);
       // log unban
-      logUnban(serversRepo, user, botMember, 'Temporary ban expired.');
+      logUnban(serversRepo, user, botMember!, 'Temporary ban expired.');
     });
 }

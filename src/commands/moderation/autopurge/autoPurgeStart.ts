@@ -66,7 +66,7 @@ export default class AutoPurgeStartCommand extends Command {
     let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
 
     let existingPurge = await autoPurgeRepo.findOne({
-      where: { server: msg.guild.id, channel: channel.id },
+      where: { server: msg.guild!.id, channel: channel.id },
     });
 
     // TODO: Maybe allow multiple purges per channel?
@@ -79,7 +79,7 @@ export default class AutoPurgeStartCommand extends Command {
 
     // add the auto-purge into the db
     await autoPurgeRepo.insert({
-      server: msg.guild.id,
+      server: msg.guild!.id,
       channel: channel.id,
       timeUntilNextPurge: interval + Date.now(),
       purgeInterval: interval,

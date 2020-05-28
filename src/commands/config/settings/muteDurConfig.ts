@@ -33,36 +33,36 @@ export default class MuteDurationConfigCommand extends Command {
   public async exec(msg: Message, { duration }: { duration: number }) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     if (duration === 0) {
       return msg.util?.send(
-        `The current mute duration is ${ms(server.muteDuration)}`
+        `Current Default Mute Duration ${ms(server!.muteDuration)}`
       );
     }
 
     // update the mute duration
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { muteDuration: duration }
       );
 
       logger.debug(
-        `Updating muted duration in ${msg.guild.name} (${msg.guild.id}) to ${ms(
-          duration
-        )}`
+        `Updating muted duration in ${msg.guild?.name} (${
+          msg.guild?.id
+        }) to ${ms(duration)}`
       );
     } catch (err) {
       logger.error(
-        `Error updating mute duration in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error updating mute duration in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
       return msg.util?.send('Error when updating mute duration.');
     }
 
-    return msg.util?.send(`The mute role has been set to ${ms(duration)}`);
+    return msg.util?.send(`Updated Mute Duration: ${ms(duration)}`);
   }
 }

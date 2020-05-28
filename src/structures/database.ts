@@ -4,8 +4,8 @@ import { dbName, dbHost, dbUsername, dbPassword } from '../config';
 import { Warnings } from '../models/warnings';
 import { Servers } from '../models/server';
 import { Mutes } from '../models/mutes';
-import { AutoPurges } from '../models/autopurge';
-import { TempBans } from '../models/tempbans';
+import { AutoPurges } from '../models/autoPurge';
+import { TempBans } from '../models/tempBans';
 import { ChannelLocks } from '../models/channelLocks';
 
 const connectionManager: ConnectionManager = new ConnectionManager();

@@ -22,7 +22,7 @@ export default class MissingPermissionsListener extends Listener {
     const serverRepo = this.client.db.getRepository(Servers);
 
     const server = await serverRepo.findOneOrFail({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild?.id },
     });
 
     if (!server.missingPermissionMessages) {

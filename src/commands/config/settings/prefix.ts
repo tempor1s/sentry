@@ -30,31 +30,29 @@ export default class PrefixConfigCommand extends Command {
   public async exec(msg: Message, { prefix }: { prefix: string }) {
     let serverPrefix = await (this.handler.prefix as PrefixSupplier)(msg);
     if (!prefix) {
-      return msg.util?.send(
-        `The current prefix for the server is \`${serverPrefix}\``
-      );
+      return msg.util?.send(`Current Prefix: \`${serverPrefix}\``);
     }
 
     let serverRepo: Repository<Servers> = this.client.db.getRepository(Servers);
 
     // update the prefix
     try {
-      await serverRepo.update({ server: msg.guild.id }, { prefix: prefix });
+      await serverRepo.update({ server: msg.guild!.id }, { prefix: prefix });
 
       logger.debug(
-        `Updating prefix in ${msg.guild.name} (${msg.guild.id}) from '${serverPrefix}' -> '${prefix}'`
+        `Updating prefix in ${msg.guild?.name} (${msg.guild?.id}) from '${serverPrefix}' -> '${prefix}'`
       );
     } catch (err) {
       logger.error(
-        `Error updating prefix in ${msg.guild.name} (${msg.guild.id}). Reason: `,
+        `Error updating prefix in ${msg.guild?.name} (${msg.guild?.id}). Reason: `,
         err
       );
     }
 
     if (prefix === defaultPrefix) {
-      return msg.util?.send(`Reset prefix back to \`${prefix}\``);
+      return msg.util?.send(`Reset prefix back to: \`${prefix}\``);
     }
 
-    return msg.util?.send(`The prefix has been set to \`${prefix}\``);
+    return msg.util?.send(`Updated Prefix: \`${prefix}\``);
   }
 }

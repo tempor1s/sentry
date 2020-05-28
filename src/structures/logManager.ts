@@ -14,13 +14,12 @@ import ms from 'ms';
 import { utc } from 'moment';
 import 'moment-duration-format';
 
-// TODO: Use raw events to log old message deletes
 export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
-  let server = await repo.findOne({ where: { server: msg.member.guild.id } });
+  let server = await repo.findOne({ where: { server: msg.member!.guild.id } });
 
   if (
-    !server.messageLogDeletesEnabled ||
-    !server.messageLog ||
+    !server?.messageLogDeletesEnabled ||
+    !server?.messageLog ||
     msg.author.bot
   ) {
     return;
@@ -32,14 +31,14 @@ export async function logMsgDelete(repo: Repository<Servers>, msg: Message) {
     .addField('Message', `[Context](${msg.url})`, true)
     .addField('ID', msg.id, true)
     .addField('Channel', msg.channel, true)
-    .addField('Executor', msg.member.user, true)
-    .setThumbnail(msg.member.user.displayAvatarURL());
+    .addField('Executor', msg.member!.user, true)
+    .setThumbnail(msg.member!.user.displayAvatarURL() ?? '');
 
   // add attachments
   let attachment = msg.attachments.first();
   if (attachment) embed.addField('Attachment(s)', attachment.url);
 
-  let channel = msg.guild.channels.cache.get(server.messageLog) as TextChannel;
+  let channel = msg.guild!.channels.cache.get(server.messageLog) as TextChannel;
 
   channel.send(embed);
 }
@@ -52,7 +51,7 @@ export async function logUncachedMsgDelete(
 ) {
   let server = await repo.findOne({ where: { server: eventData.guild_id } });
 
-  if (!server.messageLogEditsEnabled || !server.messageLog) return;
+  if (!server?.messageLogEditsEnabled || !server?.messageLog) return;
 
   let embed = getDefaultEmbed()
     .setTitle('Old Message Deleted')
@@ -77,10 +76,14 @@ export async function logMsgEdit(
   newMsg: Message
 ) {
   let server = await repo.findOne({
-    where: { server: newMsg.member.guild.id },
+    where: { server: newMsg.member!.guild.id },
   });
 
-  if (!server.messageLogEditsEnabled || !server.messageLog || newMsg.author.bot)
+  if (
+    !server?.messageLogEditsEnabled ||
+    !server?.messageLog ||
+    newMsg.author.bot
+  )
     return;
 
   let embed = getDefaultEmbed()
@@ -90,10 +93,10 @@ export async function logMsgEdit(
     .addField('Message', `[Context](${newMsg.url})`, true)
     .addField('ID', newMsg.id, true)
     .addField('Channel', newMsg.channel, true)
-    .addField('Executor', newMsg.member.user, true)
-    .setThumbnail(newMsg.member.user.displayAvatarURL());
+    .addField('Executor', newMsg.member?.user, true)
+    .setThumbnail(newMsg.member!.user.displayAvatarURL() ?? '');
 
-  let channel = newMsg.guild.channels.cache.get(
+  let channel = newMsg.guild!.channels.cache.get(
     server.messageLog
   ) as TextChannel;
 
@@ -108,7 +111,7 @@ export async function logUncachedMsgEdit(
 ) {
   let server = await repo.findOne({ where: { server: eventData.guild_id } });
 
-  if (!server.messageLogEditsEnabled || !server.messageLog) return;
+  if (!server?.messageLogEditsEnabled || !server?.messageLog) return;
 
   let embed = getDefaultEmbed()
     .setTitle('Old Message Edited')
@@ -139,23 +142,23 @@ export async function logUncachedMsgEdit(
 
 export async function logImageUpload(repo: Repository<Servers>, msg: Message) {
   let server = await repo.findOne({
-    where: { server: msg.member.guild.id },
+    where: { server: msg.member!.guild.id },
   });
 
-  if (!server.messageLogImagesEnabled || !server.messageLog || msg.author.bot)
+  if (!server?.messageLogImagesEnabled || !server?.messageLog || msg.author.bot)
     return;
 
   let embed = getDefaultEmbed()
     .setTitle('Image Uploaded')
     .addField('ID', msg.id, true)
     .addField('Channel', msg.channel, true)
-    .addField('User', msg.member.user, true);
+    .addField('User', msg.member!.user, true);
 
   embed.attachFiles(
     Array.from(msg.attachments.values()).map((attachment) => attachment.url)
   );
 
-  let channel = msg.guild.channels.cache.get(server.messageLog) as TextChannel;
+  let channel = msg.guild!.channels.cache.get(server.messageLog) as TextChannel;
 
   channel.send(embed);
 }
@@ -164,19 +167,19 @@ export async function logCommandExecute(
   repo: Repository<Servers>,
   msg: Message
 ) {
-  let server = await repo.findOne({ where: { server: msg.member.guild.id } });
+  let server = await repo.findOne({ where: { server: msg.member!.guild.id } });
 
-  if (!server.commandLogEnabled || !server.modLog) {
+  if (!server?.commandLogEnabled || !server?.modLog) {
     return;
   }
 
   let embed = getDefaultEmbed()
     .setTitle('Command Executed')
     .addField('Command', msg.content, false)
-    .addField('Executor', msg.member.user, true)
-    .setThumbnail(msg.member.user.displayAvatarURL());
+    .addField('Executor', msg.member!.user, true)
+    .setThumbnail(msg.member!.user.displayAvatarURL());
 
-  let channel = msg.guild.channels.cache.get(server.commandLog) as TextChannel;
+  let channel = msg.guild!.channels.cache.get(server.commandLog) as TextChannel;
 
   channel.send(embed);
 }
@@ -191,7 +194,7 @@ export async function logMute(
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
   // make sure mod log is enabled and a channel is set
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -217,7 +220,7 @@ export async function logUnmute(
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
   // make sure mod log is enabled and a channel is set
-  if (!server.modLogEnabled || !server.modLog) {
+  if (!server?.modLogEnabled || !server?.modLog) {
     return;
   }
 
@@ -242,7 +245,7 @@ export async function logPurge(
   let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
   // make sure mod log is enabled and a channel is set
-  if (!server.modLogEnabled || !server.modLog) {
+  if (!server?.modLogEnabled || !server?.modLog) {
     return;
   }
 
@@ -277,7 +280,6 @@ export async function logPurge(
   modLogChannel.send(embed);
 }
 
-// TODO: Log kick through event as well
 export async function logKick(
   repo: Repository<Servers>,
   member: GuildMember,
@@ -287,7 +289,7 @@ export async function logKick(
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
   // make sure mod log is enabled and a channel is set
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -304,7 +306,6 @@ export async function logKick(
   modLogChannel.send(embed);
 }
 
-// TODO: Log ban through event as well
 export async function logBan(
   repo: Repository<Servers>,
   user: User,
@@ -315,7 +316,7 @@ export async function logBan(
   let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
   // make sure mod log is enabled and a channel is set
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -342,7 +343,7 @@ export async function logUnban(
   let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
   // make sure mod log is enabled and a channel is set
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -369,7 +370,7 @@ export async function logNick(
 ) {
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -395,7 +396,7 @@ export async function logRoleAdd(
 ) {
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -421,7 +422,7 @@ export async function logRoleRemove(
 ) {
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -446,7 +447,7 @@ export async function logRoleClear(
 ) {
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -470,7 +471,7 @@ export async function logNuke(
 ) {
   let server = await repo.findOne({ where: { server: channel.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -493,7 +494,7 @@ export async function logRolesAddAll(
 ) {
   let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -516,7 +517,7 @@ export async function logRolesRemoveAll(
 ) {
   let server = await repo.findOne({ where: { server: moderator.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -539,7 +540,7 @@ export async function logAutoPurge(
 ) {
   let server = await repo.findOne({ where: { server: channel.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -563,7 +564,7 @@ export async function logChannelLock(
 ) {
   let server = await repo.findOne({ where: { server: channel.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -587,7 +588,7 @@ export async function logChannelUnlock(
 ) {
   let server = await repo.findOne({ where: { server: channel.guild.id } });
 
-  if (!server.modLogEnabled && !server.modLog) {
+  if (!server?.modLogEnabled && !server?.modLog) {
     return;
   }
 
@@ -626,7 +627,7 @@ export async function logLeaveMsg(
 ) {
   let server = await repo.findOne({ where: { server: member.guild.id } });
 
-  if (!server.leaveMsgEnabled && !server.joinLeaveLog) {
+  if (!server?.leaveMsgEnabled && !server?.joinLeaveLog) {
     return;
   }
 

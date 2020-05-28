@@ -2,7 +2,6 @@ import { Listener } from 'discord-akairo';
 import { TextChannel } from 'discord.js';
 import {
   logUncachedMsgEdit,
-  logMsgDelete,
   logUncachedMsgDelete,
 } from '../../structures/logManager';
 import { Servers } from '../../models/server';

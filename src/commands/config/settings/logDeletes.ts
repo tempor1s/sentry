@@ -21,29 +21,24 @@ export default class LogDeletesConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.messageLogDeletesEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.messageLogDeletesEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { messageLogDeletesEnabled: flag }
       );
 
       logger.debug(
-        `Set deleted message logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set deleted message logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling deleted message logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling deleted message logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -53,7 +48,7 @@ export default class LogDeletesConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} deleted message logging.`
+      `${flag ? 'Enabled' : 'Disabled'} deleted message logging.`
     );
   }
 }

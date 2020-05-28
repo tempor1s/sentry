@@ -35,7 +35,7 @@ export default class MuteJoinListener extends Listener {
     // Add the muted role
     try {
       await member.roles.add(
-        server.mutedRole,
+        server!.mutedRole,
         `Muted | Reason: Left and rejoined while muted.`
       );
 
@@ -50,7 +50,7 @@ export default class MuteJoinListener extends Listener {
         member,
         'Mute Evading | Remute',
         muted.end - Date.now(),
-        member.guild.members.cache.get(this.client.user.id)
+        member.guild.members.cache.get(this.client.user!.id)!
       );
     } catch (err) {
       logger.error(

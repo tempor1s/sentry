@@ -21,24 +21,24 @@ export default class WelcomeMsgDMConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag = server.welcomeMessageSendDM ? false : true;
+    let flag = server?.welcomeMessageSendDM ? false : true;
 
     // update if welcome message is enabled
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { welcomeMessageSendDM: flag }
       );
 
       logger.debug(
-        `Set DM welcome message in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set DM welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling DM welcome message in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling DM welcome message in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -48,9 +48,7 @@ export default class WelcomeMsgDMConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${
-        flag ? 'enabled' : 'disabled'
-      } the sending of welcome messages in DM.`
+      `${flag ? 'Enabled' : 'Disabled'} the sending of welcome messages in DM.`
     );
   }
 }

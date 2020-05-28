@@ -44,7 +44,7 @@ export default class UnmuteCommand extends Command {
 
     // Check to make sure that we are not muting someone with an equal or higher role
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         'This member has a higher or equal role to you. You are unable to unmute them.'
       );
 
@@ -52,20 +52,21 @@ export default class UnmuteCommand extends Command {
     let serverRepo = this.client.db.getRepository(Servers);
 
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
     // TODO: Could just swap this over to checking user roles later if we need to optimize DB
     let mute = await mutesRepos.findOne({
-      where: { server: msg.guild.id, user: member.id },
+      where: { server: msg.guild!.id, user: member.id },
     });
 
     if (!mute) {
       return msg.util?.send('That user is not muted.');
     }
 
-    await unmute(mutesRepos, member, server.mutedRole);
-    logUnmute(serverRepo, member, msg.member);
+    // TODO: Do not assume that the server has a muted role - could error
+    await unmute(mutesRepos, member, server!.mutedRole);
+    logUnmute(serverRepo, member, msg.member!);
 
     return msg.util?.send(`Unmuted ${member.user}.`);
   }

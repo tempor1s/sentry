@@ -22,14 +22,14 @@ export default class UserBannedListener extends Listener {
     let banAction = auditLogs.entries.first();
 
     // dont log actions that are done by the bot because it will already be logged through the ban action
-    if (banAction.executor.id == this.client.user.id) return;
+    if (banAction!.executor.id === this.client.user!.id) return;
 
     // log the user banned
     logBan(
       serversRepo,
       user,
-      banAction.reason ? banAction.reason : 'No reason provided.',
-      guild.members.cache.get(banAction.executor.id)
+      banAction!.reason ? banAction!.reason : 'No reason provided.',
+      guild.members.cache.get(banAction!.executor.id)!
     );
   }
 }

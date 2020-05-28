@@ -24,34 +24,34 @@ interface BotOptions {
 
 export default class Client extends AkairoClient {
   public config: BotOptions;
-  public db: Connection;
-  public invite: string;
+  public db: Connection = Database.get(dbName);
+  public invite!: string;
   public listenerHandler: ListenerHandler = new ListenerHandler(this, {
     directory: join(__dirname, '..', 'listeners'),
   });
   public commandHandler: CommandHandler = new CommandHandler(this, {
     directory: join(__dirname, '..', 'commands'),
-    // TODO: Add LRU cache to increase speed and reduce queries and also make this not a promise :)
-    prefix: (msg: Message): Promise<string> | string => {
+    // TODO: Add LRU cache to increase speed and reduce queries
+    prefix: async (msg: Message): Promise<string> => {
       if (msg.channel instanceof DMChannel) {
         return defaultPrefix;
       }
 
       let serverRepo: Repository<Servers> = this.db.getRepository(Servers);
 
-      let prefix = serverRepo
-        .findOne({ where: { server: msg.guild.id } })
-        .then((server) => server.prefix)
+      let prefix = await serverRepo
+        .findOne({ where: { server: msg.guild?.id } })
+        .then((server) => server?.prefix)
         // insert the server into the db if we have not seen it before
         .catch((_) => {
           let serversRepo: Repository<Servers> = this.db.getRepository(Servers);
 
-          serversRepo.insert({ server: msg.guild.id });
+          serversRepo.insert({ server: msg.guild!.id });
 
           return defaultPrefix;
         });
 
-      return prefix;
+      return prefix || defaultPrefix;
     },
     blockBots: true,
     allowMention: true,
@@ -64,8 +64,8 @@ export default class Client extends AkairoClient {
       {
         ownerID: config.owners,
       },
-      // TODO: Reduce this when the bot grows :)
-      { messageCacheMaxSize: 1000, disableMentions: 'everyone' }
+      // we may need to reduce cache size as the bot grows
+      { messageCacheMaxSize: 100, disableMentions: 'everyone' }
     );
 
     this.config = config;
@@ -88,8 +88,7 @@ export default class Client extends AkairoClient {
     this.invite = await this.generateInvite([Permissions.FLAGS.ADMINISTRATOR]);
     logger.debug('Generating invite.');
 
-    // Get the DB and connect/synchronize to it.
-    this.db = Database.get(dbName);
+    // conect to the db
     await this.db.connect();
     logger.debug('Connecting to DB...');
     await this.db.synchronize();

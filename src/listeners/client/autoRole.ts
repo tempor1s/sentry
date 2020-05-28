@@ -18,12 +18,12 @@ export default class AutoRoleListener extends Listener {
       where: { server: member.guild.id },
     });
 
-    if (server.autoroleEnabled) {
-      if (server.autoroleRole) {
+    if (server!.autoroleEnabled) {
+      if (server!.autoroleRole) {
         // Assign the role
-        await member.roles.add(server.autoroleRole, 'Autorole');
+        await member.roles.add(server!.autoroleRole, 'Autorole');
         logger.debug(
-          `Auto assigning role ${server.autoroleRole} in ${member.guild.name} (${member.guild.id})`
+          `Auto assigning role ${server?.autoroleRole} in ${member.guild.name} (${member.guild.id})`
         );
       } else {
         logger.debug('Not auto-assigning role because role is not set.');

@@ -32,7 +32,7 @@ export default class UserInfoCommand extends Command {
     let isBanned = '';
 
     try {
-      await msg.guild.fetchBan(user);
+      await msg.guild!.fetchBan(user);
       isBanned = 'Yes';
     } catch (err) {
       isBanned = 'No';

@@ -46,7 +46,7 @@ export default class UnlockCommand extends Command {
     if (!unlocked)
       return msg.util?.send('Channel is not locked or unlock failed.');
 
-    logChannelUnlock(serversRepo, channel, msg.member);
+    logChannelUnlock(serversRepo, channel, msg.member!);
 
     if (msg.channel.id !== channel.id)
       return msg.util?.send('Channel unlocked! :)');

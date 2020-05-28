@@ -42,7 +42,7 @@ export default class AvatarCommand extends Command {
     msg: Message,
     { member, size }: { member: GuildMember; size: number }
   ) {
-    return msg.util.send(
+    return msg.util?.send(
       getDefaultEmbed()
         .setTitle(`Avatar | ${member.user.tag}`)
         .setImage(member.user.displayAvatarURL({ size: size as ImageSize }))

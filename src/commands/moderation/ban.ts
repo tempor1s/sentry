@@ -72,7 +72,7 @@ export default class BanCommand extends Command {
 
     // check to make sure they are not a higher role
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         `That member has a higher or equal role to you. You are unable to ban them.`
       );
 
@@ -94,7 +94,7 @@ export default class BanCommand extends Command {
       await member.ban({ reason: reason, days: days });
 
       // log ban
-      logBan(serversRepo, member.user, reason, msg.member);
+      logBan(serversRepo, member.user, reason, msg.member!);
 
       logger.debug(
         `Banned ${member.user.tag} (${member.id}) for reason: ${reason}`
@@ -109,7 +109,7 @@ export default class BanCommand extends Command {
       .addField('Reason', reason)
       .addField('User', member.user, true)
       .addField('Duration', 'Indefinite', true)
-      .addField('Moderator', msg.member.user, true);
+      .addField('Moderator', msg.member!.user, true);
 
     return msg.util?.send(embed);
   }

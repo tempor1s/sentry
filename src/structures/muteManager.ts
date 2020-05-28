@@ -18,7 +18,7 @@ export async function unmuteLoop(
     .filter((m) => m.end <= Date.now())
     .map(async (m) => {
       let guild = client.guilds.cache.get(m.server);
-      let member = guild.members.cache.get(m.user);
+      let member = guild!.members.cache.get(m.user);
       // TODO: This is slow. Optimize with relations or something? :)
       let serverDb = await serversRepo.findOne({
         where: { server: m.server },
@@ -27,15 +27,15 @@ export async function unmuteLoop(
       // try to mute the user
       try {
         // Unmute the user
-        await unmute(mutesRepo, member, serverDb.mutedRole);
+        await unmute(mutesRepo, member!, serverDb!.mutedRole);
         // Log the unmute
         logUnmute(
           serversRepo,
-          member,
-          member.guild.members.cache.get(client.user.id)
+          member!,
+          member!.guild.members.cache.get(client.user!.id)!
         );
 
-        logger.debug(`Unmuting user ${member.user.tag} (${member.id}).`);
+        logger.debug(`Unmuting user ${member!.user.tag} (${member!.id}).`);
       } catch (err) {
         logger.error('Error unmuting user in unmute loop. Reason: ', err);
       }
@@ -90,8 +90,8 @@ export async function mute(
     // Let the user know we muted them
     if (!silent) {
       member.send(
-        `You have been muted by ${msg.member.user} in ${
-          msg.guild.name
+        `You have been muted by ${msg.member!.user} in ${
+          msg.guild!.name
         } for \`${ms(duration)}\``
       );
     }
@@ -130,8 +130,8 @@ export async function unmute(
 
   // add roles that we removed initally
   try {
-    if (mute.roles) {
-      mute.roles.map((id) => member.roles.add(id));
+    if (mute!.roles) {
+      mute!.roles.map((id) => member.roles.add(id));
     }
   } catch (err) {
     logger.error(
@@ -196,9 +196,9 @@ export async function getMutedRole(
   guild: Guild
 ): Promise<Role> {
   let server = await serverRepo.findOne({ where: { server: guild.id } });
-  let mutedRole = guild.roles.cache.get(server.mutedRole);
+  let mutedRole = guild.roles.cache.get(server!.mutedRole);
 
-  return mutedRole;
+  return mutedRole!;
 }
 
 async function createMutedRole(

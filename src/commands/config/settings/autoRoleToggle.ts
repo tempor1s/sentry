@@ -20,37 +20,30 @@ export default class AutoRoleToggleConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.autoroleEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.autoroleEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { autoroleEnabled: flag }
       );
 
       logger.debug(
-        `Set autorole in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set autorole in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling autorole in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling autorole in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
       return msg.util?.send('Error when toggling autorole. Please try again.');
     }
 
-    return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} autorole.`
-    );
+    return msg.util?.send(`${flag ? 'Enabled' : 'Disabled'} autorole.`);
   }
 }

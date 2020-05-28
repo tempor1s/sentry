@@ -30,7 +30,7 @@ export default class AutoPurgeStopCommand extends Command {
     let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
 
     let existingPurge = await autoPurgeRepo.findOne({
-      where: { server: msg.guild.id, channel: channel.id },
+      where: { server: msg.guild!.id, channel: channel.id },
     });
 
     // purge already exists on the channel
@@ -40,7 +40,7 @@ export default class AutoPurgeStopCommand extends Command {
 
     // remove the auto purge from the channel
     await autoPurgeRepo.delete({
-      server: msg.guild.id,
+      server: msg.guild!.id,
       channel: channel.id,
     });
 

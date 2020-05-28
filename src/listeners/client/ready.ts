@@ -21,7 +21,7 @@ export default class ReadyListener extends Listener {
   }
 
   public async exec() {
-    logger.info(`${this.client.user.tag} is now online.`);
+    logger.info(`${this.client.user!.tag} is now online.`);
 
     const mutesRepo = this.client.db.getRepository(Mutes);
     const serversRepo = this.client.db.getRepository(Servers);
@@ -30,14 +30,14 @@ export default class ReadyListener extends Listener {
     const channelLockrepo = this.client.db.getRepository(ChannelLocks);
 
     // Update servers/members every 5 minutes.
-    this.client.user.setActivity(
+    this.client.user!.setActivity(
       `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
       { type: 'WATCHING' }
     );
 
     // update activity every 5mins with new server/member count
     setInterval(() => {
-      this.client.user.setActivity(
+      this.client.user!.setActivity(
         `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
         { type: 'WATCHING' }
       );

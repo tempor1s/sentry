@@ -20,24 +20,24 @@ export default class WelcomeMsgEmbededConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag = server.welcomeMessageEmbeded ? false : true;
+    let flag = server?.welcomeMessageEmbeded ? false : true;
 
     // update if welcome message is enabled
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { welcomeMessageEmbeded: flag }
       );
 
       logger.debug(
-        `Set embeded welcome message in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set embeded welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling embeded welcome message in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling embeded welcome message in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -47,7 +47,7 @@ export default class WelcomeMsgEmbededConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} embeded welcome message.`
+      `${flag ? 'Enabled' : 'Disabled'} embeded welcome message.`
     );
   }
 }

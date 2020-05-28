@@ -20,29 +20,24 @@ export default class LogImagesConfigCommand extends Command {
   public async exec(msg: Message) {
     let serverRepo = this.client.db.getRepository(Servers);
     let server = await serverRepo.findOne({
-      where: { server: msg.guild.id },
+      where: { server: msg.guild!.id },
     });
 
-    let flag: boolean;
-    if (server.messageLogImagesEnabled) {
-      flag = false;
-    } else {
-      flag = true;
-    }
+    let flag = server?.messageLogImagesEnabled ? false : true;
 
     // update the muterole
     try {
       await serverRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         { messageLogImagesEnabled: flag }
       );
 
       logger.debug(
-        `Set image upload logging in ${msg.guild.name} (${msg.guild.id}) to: ${flag}`
+        `Set image upload logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
       );
     } catch (err) {
       logger.error(
-        `Error toggling image upload logging in ${msg.guild.name} (${msg.guild.id}). Error: `,
+        `Error toggling image upload logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,
         err
       );
 
@@ -52,7 +47,7 @@ export default class LogImagesConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `Successfully ${flag ? 'enabled' : 'disabled'} image upload logging.`
+      `${flag ? 'Enabled' : 'Disabled'} image upload logging.`
     );
   }
 }

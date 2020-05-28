@@ -22,7 +22,7 @@ export default class LogImageUploadListener extends Listener {
       return;
     }
 
-    logger.debug(`Image uploaded in ${msg.guild.name} (${msg.guild.id})`);
+    logger.debug(`Image uploaded in ${msg.guild!.name} (${msg.guild!.id})`);
 
     let serversRepo = this.client.db.getRepository(Servers);
     await logImageUpload(serversRepo, msg);

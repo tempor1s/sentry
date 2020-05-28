@@ -58,7 +58,7 @@ export default class WelcomeCommand extends Command {
     // update the channel and message in the server and enable it
     try {
       await serversRepo.update(
-        { server: msg.guild.id },
+        { server: msg.guild!.id },
         {
           welcomeMessage: message,
           welcomeChannel: channel.id,
@@ -67,7 +67,7 @@ export default class WelcomeCommand extends Command {
       );
     } catch (err) {
       logger.error(
-        `Error when updating welcome message in ${msg.guild.name} (${msg.guild.id})`
+        `Error when updating welcome message in ${msg.guild?.name} (${msg.guild?.id})`
       );
     }
 

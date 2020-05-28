@@ -46,7 +46,7 @@ export default class Help extends Command {
         let availableCommands = category.filter(
           (cmd) =>
             cmd.aliases.length > 0 &&
-            msg.member.hasPermission(
+            msg.member!.hasPermission(
               new Permissions(
                 cmd.userPermissions as BitFieldResolvable<PermissionString>
               )

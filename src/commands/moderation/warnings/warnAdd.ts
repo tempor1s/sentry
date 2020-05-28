@@ -46,7 +46,7 @@ export default class WarnAddCommand extends Command {
 
     try {
       await warningRepo.insert({
-        server: msg.guild.id,
+        server: msg.guild!.id,
         user: member.id,
         moderator: msg.author.id,
         reason: reason,

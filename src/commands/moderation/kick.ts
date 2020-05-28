@@ -65,7 +65,7 @@ export default class KickCommand extends Command {
 
     // Checks so that you can not kick someone higher than you.
     if (await checkHigherOrEqualPermissions(msg, member))
-      return msg.util.send(
+      return msg.util?.send(
         'That member has a higher or equal role to you. You are unable to kick them.'
       );
 
@@ -82,7 +82,7 @@ export default class KickCommand extends Command {
       });
 
       // log kick
-      logKick(serversRepo, member, reason, msg.member);
+      logKick(serversRepo, member, reason, msg.member!);
 
       logger.debug(
         `Kicked ${member.user.tag} (${member.id}) for reason: ${reason}`
@@ -96,7 +96,7 @@ export default class KickCommand extends Command {
       .setTitle('Kicked')
       .addField('Reason', reason, true)
       .addField('User', member.user, true)
-      .addField('Moderator', msg.member.user, true);
+      .addField('Moderator', msg.member!.user, true);
 
     return msg.util?.send(embed);
   }
