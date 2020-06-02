@@ -1,5 +1,5 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
-import { Message, Permissions, DMChannel } from 'discord.js';
+import { Message, Permissions, DMChannel, ClientApplication } from 'discord.js';
 import { join } from 'path';
 import { owners, dbName, defaultPrefix } from '../config';
 import { Connection } from 'typeorm';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { Servers } from '../models/server';
 import Database from '../structures/database';
 import logger from '../utils/logger';
+import http from 'http';
 
 declare module 'discord-akairo' {
   interface AkairoClient {
@@ -14,6 +15,8 @@ declare module 'discord-akairo' {
     listenerHandler: ListenerHandler;
     db: Connection;
     invite: string;
+    site: http.Server;
+    application: ClientApplication;
   }
 }
 
@@ -79,20 +82,28 @@ export default class Client extends AkairoClient {
       process,
     });
 
+    logger.debug('Registering command handler..');
     this.commandHandler.loadAll();
-    logger.debug('Registering command handler.');
+    logger.debug('Registering event listeners..');
     this.listenerHandler.loadAll();
-    logger.debug('Registering listeners.');
 
     // Get invite
+    logger.debug('Generating invite..');
     this.invite = await this.generateInvite([Permissions.FLAGS.ADMINISTRATOR]);
-    logger.debug('Generating invite.');
+
+    // Get client application
+    logger.debug('Getting Application Info..');
+    this.application = await this.fetchApplication();
 
     // conect to the db
+    logger.debug('Connecting to DB..');
     await this.db.connect();
-    logger.debug('Connecting to DB...');
-    await this.db.synchronize();
     logger.debug('Synchronizing DB..');
+    await this.db.synchronize();
+
+    // initialize the dashboard
+    logger.debug('Initialzing the dashboard..');
+    require('../dashboard/dashboard')(this);
   }
 
   public async start(): Promise<string> {

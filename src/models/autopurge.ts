@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('autopurge')
+@Entity('autopurges')
 export class AutoPurges {
   @PrimaryGeneratedColumn()
   id!: number;
