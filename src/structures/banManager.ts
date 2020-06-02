@@ -5,8 +5,8 @@ import { Servers } from '../models/server';
 import { TempBans } from '../models/tempbans';
 
 export async function tempUnbanLoop(
-  tempBanRepo: Repository<TempBans>,
   serversRepo: Repository<Servers>,
+  tempBanRepo: Repository<TempBans>,
   client: AkairoClient
 ) {
   const tempBans = await tempBanRepo.find();

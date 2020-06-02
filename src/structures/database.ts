@@ -2,13 +2,6 @@ import { ConnectionManager } from 'typeorm';
 import { dbName, dbHost, dbUsername, dbPassword } from '../config';
 import path from 'path';
 
-import { Warnings } from '../models/warnings';
-import { Servers } from '../models/server';
-import { Mutes } from '../models/mutes';
-import { AutoPurges } from '../models/autoPurge';
-import { TempBans } from '../models/tempBans';
-import { ChannelLocks } from '../models/channelLocks';
-
 const connectionManager: ConnectionManager = new ConnectionManager();
 
 connectionManager.create({

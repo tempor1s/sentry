@@ -35,7 +35,7 @@ export default class AutoPurgeShowCommand extends Command {
       const embed = getDefaultEmbed().setTitle('Channel Purge Info');
 
       let autoPurge = await autoPurgeRepo.findOne({
-        where: { server: msg.guild.id, channel: channel.id },
+        where: { server: msg.guild!.id, channel: channel.id },
       });
 
       if (autoPurge) {
