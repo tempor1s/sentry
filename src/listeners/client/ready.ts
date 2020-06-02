@@ -7,8 +7,8 @@ import logger from '../../utils/logger';
 
 import { Mutes } from '../../models/mutes';
 import { Servers } from '../../models/server';
-import { AutoPurges } from '../../models/autopurge';
-import { TempBans } from '../../models/tempbans';
+import { AutoPurges } from '../../models/autoPurge';
+import { TempBans } from '../../models/tempBans';
 import { ChannelLocks } from '../../models/channelLocks';
 
 export default class ReadyListener extends Listener {
@@ -55,7 +55,7 @@ export default class ReadyListener extends Listener {
       30000
     );
 
-    // unban users that are past the interval
+    // unban users that are past the interval (runs every 5 minutes)
     setInterval(
       async () => tempUnbanLoop(tempBanRepo, serversRepo, this.client),
       3e5
