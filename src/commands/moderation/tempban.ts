@@ -5,7 +5,7 @@ import { Message, Permissions, GuildMember } from 'discord.js';
 import { logBan } from '../../structures/logManager';
 import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
-import { TempBans } from '../../models/tempbans';
+import { TempBans } from '../../models/tempBans';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class TempBanCommand extends Command {

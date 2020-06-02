@@ -2,7 +2,7 @@ import { AkairoClient } from 'discord-akairo';
 import { Repository } from 'typeorm';
 import { logUnban } from '../structures/logManager';
 import { Servers } from '../models/server';
-import { TempBans } from '../models/tempbans';
+import { TempBans } from '../models/tempBans';
 
 export async function tempUnbanLoop(
   serversRepo: Repository<Servers>,
