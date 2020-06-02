@@ -23,7 +23,7 @@ export default class WelcomeMsgToggleConfigCommand extends Command {
       where: { server: msg.guild!.id },
     });
 
-    let flag = server.welcomeMessageEnabled ? false : true;
+    let flag = server!.welcomeMessageEnabled ? false : true;
 
     // update if welcome message is enabled
     try {

@@ -3,12 +3,13 @@ import { unmuteLoop } from '../../structures/muteManager';
 import { autoPurgeLoop } from '../../structures/autoPurgeManager';
 import { tempUnbanLoop } from '../../structures/banManager';
 import { unlockChannelLoop } from '../../structures/lockManager';
+import { Repository } from 'typeorm';
 import logger from '../../utils/logger';
 
 import { Mutes } from '../../models/mutes';
-import { Servers } from '../../models/server';
 import { AutoPurges } from '../../models/autoPurge';
 import { TempBans } from '../../models/tempBans';
+import { Servers } from '../../models/server';
 import { ChannelLocks } from '../../models/channelLocks';
 
 export default class ReadyListener extends Listener {
@@ -23,11 +24,19 @@ export default class ReadyListener extends Listener {
   public async exec() {
     logger.info(`${this.client.user!.tag} is now online.`);
 
-    const mutesRepo = this.client.db.getRepository(Mutes);
-    const serversRepo = this.client.db.getRepository(Servers);
-    const autoPurgeRepo = this.client.db.getRepository(AutoPurges);
-    const tempBanRepo = this.client.db.getRepository(TempBans);
-    const channelLockrepo = this.client.db.getRepository(ChannelLocks);
+    const mutesRepo: Repository<Mutes> = this.client.db.getRepository(Mutes);
+    const serversRepo: Repository<Servers> = this.client.db.getRepository(
+      Servers
+    );
+    const autoPurgeRepo: Repository<AutoPurges> = this.client.db.getRepository(
+      AutoPurges
+    );
+    const tempBanRepo: Repository<TempBans> = this.client.db.getRepository(
+      TempBans
+    );
+    const channelLockrepo: Repository<ChannelLocks> = this.client.db.getRepository(
+      ChannelLocks
+    );
 
     // Update servers/members every 5 minutes.
     this.client.user!.setActivity(
@@ -57,7 +66,7 @@ export default class ReadyListener extends Listener {
 
     // unban users that are past the interval (runs every 5 minutes)
     setInterval(
-      async () => tempUnbanLoop(tempBanRepo, serversRepo, this.client),
+      async () => tempUnbanLoop(serversRepo, tempBanRepo, this.client),
       3e5
     );
 

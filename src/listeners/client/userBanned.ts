@@ -21,15 +21,17 @@ export default class UserBannedListener extends Listener {
     // TODO: This might fail. Maybe sort through the first 1-10 and find the EXACT action? :)
     let banAction = auditLogs.entries.first();
 
+    if (!banAction) return;
+
     // dont log actions that are done by the bot because it will already be logged through the ban action
-    if (banAction!.executor.id === this.client.user!.id) return;
+    if (banAction.executor.id === this.client.user!.id) return;
 
     // log the user banned
     logBan(
       serversRepo,
       user,
-      banAction!.reason ? banAction!.reason : 'No reason provided.',
-      guild.members.cache.get(banAction!.executor.id)!
+      banAction.reason ? banAction.reason : 'No reason provided.',
+      guild.members.cache.get(banAction.executor.id)!
     );
   }
 }
