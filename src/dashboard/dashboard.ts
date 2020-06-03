@@ -13,7 +13,6 @@ import {
   domain,
 } from '../config';
 import logger from '../utils/logger';
-import { renderFile } from 'ejs';
 import bodyParser from 'body-parser';
 import clientResponse from './utils/clientResponse';
 
@@ -61,11 +60,6 @@ module.exports = async (client: AkairoClient) => {
   app.use(helmet());
 
   app.locals.domain = domain;
-
-  // set js for out templating engine
-  app.engine('html', renderFile);
-  app.set('view engine', 'html');
-  app.set('views', path.join(__dirname, 'templates'));
 
   // parse json or form bodys
   app.use(bodyParser.json());
