@@ -1,7 +1,5 @@
-import url from 'url';
 import path from 'path';
 import { AkairoClient } from 'discord-akairo';
-import moment from 'moment';
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
@@ -17,6 +15,7 @@ import {
 import logger from '../utils/logger';
 import { renderFile } from 'ejs';
 import bodyParser from 'body-parser';
+import clientResponse from './utils/clientResponse';
 
 const app = express();
 
@@ -84,22 +83,8 @@ module.exports = async (client: AkairoClient) => {
     res.redirect('/login');
   }
 
-  const renderTemplate = (
-    req: Request,
-    res: Response,
-    template: string,
-    data = {}
-  ) => {
-    const baseData = {
-      bot: client,
-      path: req.path,
-      user: req.isAuthenticated() ? req.user! : null,
-    };
-    res.render(template, Object.assign(baseData, data));
-  };
-
-  app.get('/', (req: Request, res: Response) => {
-    renderTemplate(req, res, 'index.ejs');
+  app.get('/', (_: Request, res: Response) => {
+    clientResponse(res, 200, { data: { hello: 'Hello!' } });
   });
 
   client.site = app.listen(8080, '0.0.0.0', () => {

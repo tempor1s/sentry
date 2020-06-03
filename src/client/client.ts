@@ -102,7 +102,7 @@ export default class Client extends AkairoClient {
     await this.db.synchronize();
 
     // initialize the dashboard
-    logger.debug('Initialzing the dashboard..');
+    logger.info('Initialzing the dashboard..');
     require('../dashboard/dashboard')(this);
   }
 
