@@ -4,11 +4,11 @@
 #
 FROM node:lts AS builder
 
-WORKDIR /usr/src/app
+WORKDIR /usr/sentry
 
 COPY package*.json ./
 COPY tsconfig*.json ./
-COPY ./src ./src
+COPY ./sentry ./sentry
 RUN npm ci --quiet && npm run build
 
 #
@@ -28,6 +28,6 @@ RUN npm ci --quiet --only=production
 RUN npm i -g pm2
 
 ## We just need the build to execute the command
-COPY --from=builder /usr/src/app/build ./build
+COPY --from=builder /usr/sentry/build ./build
 
 CMD ["pm2-runtime", "build/index.js"]

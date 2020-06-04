@@ -2,14 +2,14 @@
   "name": "sentry",
   "version": "1.0.0",
   "description": "Sentry is a simple and powerful discord bot designed to manage large servers. ",
-  "main": "dist/index.js",
+  "main": "build/index.js",
   "repository": "git@github.com:tempor1s/sentry-ts.git",
   "author": "Ben <benlaugherty@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start:dev": "ts-node-dev --respawn --transpileOnly --watch src src/index.ts"
+    "start:dev": "ts-node-dev --respawn --transpileOnly --watch sentry sentry/index.ts"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
