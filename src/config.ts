@@ -9,6 +9,8 @@ export let dbUsername: string = process.env.DB_USERNAME!;
 export let dbPassword: string = process.env.DB_PASSWORD!;
 export let discordClientSecret: string = process.env.CLIENT_SECRET!;
 // TODO: Might need to change this
-export let callbackUrl: string = 'http://0.0.0.0/localhost';
+export let callbackUrl: string = 'http://0.0.0.0/callback';
 export let sessionSecret: string = process.env.SESSION_SECRET ?? 'secret';
 export let domain: string = process.env.DOMAIN ?? '0.0.0.0';
+export let redisUrl: string = process.env.REDIS_URL ?? 'redis://cache';
+export let redisPassword: string = process.env.REDIS_PASSWORD ?? 'password';

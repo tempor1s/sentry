@@ -9,8 +9,11 @@ services:
       - ./:/usr/src/app
     depends_on:
       - postgres
+      - redis
     ports:
       - 8080:8080
+    links:
+      - redis
   postgres:
     image: postgres
     restart: always
@@ -27,5 +30,12 @@ services:
     restart: always
     ports:
       - 9000:8080
+  redis:
+    image: redis
+    command: redis-server --requirepass password
+    container_name: cache
+    restart: always
+    ports:
+      - 6379:6379
 volumes:
   data:

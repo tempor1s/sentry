@@ -1,13 +1,19 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
 import { Message, Permissions, DMChannel, ClientApplication } from 'discord.js';
 import { join } from 'path';
-import { owners, dbName, defaultPrefix } from '../config';
-import { Connection } from 'typeorm';
-import { Repository } from 'typeorm';
+import {
+  owners,
+  dbName,
+  defaultPrefix,
+  redisUrl,
+  redisPassword,
+} from '../config';
+import { Connection, Repository } from 'typeorm';
 import { Servers } from '../models/server';
 import Database from '../structures/database';
 import logger from '../utils/logger';
 import http from 'http';
+import redis, { RedisClient } from 'redis';
 
 declare module 'discord-akairo' {
   interface AkairoClient {
@@ -17,6 +23,7 @@ declare module 'discord-akairo' {
     invite: string;
     site: http.Server;
     application: ClientApplication;
+    cache: RedisClient;
   }
 }
 
@@ -34,7 +41,7 @@ export default class Client extends AkairoClient {
   });
   public commandHandler: CommandHandler = new CommandHandler(this, {
     directory: join(__dirname, '..', 'commands'),
-    // TODO: Add LRU cache to increase speed and reduce queries
+    // TODO: Add cache to increase speed and reduce queries
     prefix: async (msg: Message): Promise<string> => {
       if (msg.channel instanceof DMChannel) {
         return defaultPrefix;
@@ -95,14 +102,18 @@ export default class Client extends AkairoClient {
     logger.debug('Getting Application Info..');
     this.application = await this.fetchApplication();
 
-    // conect to the db
+    // connect to the db
     logger.debug('Connecting to DB..');
     await this.db.connect();
     logger.debug('Synchronizing DB..');
     await this.db.synchronize();
 
+    // initalize cache
+    logger.debug('Initializing redis cache.');
+    this.cache = redis.createClient(redisUrl, { password: redisPassword });
+
     // initialize the dashboard
-    logger.info('Initialzing the dashboard..');
+    logger.info('Initializing the dashboard..');
     require('../dashboard/dashboard')(this);
   }
 

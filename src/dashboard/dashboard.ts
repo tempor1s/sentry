@@ -4,6 +4,7 @@ import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import connectRedis from 'connect-redis';
 import helmet from 'helmet';
 import { Strategy } from 'passport-discord';
 import {
@@ -46,9 +47,13 @@ module.exports = async (client: AkairoClient) => {
     )
   );
 
+  // redis session store
+  let RedisStore = connectRedis(session);
+
   // session data for logged in users :)
   app.use(
     session({
+      store: new RedisStore({ client: client.cache }),
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
