@@ -1,19 +1,14 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
-import { Message, Permissions, DMChannel, ClientApplication } from 'discord.js';
+import { Message, Permissions, ClientApplication } from 'discord.js';
 import { join } from 'path';
-import {
-  owners,
-  dbName,
-  defaultPrefix,
-  redisUrl,
-  redisPassword,
-} from '../config';
-import { Connection, Repository } from 'typeorm';
-import { Servers } from '../models/server';
+import { owners, dbName } from '../config';
+import { Connection } from 'typeorm';
+import { getPrefix } from '../structures/prefixManager';
+import { redisClient } from '../structures/redis';
+import { RedisClient } from 'redis';
 import Database from '../structures/database';
 import logger from '../utils/logger';
 import http from 'http';
-import redis, { RedisClient } from 'redis';
 
 declare module 'discord-akairo' {
   interface AkairoClient {
@@ -41,27 +36,8 @@ export default class Client extends AkairoClient {
   });
   public commandHandler: CommandHandler = new CommandHandler(this, {
     directory: join(__dirname, '..', 'commands'),
-    // TODO: Add cache to increase speed and reduce queries
     prefix: async (msg: Message): Promise<string> => {
-      if (msg.channel instanceof DMChannel) {
-        return defaultPrefix;
-      }
-
-      let serverRepo: Repository<Servers> = this.db.getRepository(Servers);
-
-      let prefix = await serverRepo
-        .findOne({ where: { server: msg.guild?.id } })
-        .then((server) => server?.prefix)
-        // insert the server into the db if we have not seen it before
-        .catch((_) => {
-          let serversRepo: Repository<Servers> = this.db.getRepository(Servers);
-
-          serversRepo.insert({ server: msg.guild!.id });
-
-          return defaultPrefix;
-        });
-
-      return prefix || defaultPrefix;
+      return getPrefix(msg, this);
     },
     blockBots: true,
     allowMention: true,
@@ -109,8 +85,8 @@ export default class Client extends AkairoClient {
     await this.db.synchronize();
 
     // initalize cache
-    logger.debug('Initializing redis cache.');
-    this.cache = redis.createClient(redisUrl, { password: redisPassword });
+    logger.debug('Initializing redis cache..');
+    this.cache = redisClient;
 
     // initialize the dashboard
     logger.info('Initializing the dashboard..');

@@ -1,9 +1,6 @@
-import { Command, PrefixSupplier } from 'discord-akairo';
+import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { Repository } from 'typeorm';
-import { Servers } from '../../../models/server';
-import { defaultPrefix } from '../../../config';
-import logger from '../../../utils/logger';
+import { setPrefix } from '../../../structures/prefixManager';
 
 export default class PrefixConfigCommand extends Command {
   public constructor() {
@@ -28,31 +25,6 @@ export default class PrefixConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { prefix }: { prefix: string }) {
-    let serverPrefix = await (this.handler.prefix as PrefixSupplier)(msg);
-    if (!prefix) {
-      return msg.util?.send(`Current Prefix: \`${serverPrefix}\``);
-    }
-
-    let serverRepo: Repository<Servers> = this.client.db.getRepository(Servers);
-
-    // update the prefix
-    try {
-      await serverRepo.update({ server: msg.guild!.id }, { prefix: prefix });
-
-      logger.debug(
-        `Updating prefix in ${msg.guild?.name} (${msg.guild?.id}) from '${serverPrefix}' -> '${prefix}'`
-      );
-    } catch (err) {
-      logger.error(
-        `Error updating prefix in ${msg.guild?.name} (${msg.guild?.id}). Reason: `,
-        err
-      );
-    }
-
-    if (prefix === defaultPrefix) {
-      return msg.util?.send(`Reset prefix back to: \`${prefix}\``);
-    }
-
-    return msg.util?.send(`Updated Prefix: \`${prefix}\``);
+    await setPrefix(msg, this.client, this.handler, prefix);
   }
 }
