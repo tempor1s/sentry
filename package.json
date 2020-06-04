@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc &&",
+    "build": "tsc",
     "start:dev": "ts-node-dev --respawn --transpileOnly --watch src src/index.ts"
   },
   "dependencies": {
