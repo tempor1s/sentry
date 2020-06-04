@@ -8,9 +8,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc && npm run copy:static",
-    "start:dev": "ts-node-dev --respawn --transpileOnly --watch src src/index.ts",
-    "copy:static": "ts-node src/utils/copyStaticAssets.ts"
+    "build": "tsc &&",
+    "start:dev": "ts-node-dev --respawn --transpileOnly --watch src src/index.ts"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
