@@ -1,11 +1,10 @@
-import url from 'url';
 import path from 'path';
 import { AkairoClient } from 'discord-akairo';
-import moment from 'moment';
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import connectRedis from 'connect-redis';
 import helmet from 'helmet';
 import { Strategy } from 'passport-discord';
 import {
@@ -15,8 +14,8 @@ import {
   domain,
 } from '../config';
 import logger from '../utils/logger';
-import { renderFile } from 'ejs';
 import bodyParser from 'body-parser';
+import clientResponse from './utils/clientResponse';
 
 const app = express();
 
@@ -48,9 +47,13 @@ module.exports = async (client: AkairoClient) => {
     )
   );
 
+  // redis session store
+  let RedisStore = connectRedis(session);
+
   // session data for logged in users :)
   app.use(
     session({
+      store: new RedisStore({ client: client.cache }),
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
@@ -62,11 +65,6 @@ module.exports = async (client: AkairoClient) => {
   app.use(helmet());
 
   app.locals.domain = domain;
-
-  // set js for out templating engine
-  app.engine('html', renderFile);
-  app.set('view engine', 'html');
-  app.set('views', path.join(__dirname, 'templates'));
 
   // parse json or form bodys
   app.use(bodyParser.json());
@@ -84,22 +82,8 @@ module.exports = async (client: AkairoClient) => {
     res.redirect('/login');
   }
 
-  const renderTemplate = (
-    req: Request,
-    res: Response,
-    template: string,
-    data = {}
-  ) => {
-    const baseData = {
-      bot: client,
-      path: req.path,
-      user: req.isAuthenticated() ? req.user! : null,
-    };
-    res.render(template, Object.assign(baseData, data));
-  };
-
-  app.get('/', (req: Request, res: Response) => {
-    renderTemplate(req, res, 'index.ejs');
+  app.get('/', (_: Request, res: Response) => {
+    clientResponse(res, 200, { data: { hello: 'Hello!' } });
   });
 
   client.site = app.listen(8080, '0.0.0.0', () => {

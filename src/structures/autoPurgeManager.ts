@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import logger from '../utils/logger';
 import { logAutoPurge } from '../structures/logManager';
 
-import { AutoPurges } from '../models/autopurge';
+import { AutoPurges } from '../models/autoPurge';
 import { Servers } from '../models/server';
 
 export async function autoPurgeLoop(

@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { AutoPurges } from '../../../models/autopurge';
+import { AutoPurges } from '../../../models/autoPurge';
 
 export default class AutoPurgeStopAllCommand extends Command {
   public constructor() {

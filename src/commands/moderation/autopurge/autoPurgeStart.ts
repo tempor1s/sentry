@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { AutoPurges } from '../../../models/autopurge';
+import { AutoPurges } from '../../../models/autoPurge';
 import ms from 'ms';
 
 export default class AutoPurgeStartCommand extends Command {
