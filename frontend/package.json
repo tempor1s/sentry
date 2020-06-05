@@ -2,8 +2,8 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node-dev --project tsconfig.server.json --respawn --transpileOnly --watch server --ignore-watch .next server/index.ts",
-    "build": "next build && tsc"
+    "dev": "ts-node-dev --project tsconfig.server.json --respawn --transpileOnly --watch server --ignore-watch .next src/index.ts",
+    "build": "tsc -p tsconfig.server.json && next build"
   },
   "dependencies": {
     "express": "^4.17.1",

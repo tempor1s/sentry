@@ -9,6 +9,7 @@ WORKDIR /usr/sentry
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY ./sentry ./sentry
+
 RUN npm ci --quiet && npm run build
 
 #
