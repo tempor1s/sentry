@@ -9,7 +9,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "outDir": "./build",
-    "rootDir": "./src",
+    "rootDir": "./sentry",
     "lib": [
       "ESNext",
       "ESNext.Array",

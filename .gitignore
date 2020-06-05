@@ -6,3 +6,4 @@ build
 error.log
 combined.log
 .git
+dist

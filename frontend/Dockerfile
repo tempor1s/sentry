@@ -4,11 +4,12 @@
 #
 FROM node:lts AS builder
 
-WORKDIR /usr/sentry
+WORKDIR /usr/src/app
 
+# copy all the required stuff into your builder
 COPY package*.json ./
 COPY tsconfig*.json ./
-COPY ./sentry ./sentry
+COPY ./src ./src
 
 RUN npm ci --quiet && npm run build
 
@@ -19,16 +20,17 @@ RUN npm ci --quiet && npm run build
 #
 FROM node:lts-alpine
 
-EXPOSE 8080
+EXPOSE 3000
 
-WORKDIR /sentry
+WORKDIR /app
 ENV NODE_ENV=production
 
 COPY package*.json ./
 RUN npm ci --quiet --only=production
 RUN npm i -g pm2
 
-## We just need the build to execute the command
-COPY --from=builder /usr/sentry/build ./build
+## We just need the build to execute the command and nextjs stuff
+COPY --from=builder /usr/src/app/build ./build
+COPY --from=builder /usr/src/app/.next ./.next
 
 CMD ["pm2-runtime", "build/index.js"]

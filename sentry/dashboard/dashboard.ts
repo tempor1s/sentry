@@ -78,12 +78,33 @@ module.exports = async (client: AkairoClient) => {
   function checkAuth(req: Request, res: Response, next: NextFunction) {
     if (req.isAuthenticated()) return next();
     // FIXME: possible bug
-    req.session!.backURL = req.url;
     res.redirect('/login');
   }
 
+  // TODO: Return basic client information
   app.get('/', (_: Request, res: Response) => {
     clientResponse(res, 200, { data: { hello: 'Hello!' } });
+  });
+
+  app.get(
+    '/login',
+    (req: Request, res: Response, next: NextFunction) => {
+      // TODO: Handle backs?
+      next();
+    },
+    passport.authenticate('discord')
+  );
+
+  app.get(
+    '/callback',
+    passport.authenticate('discord', { failureRedirect: '/autherror' }),
+    (req: Request, res: Response) => {
+      clientResponse(res, 200, { data: { message: 'Success' } });
+    }
+  );
+
+  app.get('/autherror', (req: Request, res: Response) => {
+    clientResponse(res, 500, { data: { message: 'Auth Error' } });
   });
 
   client.site = app.listen(8080, '0.0.0.0', () => {
