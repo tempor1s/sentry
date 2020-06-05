@@ -4,11 +4,11 @@
 #
 FROM node:lts AS builder
 
-WORKDIR /usr/sentry
+WORKDIR /usr/frontend
 
 COPY package*.json ./
 COPY tsconfig*.json ./
-COPY ./sentry ./sentry
+COPY . ./
 RUN npm ci --quiet && npm run build
 
 #
@@ -18,9 +18,9 @@ RUN npm ci --quiet && npm run build
 #
 FROM node:lts-alpine
 
-EXPOSE 8080
+EXPOSE 3000
 
-WORKDIR /sentry
+WORKDIR /frontend
 ENV NODE_ENV=production
 
 COPY package*.json ./
@@ -28,6 +28,6 @@ RUN npm ci --quiet --only=production
 RUN npm i -g pm2
 
 ## We just need the build to execute the command
-COPY --from=builder /usr/sentry/build ./build
+COPY --from=builder /usr/frontend/dist ./dist
 
-CMD ["pm2-runtime", "build/index.js"]
+CMD ["pm2-runtime", "dist/index.js"]
