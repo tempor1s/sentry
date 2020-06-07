@@ -20,8 +20,8 @@
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./build",
-    "rootDir": "./src"
+    "outDir": "./build"
   },
-  "exclude": ["build", ".next", "out", "next.config.js", "node_modules"]
+  "exclude": ["build", ".next", "out", "next.config.js", "node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

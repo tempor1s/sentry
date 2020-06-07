@@ -3,10 +3,9 @@
   "compilerOptions": {
     "module": "commonjs",
     "outDir": "./build",
-    "rootDir": "./src",
     "target": "es2017",
     "isolatedModules": false,
     "noEmit": false
   },
-  "include": ["src/**/*.ts"]
+  "include": ["server/**/*.ts"]
 }
