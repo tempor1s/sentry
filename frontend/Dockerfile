@@ -9,7 +9,8 @@ WORKDIR /usr/src/app
 # copy all the required stuff into your builder
 COPY package*.json ./
 COPY tsconfig*.json ./
-COPY ./src ./src
+COPY ./server ./server
+COPY ./pages ./pages
 
 RUN npm ci --quiet && npm run build
 

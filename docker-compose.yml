@@ -20,7 +20,7 @@ services:
       context: ./frontend/
       dockerfile: Dockerfile-dev
     volumes:
-      - ./frontend/:/usr/frontend/
+      - ./frontend:/usr/frontend/
     ports:
       - 3000:3000
   postgres:

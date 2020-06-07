@@ -6,7 +6,7 @@
   "repository": "git@github.com:tempor1s/sentry-ts.git",
   "author": "Ben <benlaugherty@gmail.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "tsc",
     "start:dev": "ts-node-dev --respawn --transpileOnly --watch sentry sentry/index.ts"
