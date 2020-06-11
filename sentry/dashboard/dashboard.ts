@@ -1,28 +1,33 @@
-import path from 'path';
 import { AkairoClient } from 'discord-akairo';
 import express from 'express';
-import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import helmet from 'helmet';
 import { Strategy } from 'passport-discord';
-import {
-  discordClientSecret,
-  callbackUrl,
-  sessionSecret,
-  domain,
-} from '../config';
+import { discordClientSecret, callbackUrl, sessionSecret } from '../config';
 import logger from '../utils/logger';
-import bodyParser from 'body-parser';
-import clientResponse from './utils/clientResponse';
+import { ApolloServer, gql } from 'apollo-server-express';
 
 const app = express();
 
-module.exports = async (client: AkairoClient) => {
-  // static public stuff
-  app.use('/public', express.static(path.resolve('./public')));
+// graphql stuff
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
 
+const resolvers = {
+  Query: {
+    hello: () => 'Hello, world!',
+  },
+};
+
+const server = new ApolloServer({ typeDefs, resolvers });
+server.applyMiddleware({ app });
+
+module.exports = async (client: AkairoClient) => {
   // passport black magic
   passport.serializeUser((user, done) => {
     done(null, user);
@@ -64,50 +69,7 @@ module.exports = async (client: AkairoClient) => {
   app.use(passport.session());
   app.use(helmet());
 
-  app.locals.domain = domain;
-
-  // parse json or form bodys
-  app.use(bodyParser.json());
-  app.use(
-    bodyParser.urlencoded({
-      extended: true,
-    })
-  );
-
-  // auth checks
-  function checkAuth(req: Request, res: Response, next: NextFunction) {
-    if (req.isAuthenticated()) return next();
-    // FIXME: possible bug
-    res.redirect('/login');
-  }
-
-  // TODO: Return basic client information
-  app.get('/', (_: Request, res: Response) => {
-    clientResponse(res, 200, { data: { hello: 'Hello!' } });
-  });
-
-  app.get(
-    '/login',
-    (req: Request, res: Response, next: NextFunction) => {
-      // TODO: Handle backs?
-      next();
-    },
-    passport.authenticate('discord')
-  );
-
-  app.get(
-    '/callback',
-    passport.authenticate('discord', { failureRedirect: '/autherror' }),
-    (req: Request, res: Response) => {
-      clientResponse(res, 200, { data: { message: 'Success' } });
-    }
-  );
-
-  app.get('/autherror', (req: Request, res: Response) => {
-    clientResponse(res, 500, { data: { message: 'Auth Error' } });
-  });
-
   client.site = app.listen(8080, '0.0.0.0', () => {
-    logger.info('Server now online.');
+    logger.info(`Server now ready at http://0.0.0.0:8080${server.graphqlPath}`);
   });
 };

@@ -12,6 +12,7 @@ COPY tsconfig*.json ./
 COPY ./server ./server
 COPY ./pages ./pages
 
+# install all the required packages and build the code (since typescript :))
 RUN npm ci --quiet && npm run build
 
 #
