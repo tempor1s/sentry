@@ -1,27 +1,39 @@
-import GET_HELLO from '../server/graphql/query/hello';
+import GET_STATS from '../server/graphql/query/stats';
 
 interface Data {
-  hello: string;
+  stats: Stats;
 }
 
-interface HelloProps {
+interface Stats {
+  servers: number;
+  users: number;
+  channels: number;
+}
+
+interface StatsProps {
   loading: boolean;
   data: Data;
   error: string;
 }
 
-// TODO: Get the bot information instead of hello world lol
-const Home = (props: HelloProps) => {
+const Home = (props: StatsProps) => {
   const { data } = props;
-  const helloMsg = data['hello'];
 
-  return <div>Data from server: {helloMsg}</div>;
+  const stats = data['stats'];
+
+  return (
+    <div>
+      <h2>Servers: {stats['servers']}</h2>
+      <h2>Users: {stats['users']}</h2>
+      <h2>Channels: {stats['channels']}</h2>
+    </div>
+  );
 };
 
 Home.getInitialProps = async (context: any) => {
   try {
     const { data, loading } = await context.apolloClient.query({
-      query: GET_HELLO,
+      query: GET_STATS,
     });
 
     return { data, loading };
