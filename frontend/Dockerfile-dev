@@ -1,13 +1,19 @@
+# use node alpine for a smaller image
 FROM node:lts-alpine 
 
 WORKDIR /usr/frontend
 
-COPY package.json ./ 
+# copy package and package.json into the build context
+COPY package*.json ./
 
+# install all the required stuff
 RUN npm install
 
+# copy everything else into the build context
 COPY . ./ 
 
+# expose port 3000 to the outside world
 EXPOSE 3000
 
+# run the dev command that allows for hot reloads and stuff! :)
 CMD ["npm", "run", "dev"]

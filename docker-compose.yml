@@ -23,6 +23,8 @@ services:
       - ./frontend:/usr/frontend/
     ports:
       - 3000:3000
+    links:
+      - bot
   postgres:
     image: postgres
     restart: always
