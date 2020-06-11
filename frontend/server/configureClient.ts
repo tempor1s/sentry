@@ -1,5 +1,5 @@
 import { ApolloClient } from 'apollo-client';
-import { split, ApolloLink, concat } from 'apollo-link';
+import { ApolloLink, concat } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { getMainDefinition } from 'apollo-utilities';
 import withApollo from 'next-with-apollo';
@@ -8,10 +8,10 @@ import fetch from 'isomorphic-unfetch';
 import Cookies from 'js-cookie';
 import { SERVER } from './config';
 
-interface Definiton {
-  kind: string;
-  operation?: string;
-}
+// interface Definiton {
+//   kind: string;
+//   operation?: string;
+// }
 
 let authToken: string | null = null;
 
