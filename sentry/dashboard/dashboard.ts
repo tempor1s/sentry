@@ -11,22 +11,6 @@ import { ApolloServer, gql } from 'apollo-server-express';
 
 const app = express();
 
-// graphql stuff
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'Hello, world!',
-  },
-};
-
-const server = new ApolloServer({ typeDefs, resolvers });
-server.applyMiddleware({ app });
-
 module.exports = async (client: AkairoClient) => {
   // passport black magic
   passport.serializeUser((user, done) => {
@@ -37,7 +21,7 @@ module.exports = async (client: AkairoClient) => {
     done(null, obj);
   });
 
-  // setup callback
+  // passport strategy
   passport.use(
     new Strategy(
       {
@@ -51,6 +35,36 @@ module.exports = async (client: AkairoClient) => {
       }
     )
   );
+
+  // graphql stuff
+  // TODO: Move type defs and resolvers into a seperate file because its gonna get very long
+  const typeDefs = gql`
+    type Query {
+      stats: Stats
+    }
+
+    type Stats {
+      servers: Int!
+      users: Int!
+      channels: Int!
+    }
+  `;
+
+  // TODO: A lot of this is going to need to change when sharding is added
+  const resolvers = {
+    Query: {
+      stats: () => {
+        return {
+          servers: client.guilds.cache.size,
+          users: client.users.cache.size,
+          channels: client.channels.cache.size,
+        };
+      },
+    },
+  };
+
+  const server = new ApolloServer({ typeDefs, resolvers });
+  server.applyMiddleware({ app });
 
   // redis session store
   let RedisStore = connectRedis(session);
