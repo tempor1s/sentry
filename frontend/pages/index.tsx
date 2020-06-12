@@ -1,13 +1,11 @@
 import GET_STATS from '../server/graphql/query/stats';
 
 interface Data {
-  stats: Stats;
-}
-
-interface Stats {
-  servers: number;
-  users: number;
-  channels: number;
+  stats: {
+    servers: number;
+    users: number;
+    channels: number;
+  };
 }
 
 interface StatsProps {
