@@ -41,6 +41,8 @@ services:
     restart: always
     ports:
       - 9000:8080
+    links:
+      - postgres
   redis:
     image: redis
     command: redis-server --requirepass password

@@ -1,15 +1,15 @@
-import { AkairoClient } from 'discord-akairo';
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import helmet from 'helmet';
+import path from 'path';
+import { AkairoClient } from 'discord-akairo';
 import { Strategy } from 'passport-discord';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
 import { discordClientSecret, callbackUrl, sessionSecret } from '../config';
 import logger from '../utils/logger';
-import { ApolloServer, gql } from 'apollo-server-express';
-import { buildSchema } from 'type-graphql';
-import { StatsResolver } from './resolvers/stats';
 
 const app = express();
 
@@ -41,9 +41,14 @@ module.exports = async (client: AkairoClient) => {
   // graphql stuff
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [StatsResolver],
+      resolvers: [path.join(__dirname, 'resolvers') + '/**{.ts,.js}'],
     }),
-    context: ({ req, res }) => ({ req, res, client }),
+    context: ({ req, res }) => {
+      const token = req.headers.authorization || '';
+      console.log(token);
+
+      return { req, res, client };
+    },
   });
 
   server.applyMiddleware({ app });

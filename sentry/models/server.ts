@@ -1,96 +1,135 @@
-import { Column, PrimaryColumn, Entity, CreateDateColumn } from 'typeorm';
+import {
+  Column,
+  PrimaryColumn,
+  Entity,
+  CreateDateColumn,
+  BaseEntity,
+} from 'typeorm';
 import { defaultPrefix } from '../config';
+import { ObjectType, Field } from 'type-graphql';
 
+@ObjectType()
 @Entity('servers')
-export class Servers {
+export class Servers extends BaseEntity {
   // Server ID
+  @Field()
   @PrimaryColumn({ type: 'varchar', length: 22, unique: true })
   server!: string;
 
   // Prefix
+  @Field()
   @Column({ type: 'text', default: defaultPrefix })
   prefix!: string;
 
   // Missing permissions messages
+  @Field()
   @Column({ type: 'bool', default: true })
   missingPermissionMessages!: boolean;
 
   // if we want to enable autorole
+  @Field()
   @Column({ type: 'bool', default: false })
   autoroleEnabled!: boolean;
 
   // set what the autorole is
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  autoroleRole!: string;
+  autoroleRole?: string;
 
   // Log Channels Enabled
+  @Field()
   @Column({ type: 'bool', default: false })
   commandLogEnabled!: boolean;
 
+  @Field()
   @Column({ type: 'bool', default: false })
   modLogEnabled!: boolean;
 
+  @Field()
   @Column({ type: 'bool', default: false })
   messageLogEditsEnabled!: boolean;
 
+  @Field()
   @Column({ type: 'bool', default: false })
   messageLogDeletesEnabled!: boolean;
 
+  @Field()
   @Column({ type: 'bool', default: false })
   messageLogImagesEnabled!: boolean;
 
   // welcome message enabled
+  @Field()
   @Column({ type: 'bool', default: false })
   welcomeMessageEnabled!: boolean;
 
   // welcome channel
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  welcomeChannel!: string;
+  welcomeChannel?: string;
 
   // welcome message
-  @Column({ type: 'text', nullable: true })
+  @Field()
+  @Column({
+    type: 'text',
+    nullable: true,
+    default: 'Hello. Welcome to the server!',
+  })
   welcomeMessage!: string;
 
   // welcome message embeded?
+  @Field()
   @Column({ type: 'bool', default: false })
   welcomeMessageEmbeded!: boolean;
 
   // welcome message send in dm if possible
+  @Field()
   @Column({ type: 'bool', default: false })
   welcomeMessageSendDM!: boolean;
 
   // User Join message
+  @Field()
   @Column({ type: 'bool', default: false })
   joinMsgEnabled!: boolean;
 
   // User Leave message
+  @Field()
   @Column({ type: 'bool', default: false })
   leaveMsgEnabled!: boolean;
 
   // Mod Log
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  modLog!: string;
+  modLog?: string;
 
   // Message Log (edits, deletes, image uploads)
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  messageLog!: string;
+  messageLog?: string;
 
   // Command Executions
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  commandLog!: string;
+  commandLog?: string;
 
   // Join/Leave log
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  joinLeaveLog!: string;
+  joinLeaveLog?: string;
 
   // Mute Role
+  @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  mutedRole!: string;
+  mutedRole?: string;
 
   // Mute Duration
+  @Field()
   @Column({ type: 'integer', default: 600000 })
   muteDuration!: number;
 
-  @CreateDateColumn()
+  @Field(() => Date)
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   botJoined!: Date;
 }
