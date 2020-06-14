@@ -19,6 +19,10 @@ export class Users extends BaseEntity {
   @Column({ type: 'text' })
   email!: string;
 
+  @Field()
+  @Column({ type: 'text' })
+  token!: string;
+
   @Field(() => Date)
   @CreateDateColumn({
     type: 'timestamp',
