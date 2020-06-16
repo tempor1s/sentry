@@ -17,13 +17,13 @@ interface StatsProps {
 const Home = (props: StatsProps) => {
   const { data } = props;
 
-  const stats = data['stats'];
-
   return (
     <div>
-      <h2>Servers: {stats['servers']}</h2>
-      <h2>Users: {stats['users']}</h2>
-      <h2>Channels: {stats['channels']}</h2>
+      <h1>
+        <a href="https://discord.com/api/oauth2/authorize?client_id=557425093425233923&redirect_uri=http%3A%2F%2F0.0.0.0%3A8080%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=email%20identify%20guilds">
+          Authenticate
+        </a>
+      </h1>
     </div>
   );
 };

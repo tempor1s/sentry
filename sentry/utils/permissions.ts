@@ -1,4 +1,6 @@
-import { Message, GuildMember, Role } from 'discord.js';
+import { Message, GuildMember, Role, Permissions } from 'discord.js';
+import { GuildInfo } from 'passport-discord';
+import { AkairoClient } from 'discord-akairo';
 
 interface PermissionsIndex {
   [key: string]: string;
@@ -63,5 +65,31 @@ export async function checkHigherRole(
     return true;
   }
 
+  return false;
+}
+
+// return true if user has manage guild / admin and the bot is in the guild we are trying to return
+export function hasManageServerAndBotInGuild(
+  client: AkairoClient,
+  guildInfo: GuildInfo,
+  userId: string
+): boolean {
+  // get the guild from the bot, meaning you should not be able to manage that server
+  const guild = client.guilds.cache.get(guildInfo.id);
+  if (!guild) return false;
+
+  // get the guild member
+  let member = guild.members.cache.get(userId);
+  // if they are not in that guild, something is wrong so return false
+  if (!member) return false;
+
+  // make sure that we have either manage guild or admin permissions
+  if (
+    member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) ||
+    member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
+  )
+    return true;
+
+  // otherwise, they do not have the correct permissions so just return false
   return false;
 }
