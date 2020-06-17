@@ -1,5 +1,5 @@
 import GET_STATS from '../server/graphql/query/stats';
-import { SERVER } from '../server/config/index';
+// import { SERVER } from '../server/config/index';
 
 interface Data {
   stats: {
@@ -18,18 +18,15 @@ interface StatsProps {
 const Home = (props: StatsProps) => {
   const { data } = props;
 
+  let url =
+    process.env.NODE_ENV === 'production'
+      ? 'https://sentry.dev.benl.dev/auth/discord'
+      : 'http://0.0.0.0:8080/auth/discord';
+
   return (
     <div>
       <h1>
-        <a
-          href={
-            // TODO: This might need to change
-            (process.env.NODE_ENV === 'production' ?? `${SERVER}/auth/discord`,
-            'http://0.0.0.0:8080/auth/discord')
-          }
-        >
-          Authenticate
-        </a>
+        <a href={url}>Authenticate</a>
       </h1>
       <h2>Bot Stats</h2>
       <h2>Users: {data.stats.users}</h2>

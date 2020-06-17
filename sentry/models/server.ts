@@ -9,6 +9,8 @@ import {
 import { defaultPrefix } from '../config';
 import { ObjectType, Field } from 'type-graphql';
 
+// TODO: Go through here and change fields to be optional, but this will require us to go through the entire project and change fields to handle undefined (very good thing)
+
 @ObjectType()
 @Entity('servers')
 export class Servers extends BaseEntity {
@@ -36,7 +38,7 @@ export class Servers extends BaseEntity {
   // set what the autorole is
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  autoroleRole?: string;
+  autoroleRole!: string;
 
   // Log Channels Enabled
   @Field()
@@ -67,7 +69,7 @@ export class Servers extends BaseEntity {
   // welcome channel
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  welcomeChannel?: string;
+  welcomeChannel!: string;
 
   // welcome message
   @Field()
@@ -101,27 +103,27 @@ export class Servers extends BaseEntity {
   // Mod Log
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  modLog?: string;
+  modLog!: string;
 
   // Message Log (edits, deletes, image uploads)
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  messageLog?: string;
+  messageLog!: string;
 
   // Command Executions
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  commandLog?: string;
+  commandLog!: string;
 
   // Join/Leave log
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  joinLeaveLog?: string;
+  joinLeaveLog!: string;
 
   // Mute Role
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
-  mutedRole?: string;
+  mutedRole!: string;
 
   // Mute Duration
   @Field()

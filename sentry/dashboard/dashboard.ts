@@ -14,6 +14,7 @@ import {
   callbackUrl,
   sessionSecret,
   serverUrl,
+  domain,
 } from '../config';
 import { redisClient } from '../structures/redis';
 import { hasManageServerAndBotInGuild } from '../utils/permissions';
@@ -29,6 +30,8 @@ module.exports = async (client: AkairoClient) => {
   // body parser for better json parsing
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+
+  app.set('trust proxy', true);
 
   passport.serializeUser((user, done) => {
     done(null, user);
@@ -46,10 +49,12 @@ module.exports = async (client: AkairoClient) => {
         client: redisClient,
       }),
       secret: sessionSecret,
+      proxy: process.env.NODE_ENV === 'production',
       resave: false,
       saveUninitialized: false,
       cookie: {
         httpOnly: true,
+        domain: domain,
         // only secure in production
         secure: process.env.NODE_ENV === 'production',
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
@@ -155,7 +160,14 @@ module.exports = async (client: AkairoClient) => {
   });
 
   const corsOptions = {
-    origin: ['http://0.0.0.0:3000', 'http://0.0.0.0:8080', serverUrl],
+    origin: [
+      'http://0.0.0.0:3000',
+      'http://0.0.0.0:8080',
+      'https://sentry.benl.dev',
+      'https://sentry.dev.benl.dev',
+      'https://sentry-frontend.dev.benl.dev',
+      serverUrl,
+    ],
     credentials: true,
   };
 
