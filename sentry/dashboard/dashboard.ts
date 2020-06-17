@@ -30,6 +30,8 @@ module.exports = async (client: AkairoClient) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  app.set('trust proxy', 1);
+
   passport.serializeUser((user, done) => {
     done(null, user);
   });
