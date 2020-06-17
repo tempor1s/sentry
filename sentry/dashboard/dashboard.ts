@@ -30,7 +30,7 @@ module.exports = async (client: AkairoClient) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.set('trust proxy', 1);
+  app.set('trust proxy', true);
 
   passport.serializeUser((user, done) => {
     done(null, user);
@@ -48,6 +48,7 @@ module.exports = async (client: AkairoClient) => {
         client: redisClient,
       }),
       secret: sessionSecret,
+      proxy: process.env.NODE_ENV === 'production',
       resave: false,
       saveUninitialized: false,
       cookie: {
