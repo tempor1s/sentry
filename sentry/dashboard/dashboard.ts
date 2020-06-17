@@ -14,6 +14,7 @@ import {
   callbackUrl,
   sessionSecret,
   serverUrl,
+  domain,
 } from '../config';
 import { redisClient } from '../structures/redis';
 import { hasManageServerAndBotInGuild } from '../utils/permissions';
@@ -53,6 +54,7 @@ module.exports = async (client: AkairoClient) => {
       saveUninitialized: false,
       cookie: {
         httpOnly: true,
+        domain: domain,
         // only secure in production
         secure: process.env.NODE_ENV === 'production',
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
