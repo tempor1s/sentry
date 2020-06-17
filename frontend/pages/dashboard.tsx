@@ -30,11 +30,11 @@ const Dashboard = (props: CurrentUserProps) => {
       <h1>User Data</h1>
       <h2>User ID: {data.currentUser.id}</h2>
       <h2>User Email: {data.currentUser.email}</h2>
-      <h2>
-        Servers:{' '}
-        {data.currentUser.servers &&
-          data.currentUser.servers.map((server) => <p>Server ID: {server}</p>)}
-      </h2>
+      <h2>Servers:</h2>
+      {data.currentUser.servers &&
+        data.currentUser.servers.map((server) => (
+          <p key={server}>Server ID: {server}</p>
+        ))}
     </div>
   );
 };
