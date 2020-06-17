@@ -1,16 +1,20 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
-import cors from 'cors';
 import path from 'path';
 import { AkairoClient } from 'discord-akairo';
 import { Strategy } from 'passport-discord';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { discordClientSecret, callbackUrl, sessionSecret } from '../config';
+import {
+  discordClientSecret,
+  callbackUrl,
+  sessionSecret,
+  serverUrl,
+} from '../config';
 import { redisClient } from '../structures/redis';
 import { hasManageServerAndBotInGuild } from '../utils/permissions';
 import { Users } from '../models/users';
@@ -20,17 +24,18 @@ const app = express();
 const RedisStore = connectRedis(session);
 
 module.exports = async (client: AkairoClient) => {
-  app.use(cors());
-  // general middleware
+  // common secure headers
   app.use(helmet());
+  // body parser for better json parsing
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  // serialize passport user and pass on to deserialize
   passport.serializeUser((user, done) => {
     done(null, user);
   });
 
-  // TODO: Type this
+  // TODO: Type this and refactor all of this out of here
   passport.deserializeUser(async (user: any, done) => {
     const repo = client.db.getRepository(Users);
     const currentUser = await repo.findOne({ where: { id: user.id } });
@@ -48,12 +53,19 @@ module.exports = async (client: AkairoClient) => {
       secret: sessionSecret,
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        // only secure in production
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      },
     })
   );
   // passport initialization
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // oauth scopes that discord that will contain information from discord
   const scopes = ['identify', 'email', 'guilds'];
 
   // passport strategy
@@ -65,6 +77,7 @@ module.exports = async (client: AkairoClient) => {
         callbackURL: callbackUrl,
         scope: scopes,
       },
+      // called after the user is created
       async (_accessToken, _refreshToken, profile, done) => {
         const repo = client.db.getRepository(Users);
         const currentUser = await repo.findOne({ where: { id: profile!.id } });
@@ -83,8 +96,6 @@ module.exports = async (client: AkairoClient) => {
           return;
         }
 
-        console.log('user profile', 'profile');
-
         // create a user in the db with id, email, and guilds that are managable
         let user: Users = repo.create({
           id: profile.id,
@@ -95,8 +106,6 @@ module.exports = async (client: AkairoClient) => {
             )
             .map((guild) => guild.id),
         });
-
-        console.log(user);
 
         // save user to db
         await repo.save(user);
@@ -117,12 +126,12 @@ module.exports = async (client: AkairoClient) => {
     passport.authenticate('discord', {
       successRedirect:
         process.env.NODE_ENV === 'production'
-          ? 'http://sentry.benl.dev'
-          : 'http://0.0.0.0:3000/dashboard',
+          ? 'http://sentry.benl.dev/dashboard'
+          : 'http://localhost:3000/dashboard',
       failureRedirect:
         process.env.NODE_ENV === 'production'
           ? 'http://sentry.benl.dev'
-          : 'http://0.0.0.0:3000',
+          : 'http://localhost:3000',
       session: true,
     })
   );
@@ -133,6 +142,7 @@ module.exports = async (client: AkairoClient) => {
       resolvers: [path.join(__dirname, 'resolvers') + '/**{.ts,.js}'],
     }),
     context: ({ req, res }) => {
+      // context that will be passed with each graphql request
       return {
         req,
         res,
@@ -148,14 +158,23 @@ module.exports = async (client: AkairoClient) => {
     },
   });
 
-  server.applyMiddleware({ app });
+  const corsOptions = {
+    origin: [
+      'http://localhost:3000',
+      'http://0.0.0.0:3000',
+      'http://frontend:3000',
+      serverUrl,
+    ],
+    credentials: true,
+  };
 
-  app.get('/', (req: Request, res: Response) => {
-    console.log(req.user);
-    res.end();
-  });
+  // setup the apollo server with the app
+  server.applyMiddleware({ app, cors: corsOptions });
 
+  // start the server
   client.site = app.listen(8080, '0.0.0.0', () => {
-    logger.info(`Server now ready at http://0.0.0.0:8080${server.graphqlPath}`);
+    logger.info(
+      `Server now ready at http://localhost:8080${server.graphqlPath}`
+    );
   });
 };

@@ -26,9 +26,13 @@ class CurrentUserResp {
 export class UserResolver {
   @Query(() => CurrentUserResp)
   async currentUser(
-    @Ctx() { getUser }: Context
+    @Ctx() { getUser, req }: Context
   ): Promise<CurrentUserResp | ApolloError> {
     const user = getUser();
+
+    console.log('get user', user);
+    console.log('req user', req.user);
+    console.log('session', req.session);
 
     if (!user) return handleError(AuthError.NOT_AUTHENTICATED);
 
