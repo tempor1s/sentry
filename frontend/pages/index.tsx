@@ -1,5 +1,5 @@
 import GET_STATS from '../server/graphql/query/stats';
-import { SERVER } from '../server/config/index';
+// import { SERVER } from '../server/config/index';
 
 interface Data {
   stats: {
