@@ -16,7 +16,7 @@ interface StatsProps {
 }
 
 const Home = (props: StatsProps) => {
-  const { data, loading, error } = props;
+  const { data } = props;
 
   return (
     <div>

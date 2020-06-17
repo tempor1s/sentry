@@ -8,16 +8,14 @@ interface Data {
   };
 }
 
-interface StatsProps {
+interface CurrentUserProps {
   loading: boolean;
   data: Data;
   error: string;
 }
 
-const Dashboard = (props: StatsProps) => {
+const Dashboard = (props: CurrentUserProps) => {
   const { loading, error, data } = props;
-
-  console.log(error);
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -46,6 +44,10 @@ Dashboard.getInitialProps = async (context: any) => {
   try {
     const { data, loading, error } = await context.apolloClient.query({
       query: GET_CURRENT_USER,
+      context: {
+        credentials: 'include',
+        fetchPolicy: 'no-cache',
+      },
     });
 
     return { data, loading, error };

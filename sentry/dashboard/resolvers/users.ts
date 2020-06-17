@@ -31,10 +31,10 @@ export class UserResolver {
     const user = getUser();
 
     console.log('get user', user);
-    console.log('req user', req.user);
+    console.log('req', req.headers);
     console.log('session', req.session);
 
-    if (!user) return handleError(AuthError.NOT_AUTHENTICATED);
+    // if (!user) return handleError(AuthError.NOT_AUTHENTICATED);
 
     return user;
   }
