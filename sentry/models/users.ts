@@ -21,7 +21,7 @@ export class Users extends BaseEntity {
 
   @Field(() => [String])
   @Column({ type: 'varchar', length: 22, array: true, nullable: true })
-  servers?: String[];
+  servers!: string[];
 
   @Field(() => Date)
   @CreateDateColumn({

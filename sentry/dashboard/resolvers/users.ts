@@ -18,7 +18,7 @@ class CurrentUserResp {
   @Field()
   email!: string;
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   servers?: String[];
 }
 
@@ -26,15 +26,11 @@ class CurrentUserResp {
 export class UserResolver {
   @Query(() => CurrentUserResp)
   async currentUser(
-    @Ctx() { getUser, req }: Context
+    @Ctx() { getUser }: Context
   ): Promise<CurrentUserResp | ApolloError> {
     const user = getUser();
 
-    console.log('get user', user);
-    console.log('req', req.headers);
-    console.log('session', req.session);
-
-    // if (!user) return handleError(AuthError.NOT_AUTHENTICATED);
+    if (!user) return handleError(AuthError.NOT_AUTHENTICATED);
 
     return user;
   }

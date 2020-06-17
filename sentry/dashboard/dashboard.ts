@@ -30,17 +30,12 @@ module.exports = async (client: AkairoClient) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  // serialize passport user and pass on to deserialize
   passport.serializeUser((user, done) => {
     done(null, user);
   });
 
-  // TODO: Type this and refactor all of this out of here
   passport.deserializeUser(async (user: any, done) => {
-    const repo = client.db.getRepository(Users);
-    const currentUser = await repo.findOne({ where: { id: user.id } });
-
-    process.nextTick(() => done(null, currentUser));
+    process.nextTick(() => done(null, user));
   });
 
   // session data
@@ -77,20 +72,25 @@ module.exports = async (client: AkairoClient) => {
         callbackURL: callbackUrl,
         scope: scopes,
       },
+      // TODO: Maybe move into .deserializeUser
       // called after the user is created
       async (_accessToken, _refreshToken, profile, done) => {
         const repo = client.db.getRepository(Users);
         const currentUser = await repo.findOne({ where: { id: profile!.id } });
 
-        if (currentUser) {
-          // always update the guilds
-          currentUser.servers = profile.guilds
-            ?.filter((guild) =>
-              hasManageServerAndBotInGuild(client, guild, profile.id)
-            )
-            .map((guild) => guild.id);
+        let guilds = profile.guilds
+          ?.filter((guild) =>
+            hasManageServerAndBotInGuild(client, guild, profile.id)
+          )
+          .map((guild) => guild.id);
 
-          await repo.save(currentUser);
+        if (currentUser) {
+          // might as well update guilds
+          if (guilds) {
+            currentUser.servers = guilds;
+
+            await repo.save(currentUser);
+          }
 
           process.nextTick(() => done(null, currentUser));
           return;
@@ -100,11 +100,7 @@ module.exports = async (client: AkairoClient) => {
         let user: Users = repo.create({
           id: profile.id,
           email: profile.email,
-          servers: profile.guilds
-            ?.filter((guild) =>
-              hasManageServerAndBotInGuild(client, guild, profile.id)
-            )
-            .map((guild) => guild.id),
+          servers: guilds,
         });
 
         // save user to db
@@ -127,11 +123,11 @@ module.exports = async (client: AkairoClient) => {
       successRedirect:
         process.env.NODE_ENV === 'production'
           ? 'http://sentry.benl.dev/dashboard'
-          : 'http://localhost:3000/dashboard',
+          : 'http://0.0.0.0:3000/dashboard',
       failureRedirect:
         process.env.NODE_ENV === 'production'
           ? 'http://sentry.benl.dev'
-          : 'http://localhost:3000',
+          : 'http://0.0.0.0:3000',
       session: true,
     })
   );
@@ -159,17 +155,7 @@ module.exports = async (client: AkairoClient) => {
   });
 
   const corsOptions = {
-    origin: [
-      'http://localhost:3000',
-      'http://0.0.0.0:3000',
-      'http://frontend:3000',
-      'http://localhost:8080',
-      'http://0.0.0.0:8080',
-      'http://sentry:8080',
-      'sentry:8080',
-      'http://frontend:3000',
-      serverUrl,
-    ],
+    origin: ['http://0.0.0.0:3000', 'http://0.0.0.0:8080', serverUrl],
     credentials: true,
   };
 
@@ -178,8 +164,6 @@ module.exports = async (client: AkairoClient) => {
 
   // start the server
   client.site = app.listen(8080, '0.0.0.0', () => {
-    logger.info(
-      `Server now ready at http://localhost:8080${server.graphqlPath}`
-    );
+    logger.info(`Server now ready at http://0.0.0.0:8080${server.graphqlPath}`);
   });
 };

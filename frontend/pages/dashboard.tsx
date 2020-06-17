@@ -32,9 +32,8 @@ const Dashboard = (props: CurrentUserProps) => {
       <h2>User Email: {data.currentUser.email}</h2>
       <h2>
         Servers:{' '}
-        {data.currentUser.servers.map((server) => (
-          <p>Server ID: {server}</p>
-        ))}
+        {data.currentUser.servers &&
+          data.currentUser.servers.map((server) => <p>Server ID: {server}</p>)}
       </h2>
     </div>
   );
