@@ -15,7 +15,7 @@ app
       return handle(req, res);
     });
 
-    server.listen(3000, (err: any) => {
+    server.listen(3000, '0.0.0.0', (err: any) => {
       if (err) throw err;
     });
   })

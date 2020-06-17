@@ -5,12 +5,6 @@ export interface Context {
   req: Request;
   res: Response;
   client: AkairoClient;
-  user?: UserPayloadInterface;
-}
-
-export interface UserPayloadInterface {
-  id: string;
-  email: string;
-  user: string;
-  servers?: string;
+  getUser: () => any;
+  logout: any;
 }

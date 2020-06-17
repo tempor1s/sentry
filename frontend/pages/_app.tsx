@@ -1,7 +1,7 @@
 import React from 'react';
 import App from 'next/app';
 import { ApolloProvider } from '@apollo/react-hooks';
-import withData from '../server/configureClient';
+import withApollo from '../server/configureClient';
 
 class SentryFrontend extends App<any> {
   render() {
@@ -15,4 +15,5 @@ class SentryFrontend extends App<any> {
 }
 
 // wraps all components with data provider from apollo
-export default withData(SentryFrontend);
+export default withApollo(SentryFrontend);
+

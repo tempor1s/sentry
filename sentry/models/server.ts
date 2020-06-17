@@ -4,6 +4,7 @@ import {
   Entity,
   CreateDateColumn,
   BaseEntity,
+  Index,
 } from 'typeorm';
 import { defaultPrefix } from '../config';
 import { ObjectType, Field } from 'type-graphql';
@@ -13,6 +14,7 @@ import { ObjectType, Field } from 'type-graphql';
 export class Servers extends BaseEntity {
   // Server ID
   @Field()
+  @Index()
   @PrimaryColumn({ type: 'varchar', length: 22, unique: true })
   server!: string;
 

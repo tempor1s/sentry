@@ -19,9 +19,9 @@ export class Users extends BaseEntity {
   @Column({ type: 'text' })
   email!: string;
 
-  @Field()
-  @Column({ type: 'text' })
-  token!: string;
+  @Field(() => [String])
+  @Column({ type: 'varchar', length: 22, array: true, nullable: true })
+  servers!: string[];
 
   @Field(() => Date)
   @CreateDateColumn({

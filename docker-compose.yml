@@ -25,6 +25,8 @@ services:
       - 3000:3000
     links:
       - bot
+    depends_on:
+      - bot
   postgres:
     image: postgres
     restart: always

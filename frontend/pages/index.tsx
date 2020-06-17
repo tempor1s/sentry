@@ -1,4 +1,5 @@
 import GET_STATS from '../server/graphql/query/stats';
+import { SERVER } from '../server/config/index';
 
 interface Data {
   stats: {
@@ -17,24 +18,34 @@ interface StatsProps {
 const Home = (props: StatsProps) => {
   const { data } = props;
 
-  const stats = data['stats'];
-
   return (
     <div>
-      <h2>Servers: {stats['servers']}</h2>
-      <h2>Users: {stats['users']}</h2>
-      <h2>Channels: {stats['channels']}</h2>
+      <h1>
+        <a
+          href={
+            // TODO: This might need to change
+            (process.env.NODE_ENV === 'production' ?? `${SERVER}/auth/discord`,
+            'http://0.0.0.0:8080/auth/discord')
+          }
+        >
+          Authenticate
+        </a>
+      </h1>
+      <h2>Bot Stats</h2>
+      <h2>Users: {data.stats.users}</h2>
+      <h2>Servers: {data.stats.servers}</h2>
+      <h2>Channels: {data.stats.channels}</h2>
     </div>
   );
 };
 
 Home.getInitialProps = async (context: any) => {
   try {
-    const { data, loading } = await context.apolloClient.query({
+    const { data, loading, error } = await context.apolloClient.query({
       query: GET_STATS,
     });
 
-    return { data, loading };
+    return { data, loading, error };
   } catch (error) {
     return {
       error: `Failed to fetch data. ${error}`,
