@@ -155,7 +155,12 @@ module.exports = async (client: AkairoClient) => {
   });
 
   const corsOptions = {
-    origin: ['http://0.0.0.0:3000', 'http://0.0.0.0:8080', serverUrl],
+    origin: [
+      'http://0.0.0.0:3000',
+      'http://0.0.0.0:8080',
+      serverUrl,
+      'https://sentry.dev.benl.me',
+    ],
     credentials: true,
   };
 
