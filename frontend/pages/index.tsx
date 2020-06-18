@@ -1,5 +1,5 @@
 import GET_STATS from '../server/graphql/query/stats';
-// import { SERVER } from '../server/config/index';
+import styled from 'styled-components';
 
 interface Data {
   stats: {
@@ -14,6 +14,16 @@ interface StatsProps {
   data: Data;
   error: string;
 }
+
+// interface StyleProps {
+//   test: boolean;
+// }
+//
+// const Button = styled.button`
+//   background-color: ${(props) => props.theme.primary};
+//   padding: ${(props: StyleProps) => (props.test ? '25px' : '100px')};
+//   h1:
+// `;
 
 const Home = (props: StatsProps) => {
   const { data } = props;
@@ -32,6 +42,7 @@ const Home = (props: StatsProps) => {
       <h2>Users: {data.stats.users}</h2>
       <h2>Servers: {data.stats.servers}</h2>
       <h2>Channels: {data.stats.channels}</h2>
+      // <Button test={false}>Hi!</Button>
     </div>
   );
 };

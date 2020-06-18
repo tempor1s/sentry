@@ -79,7 +79,7 @@ export function hasManageServerAndBotInGuild(
   if (!guild) return false;
 
   // get the guild member
-  let member = guild.members.cache.get(userId);
+  const member = guild.members.cache.get(userId);
   // if they are not in that guild, something is wrong so return false
   if (!member) return false;
 
@@ -91,5 +91,20 @@ export function hasManageServerAndBotInGuild(
     return true;
 
   // otherwise, they do not have the correct permissions so just return false
+  return false;
+}
+
+export function hasManageServer(permissionsBitfield: number): boolean {
+  // make a new permissions object out of our bit field
+  const permissions = new Permissions(permissionsBitfield);
+
+  // check to make sure the user has manage guild or admin perms
+  if (
+    permissions.has(Permissions.FLAGS.MANAGE_GUILD) ||
+    permissions.has(Permissions.FLAGS.ADMINISTRATOR)
+  )
+    return true;
+
+  // no manage guild or admin perms
   return false;
 }
