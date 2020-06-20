@@ -17,9 +17,10 @@ import {
   domain,
 } from '../config';
 import { redisClient } from '../structures/redis';
-import { hasManageServerAndBotInGuild } from '../utils/permissions';
+import { hasManageServer } from '../utils/permissions';
 import { Users } from '../models/users';
 import logger from '../utils/logger';
+import { customAuthChecker } from './utils/auth';
 
 const app = express();
 const RedisStore = connectRedis(session);
@@ -84,9 +85,7 @@ module.exports = async (client: AkairoClient) => {
         const currentUser = await repo.findOne({ where: { id: profile!.id } });
 
         let guilds = profile.guilds
-          ?.filter((guild) =>
-            hasManageServerAndBotInGuild(client, guild, profile.id)
-          )
+          ?.filter((guild) => hasManageServer(guild.permissions))
           .map((guild) => guild.id);
 
         if (currentUser) {
@@ -141,6 +140,7 @@ module.exports = async (client: AkairoClient) => {
   const server = new ApolloServer({
     schema: await buildSchema({
       resolvers: [path.join(__dirname, 'resolvers') + '/**{.ts,.js}'],
+      authChecker: customAuthChecker,
     }),
     context: ({ req, res }) => {
       // context that will be passed with each graphql request

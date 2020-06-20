@@ -5,10 +5,10 @@ import {
   Ctx,
   Field,
   ObjectType,
+  Authorized,
 } from 'type-graphql';
 import { Context } from '../interfaces/context.interface';
-import { handleError, AuthError } from '../utils/errors';
-import { ApolloError } from 'apollo-server-express';
+import { Servers } from '../../models/server';
 
 @ObjectType()
 class CurrentUserResp {
@@ -22,17 +22,65 @@ class CurrentUserResp {
   servers?: String[];
 }
 
+@ObjectType()
+class ServersResp {
+  @Field(() => [Servers])
+  joinedServers?: Servers[];
+
+  @Field(() => [String])
+  otherServers?: string[];
+}
+
+interface ServersRespInterface {
+  joinedServers: Servers[];
+  otherServers: string[];
+}
+
 @Resolver()
 export class UserResolver {
+  @Authorized()
   @Query(() => CurrentUserResp)
-  async currentUser(
-    @Ctx() { getUser }: Context
-  ): Promise<CurrentUserResp | ApolloError> {
+  async currentUser(@Ctx() { getUser }: Context): Promise<CurrentUserResp> {
+    return getUser();
+  }
+
+  @Authorized()
+  @Query(() => ServersResp)
+  async getServers(@Ctx() { getUser, client }: Context): Promise<ServersResp> {
     const user = getUser();
+    const serversRepo = client.db.getRepository(Servers);
 
-    if (!user) return handleError(AuthError.NOT_AUTHENTICATED);
+    let serversResp: ServersRespInterface = {
+      joinedServers: [],
+      otherServers: [],
+    };
 
-    return user;
+    for (const server of user.servers) {
+      let guild = client.guilds.cache.get(server);
+      // if we find the guild in our cache, we have a db entry, so try to add that
+      if (guild) {
+        const dbServer = await serversRepo.findOne({ where: { server } });
+
+        // db entry doesn't exist
+        if (!dbServer) {
+          serversResp.otherServers.push(server);
+          continue;
+        }
+
+        if (serversResp.joinedServers) {
+          serversResp.joinedServers.push(dbServer!);
+        }
+        // otherwise, we want to just add the server id that we can use for other stuff
+      } else {
+        if (serversResp.otherServers) {
+          serversResp.otherServers.push(server);
+        }
+      }
+    }
+
+    console.log(serversResp);
+
+    return serversResp;
   }
 
   @Mutation(() => Boolean)
