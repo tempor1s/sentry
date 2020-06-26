@@ -1,4 +1,5 @@
 import GET_CURRENT_USER from 'server/graphql/query/currentUser';
+import { Container } from '../components/container';
 
 interface Data {
   currentUser: {
@@ -26,7 +27,7 @@ const Dashboard = (props: CurrentUserProps) => {
   }
 
   return (
-    <div>
+    <Container>
       <h1>User Data</h1>
       <h2>User ID: {data.currentUser.id}</h2>
       <h2>User Email: {data.currentUser.email}</h2>
@@ -35,7 +36,7 @@ const Dashboard = (props: CurrentUserProps) => {
         data.currentUser.servers.map((server) => (
           <p key={server}>Server ID: {server}</p>
         ))}
-    </div>
+    </Container>
   );
 };
 
