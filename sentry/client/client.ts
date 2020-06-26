@@ -49,6 +49,7 @@ export default class Client extends AkairoClient {
     super(
       {
         ownerID: config.owners,
+        shards: 'auto',
       },
       // we may need to reduce cache size as the bot grows
       { messageCacheMaxSize: 100, disableMentions: 'everyone' }
