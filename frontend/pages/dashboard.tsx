@@ -1,5 +1,7 @@
 import GET_CURRENT_USER from 'server/graphql/query/currentUser';
-import { Container } from '../components/container';
+import dynamic from 'next/dynamic';
+
+const Container = dynamic(() => import('../components/container'));
 
 interface Data {
   currentUser: {
