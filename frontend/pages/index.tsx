@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { device } from '../server/utils/theme';
 import dynamic from 'next/dynamic';
 
-const Container = dynamic(() => import('../components/container'));
+const Container = dynamic(() => import('../server/components/container'));
 
 interface Data {
   stats: {
@@ -72,6 +72,7 @@ const Button = styled.button`
     a {
       background-color: white;
       color: black;
+      display: block;
     }
   }
 
@@ -89,12 +90,12 @@ const Home = (props: StatsProps) => {
 
   let authUrl =
     process.env.NODE_ENV === 'production'
-      ? 'https://sentry.dev.benl.dev/auth/discord'
+      ? 'https://sentrybot.io/auth/discord'
       : 'http://0.0.0.0:8080/auth/discord';
 
   let dashUrl =
     process.env.NODE_ENV === 'production'
-      ? 'https://sentry.benl.dev/dashboard'
+      ? 'https://sentrybot.io/dashboard'
       : 'http://0.0.0.0:3000/dashboard';
 
   // TODO: Check if logged in and change the invite url

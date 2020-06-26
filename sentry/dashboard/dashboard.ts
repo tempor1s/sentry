@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import passport from 'passport';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
@@ -126,11 +126,11 @@ module.exports = async (client: AkairoClient) => {
     passport.authenticate('discord', {
       successRedirect:
         process.env.NODE_ENV === 'production'
-          ? 'http://sentry.benl.dev/dashboard'
+          ? 'http://sentrybot.io/dashboard'
           : 'http://0.0.0.0:3000/dashboard',
       failureRedirect:
         process.env.NODE_ENV === 'production'
-          ? 'http://sentry.benl.dev'
+          ? 'http://sentrybot.io'
           : 'http://0.0.0.0:3000',
       session: true,
     })
@@ -164,12 +164,19 @@ module.exports = async (client: AkairoClient) => {
       'http://0.0.0.0:3000',
       'http://0.0.0.0:8080',
       'https://sentry.benl.dev',
+      'https://sentrybot.io',
+      'https://api.sentrybot.io',
       'https://sentry.dev.benl.dev',
       'https://sentry-frontend.dev.benl.dev',
       serverUrl,
     ],
     credentials: true,
   };
+
+  // basic hello world for status checks
+  app.get('/', (_: Request, res: Response) => {
+    res.send(':)');
+  });
 
   // setup the apollo server with the app
   server.applyMiddleware({ app, cors: corsOptions });
