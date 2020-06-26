@@ -164,6 +164,8 @@ module.exports = async (client: AkairoClient) => {
       'http://0.0.0.0:3000',
       'http://0.0.0.0:8080',
       'https://sentry.benl.dev',
+      'https://sentrybot.io',
+      'https://api.sentrybot.io',
       'https://sentry.dev.benl.dev',
       'https://sentry-frontend.dev.benl.dev',
       serverUrl,
