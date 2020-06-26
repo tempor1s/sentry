@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Container from './container';
+import Link from 'next/link';
 
 const NavContainer = styled.div`
   width: 100%;
@@ -32,10 +33,17 @@ export default function Navbar(): JSX.Element {
   return (
     <Container>
       <NavContainer>
-        <NavTitle>Sentry</NavTitle>
+        <NavTitle>
+          <Link href="/">
+            <a>Home</a>
+          </Link>
+        </NavTitle>
         <NavRight>
-          <li>Dashboard</li>
-          <li>Premium</li>
+          <li>
+            <Link href="/dashboard">
+              <a>Dashboard</a>
+            </Link>
+          </li>
         </NavRight>
       </NavContainer>
     </Container>

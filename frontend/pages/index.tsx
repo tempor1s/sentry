@@ -72,6 +72,7 @@ const Button = styled.button`
     a {
       background-color: white;
       color: black;
+      display: block;
     }
   }
 

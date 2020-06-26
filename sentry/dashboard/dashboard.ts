@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import passport from 'passport';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
@@ -170,6 +170,11 @@ module.exports = async (client: AkairoClient) => {
     ],
     credentials: true,
   };
+
+  // basic hello world for status checks
+  app.get('/', (_: Request, res: Response) => {
+    res.send(':)');
+  });
 
   // setup the apollo server with the app
   server.applyMiddleware({ app, cors: corsOptions });

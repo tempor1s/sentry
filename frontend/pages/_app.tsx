@@ -10,26 +10,32 @@ import { darkTheme, lightTheme } from '../server/utils/theme';
 
 const Navbar = dynamic(() => import('../server/components/navbar'));
 
-class SentryFrontend extends App<any> {
-  render() {
-    const { Component, pageProps, apollo } = this.props;
-    return (
-      <ApolloProvider client={apollo}>
-        <ThemeProvider theme={darkTheme ? darkTheme : lightTheme}>
-          <GlobalStyle />
-          <Head>
-            <link
-              href="https://fonts.googleapis.com/css?family=Roboto"
-              rel="stylesheet"
-            />
-          </Head>
-          <Navbar />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </ApolloProvider>
-    );
+// TODO: Type this? idk
+const SentryFrontend = ({ Component, pageProps, apollo }: any): any => {
+  return (
+    <ApolloProvider client={apollo}>
+      <ThemeProvider theme={darkTheme ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <Head>
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto"
+            rel="stylesheet"
+          />
+        </Head>
+        <Navbar />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </ApolloProvider>
+  );
+};
+
+SentryFrontend.getInitialProps = async ({ Component, ctx }: any) => {
+  let pageProps = {};
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
   }
-}
+  return { pageProps };
+};
 
 // wraps all components with data provider from apollo
 export default withApollo(SentryFrontend);
