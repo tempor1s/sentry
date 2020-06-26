@@ -126,11 +126,11 @@ module.exports = async (client: AkairoClient) => {
     passport.authenticate('discord', {
       successRedirect:
         process.env.NODE_ENV === 'production'
-          ? 'http://sentry.benl.dev/dashboard'
+          ? 'http://sentrybot.io/dashboard'
           : 'http://0.0.0.0:3000/dashboard',
       failureRedirect:
         process.env.NODE_ENV === 'production'
-          ? 'http://sentry.benl.dev'
+          ? 'http://sentrybot.io'
           : 'http://0.0.0.0:3000',
       session: true,
     })
