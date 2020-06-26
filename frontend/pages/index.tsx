@@ -1,6 +1,9 @@
 import GET_STATS from '../server/graphql/query/stats';
 import styled from 'styled-components';
 import { device } from '../server/utils/theme';
+import dynamic from 'next/dynamic';
+
+const Container = dynamic(() => import('../components/container'));
 
 interface Data {
   stats: {
@@ -27,9 +30,6 @@ interface StatsProps {
 // `;
 // <Button test={false}>Hi!</Button>
 
-const Container = styled.div`
-  text-align: center;
-`;
 const HeaderContent = styled.div`
   display: flex;
   height: 950px;

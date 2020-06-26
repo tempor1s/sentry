@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { device } from '../server/utils/theme';
 
-export const Container = styled.div`
+const Container = styled.div`
   width: 1375px;
   margin: 0px auto;
   @media ${device.laptopM} {
@@ -17,3 +17,5 @@ export const Container = styled.div`
     width: 90%;
   }
 `;
+
+export default Container;
