@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import withApollo from '../server/configureClient';
 import { GlobalStyle } from '../server/utils/globalstyles';
 import { darkTheme, lightTheme } from '../server/utils/theme';
+import { Navbar } from '../components/navbar';
 
 class SentryFrontend extends App<any> {
   render() {
@@ -20,6 +21,7 @@ class SentryFrontend extends App<any> {
               rel="stylesheet"
             />
           </Head>
+          <Navbar />
           <Component {...pageProps} />
         </ThemeProvider>
       </ApolloProvider>

@@ -1,5 +1,6 @@
 import GET_STATS from '../server/graphql/query/stats';
 import styled from 'styled-components';
+import { device } from '../server/utils/theme';
 
 interface Data {
   stats: {
@@ -29,10 +30,16 @@ interface StatsProps {
 const Container = styled.div`
   text-align: center;
 `;
+const HeaderContent = styled.div`
+  display: flex;
+  height: 950px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Title = styled.h1`
   font-size: 5em;
-  padding-top: 4em;
 `;
 
 const SubTitle = styled.h3`
@@ -60,11 +67,16 @@ const Button = styled.button`
 
   &:hover {
     background-color: white;
+    cursor: pointer;
 
     a {
       background-color: white;
       color: black;
     }
+  }
+
+  @media ${device.mobileS} {
+    margin-bottom: 0.75em;
   }
 `;
 
@@ -89,19 +101,23 @@ const Home = (props: StatsProps) => {
 
   return (
     <Container>
-      <Title>Sentry</Title>
-      <SubTitle>Simple & Advanced Moderation Bot For Discord</SubTitle>
-      <Button>
-        <a href={authUrl}>Invite</a>
-      </Button>
-      <Button>
-        <a href={dashUrl}>Dashboard</a>
-      </Button>
-      <Stats>
-        Sentry is current used on {data.stats.servers} servers watching over{' '}
-        {data.stats.users} users.
-      </Stats>
-      <FeaturesTitle>Key Features</FeaturesTitle>
+      <HeaderContent>
+        <Title>Sentry</Title>
+        <SubTitle>Simple & Advanced Moderation Bot For Discord</SubTitle>
+        <span>
+          <Button>
+            <a href={authUrl}>Invite</a>
+          </Button>
+          <Button>
+            <a href={dashUrl}>Dashboard</a>
+          </Button>
+        </span>
+        <Stats>
+          Sentry is current used on <strong>{data.stats.servers}</strong>{' '}
+          servers watching over <strong>{data.stats.users}</strong> users.
+        </Stats>
+        <FeaturesTitle>Key Features</FeaturesTitle>
+      </HeaderContent>
     </Container>
   );
 };
