@@ -8,7 +8,7 @@ import withApollo from '../server/configureClient';
 import { GlobalStyle } from '../server/utils/globalstyles';
 import { darkTheme, lightTheme } from '../server/utils/theme';
 
-const Navbar = dynamic(() => import('../components/navbar'));
+const Navbar = dynamic(() => import('../server/components/navbar'));
 
 class SentryFrontend extends App<any> {
   render() {

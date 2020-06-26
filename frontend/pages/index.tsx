@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { device } from '../server/utils/theme';
 import dynamic from 'next/dynamic';
 
-const Container = dynamic(() => import('../components/container'));
+const Container = dynamic(() => import('../server/components/container'));
 
 interface Data {
   stats: {

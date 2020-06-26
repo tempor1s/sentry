@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { device } from '../server/utils/theme';
+import { device } from '../utils/theme';
 
 const Container = styled.div`
   width: 1375px;
