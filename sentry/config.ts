@@ -15,5 +15,4 @@ export let sessionSecret: string = process.env.SESSION_SECRET ?? 'secret';
 export let domain: string = process.env.DOMAIN ?? '0.0.0.0';
 export let redisUrl: string = process.env.REDIS_URL ?? 'redis://cache';
 export let redisPassword: string = process.env.REDIS_PASSWORD ?? 'password';
-export let serverUrl: string =
-  process.env.SERVER_URL ?? 'https://sentry.benl.dev';
+export let serverUrl: string = process.env.SERVER_URL ?? 'https://sentrybot.io';
