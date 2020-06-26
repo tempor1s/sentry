@@ -28,7 +28,7 @@ const NavRight = styled.ul`
   }
 `;
 
-export function Navbar(): JSX.Element {
+export default function Navbar(): JSX.Element {
   return (
     <Container>
       <NavContainer>

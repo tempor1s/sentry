@@ -2,11 +2,13 @@ import { ThemeProvider } from 'styled-components';
 import React from 'react';
 import App from 'next/app';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import { ApolloProvider } from '@apollo/react-hooks';
 import withApollo from '../server/configureClient';
 import { GlobalStyle } from '../server/utils/globalstyles';
 import { darkTheme, lightTheme } from '../server/utils/theme';
-import { Navbar } from '../components/navbar';
+
+const Navbar = dynamic(() => import('../components/navbar'));
 
 class SentryFrontend extends App<any> {
   render() {
