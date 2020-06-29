@@ -12,12 +12,11 @@ jobs:
             - run: npm install
             - run: npm test
   frontend:
+    working_directory: ~/sentry/frontend
     executor:
       name: node/default
-    working_directory: ~/sentry/frontend
     steps:
-      - checkout:
-          path: ~/sentry
+      - checkout
       - node/with-cache:
           steps:
             - run: npm install
