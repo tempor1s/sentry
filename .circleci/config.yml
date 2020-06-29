@@ -22,7 +22,7 @@ jobs:
             - run: npm install
             - run: npm test
 workflows:
-  test:
-    frontend-api:
+  frontend-api:
+    jobs:
       - bot-api
       - frontend
