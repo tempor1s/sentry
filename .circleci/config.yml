@@ -24,5 +24,13 @@ jobs:
 workflows:
   frontend-api:
     jobs:
-      - bot-api
-      - frontend
+      - bot-api:
+          filters:
+            branches:
+              only:
+                - master
+      - frontend:
+          filters:
+            branches:
+              only:
+                - master
