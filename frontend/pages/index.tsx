@@ -90,7 +90,7 @@ const Home = (props: StatsProps) => {
 
   let authUrl =
     process.env.NODE_ENV === 'production'
-      ? 'https://sentrybot.io/auth/discord'
+      ? 'https://api.sentrybot.io/auth/discord'
       : 'http://0.0.0.0:8080/auth/discord';
 
   let dashUrl =

@@ -39,18 +39,11 @@ export default class ReadyListener extends Listener {
     );
 
     // Update servers/members every 5 minutes.
-    this.client.user!.setActivity(
-      `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
-      { type: 'WATCHING' }
-    );
+    this.client.user!.setActivity(`from sentrybot.io`, { type: 'WATCHING' });
 
-    // update activity every 5mins with new server/member count
-    setInterval(() => {
-      this.client.user!.setActivity(
-        `${this.client.guilds.cache.size} servers | ${this.client.users.cache.size} members`,
-        { type: 'WATCHING' }
-      );
-    }, 3e5);
+    // setInterval(() => {
+    //   this.client.user!.setActivity(`from sentrybot.io`, { type: 'WATCHING' });
+    // }, 3e5);
 
     // Unmute loop (runs every 30 seconds)
     setInterval(
