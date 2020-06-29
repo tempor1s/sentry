@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  build-and-test:
+  bot-and-api:
     executor:
       name: node/default
     steps:
@@ -11,7 +11,20 @@ jobs:
           steps:
             - run: npm install
             - run: npm test
+  frontend:
+    executor:
+      name: node/default
+    working_directory: ~/sentry/frontend
+    steps:
+      - checkout:
+          path: ~/sentry
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm test
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+    version: 2.1
+    test:
+      frontend-and-api:
+        - bot-and-api
+        - frontend
