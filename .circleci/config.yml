@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  bot-and-api:
+  bot-api:
     executor:
       name: node/default
     steps:
@@ -23,8 +23,7 @@ jobs:
             - run: npm install
             - run: npm test
 workflows:
-    version: 2.1
     test:
-      frontend-and-api:
-        - bot-and-api
+      frontend-api:
+        - bot-api
         - frontend
