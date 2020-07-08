@@ -10,7 +10,7 @@ WORKDIR /usr/sentry
 # copy all the stuff that we need for the build and install context
 COPY package*.json ./
 COPY tsconfig*.json ./
-COPY ./sentry ./sentry
+COPY . ./sentry
 
 # install all the things for production with no cache and then build all the code into /usr/sentry/build
 RUN npm ci --quiet && npm run build

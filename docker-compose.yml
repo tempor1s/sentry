@@ -3,10 +3,10 @@ services:
   bot:
     container_name: sentry
     build:
-      context: ./
+      context: ./sentry/
       dockerfile: Dockerfile-dev
     volumes:
-      - ./:/usr/sentry/
+      - ./sentry:/usr/sentry/
     depends_on:
       - postgres
       - redis

@@ -8,3 +8,11 @@ export const SERVER =
     : typeof window === 'undefined'
     ? 'http://sentry:8080'
     : 'http://0.0.0.0:8080';
+export const AUTHURL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://api.sentrybot.io/auth/discord'
+    : 'http://0.0.0.0:8080/auth/discord';
+export const DASHURL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://sentrybot.io/dashboard'
+    : 'http://0.0.0.0:3000/dashboard';
