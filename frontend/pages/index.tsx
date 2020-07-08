@@ -1,7 +1,8 @@
-import GET_STATS from '../server/graphql/query/stats';
 import styled from 'styled-components';
 import { device } from '../server/utils/theme';
 import dynamic from 'next/dynamic';
+import GET_STATS_AND_USER from '../server/graphql/query/stats';
+import { DASHURL, AUTHURL } from '../server/config/index';
 
 const Container = dynamic(() => import('../server/components/container'));
 
@@ -18,17 +19,6 @@ interface StatsProps {
   data: Data;
   error: string;
 }
-
-// interface StyleProps {
-//   test: boolean;
-// }
-//
-// const Button = styled.button`
-//   background-color: ${(props) => props.theme.primary};
-//   padding: ${(props: StyleProps) => (props.test ? '25px' : '100px')};
-//   h1:
-// `;
-// <Button test={false}>Hi!</Button>
 
 const HeaderContent = styled.div`
   display: flex;
@@ -86,20 +76,12 @@ const FeaturesTitle = styled.h1`
 `;
 
 const Home = (props: StatsProps) => {
-  const { data } = props;
+  const { data, loading, error } = props;
 
-  let authUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://api.sentrybot.io/auth/discord'
-      : 'http://0.0.0.0:8080/auth/discord';
-
-  let dashUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://sentrybot.io/dashboard'
-      : 'http://0.0.0.0:3000/dashboard';
+  if (error) return <Container>Error... {error}</Container>;
+  if (loading) return <Container>Loading..</Container>;
 
   // TODO: Check if logged in and change the invite url
-
   return (
     <Container>
       <HeaderContent>
@@ -107,10 +89,10 @@ const Home = (props: StatsProps) => {
         <SubTitle>Simple & Advanced Moderation Bot For Discord</SubTitle>
         <span>
           <Button>
-            <a href={authUrl}>Invite</a>
+            <a href={AUTHURL}>Invite</a>
           </Button>
           <Button>
-            <a href={dashUrl}>Dashboard</a>
+            <a href={DASHURL}>Dashboard</a>
           </Button>
         </span>
         <Stats>
@@ -126,7 +108,7 @@ const Home = (props: StatsProps) => {
 Home.getInitialProps = async (context: any) => {
   try {
     const { data, loading, error } = await context.apolloClient.query({
-      query: GET_STATS,
+      query: GET_STATS_AND_USER,
     });
 
     return { data, loading, error };

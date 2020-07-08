@@ -1,4 +1,5 @@
 import GET_CURRENT_USER from 'server/graphql/query/currentUser';
+import { DASHURL, AUTHURL } from '../server/config/index';
 import dynamic from 'next/dynamic';
 
 const Container = dynamic(() => import('../server/components/container'));

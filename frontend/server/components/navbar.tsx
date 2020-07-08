@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import Container from './container';
 import Link from 'next/link';
+import { useQuery } from '@apollo/react-hooks';
+import GET_CURRENT_USER from '../graphql/query/currentUser';
+import { AUTHURL } from '../../server/config/index';
 
 const NavContainer = styled.div`
   width: 100%;
@@ -30,6 +33,12 @@ const NavRight = styled.ul`
 `;
 
 export default function Navbar(): JSX.Element {
+  const { data, loading, error } = useQuery(GET_CURRENT_USER);
+
+  if (loading) {
+    return <Container>Loading...</Container>;
+  }
+
   return (
     <Container>
       <NavContainer>
@@ -40,9 +49,13 @@ export default function Navbar(): JSX.Element {
         </NavTitle>
         <NavRight>
           <li>
-            <Link href="/dashboard">
-              <a>Dashboard</a>
-            </Link>
+            {!error && !loading && data.currentUser ? (
+              <Link href="/dashboard">
+                <a>Dashboard</a>
+              </Link>
+            ) : (
+              <a href={AUTHURL}>Login</a>
+            )}
           </li>
         </NavRight>
       </NavContainer>
