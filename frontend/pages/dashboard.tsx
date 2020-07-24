@@ -1,6 +1,7 @@
-import GET_CURRENT_USER from 'server/graphql/query/currentUser';
-import { DASHURL, AUTHURL } from '../server/config/index';
 import dynamic from 'next/dynamic';
+import GET_CURRENT_USER from 'server/graphql/query/currentUser';
+import { AUTHURL } from '../server/config/index';
+import styled from 'styled-components';
 
 const Container = dynamic(() => import('../server/components/container'));
 
@@ -18,15 +19,39 @@ interface CurrentUserProps {
   error: string;
 }
 
+const LoginContainer = styled.div`
+  display: flex;
+  height: 950px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const LoginText = styled.p`
+  padding-top: 20px;
+  text-decoration: underline;
+`;
+
 const Dashboard = (props: CurrentUserProps) => {
   const { loading, error, data } = props;
 
   if (loading) {
     return <h1>Loading...</h1>;
   }
+
   // error
   if (error) {
-    return <h1>Error: {error}</h1>;
+    // Router.replace('/');
+    return (
+      <Container>
+        <LoginContainer>
+          You need to be logged in to view this page.{' '}
+          <a href={AUTHURL}>
+            <LoginText>Login now</LoginText>
+          </a>
+        </LoginContainer>
+      </Container>
+    );
   }
 
   return (
@@ -36,7 +61,7 @@ const Dashboard = (props: CurrentUserProps) => {
       <h2>User Email: {data.currentUser.email}</h2>
       <h2>Servers:</h2>
       {data.currentUser.servers &&
-        data.currentUser.servers.map((server) => (
+        data.currentUser.servers.map((server: any) => (
           <p key={server}>Server ID: {server}</p>
         ))}
     </Container>

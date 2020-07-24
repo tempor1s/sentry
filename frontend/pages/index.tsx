@@ -76,9 +76,8 @@ const FeaturesTitle = styled.h1`
 `;
 
 const Home = (props: StatsProps) => {
-  const { data, loading, error } = props;
+  const { data, loading } = props;
 
-  if (error) return <Container>Error... {error}</Container>;
   if (loading) return <Container>Loading..</Container>;
 
   // TODO: Check if logged in and change the invite url
