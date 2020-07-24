@@ -2,8 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import Container from './container';
 import Link from 'next/link';
-import { useQuery } from '@apollo/react-hooks';
+import Router from 'next/router';
+import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import GET_CURRENT_USER from '../graphql/query/currentUser';
+import LOGOUT from '../graphql/mutation/logout';
 import { AUTHURL } from '../../server/config/index';
 
 const NavContainer = styled.div`
@@ -29,11 +31,27 @@ const NavRight = styled.ul`
 
   li {
     margin-right: 15px;
+    cursor: pointer;
   }
 `;
 
 export default function Navbar(): JSX.Element {
   const { data, loading, error } = useQuery(GET_CURRENT_USER);
+  const client = useApolloClient();
+
+  // log the user out
+  const logoutUser = async (e: any) => {
+    e.preventDefault();
+
+    // logout on the server
+    await client.mutate({ mutation: LOGOUT });
+    // clear the clients store (cache)
+    client.clearStore();
+
+    // redirect to home page and reload state
+    Router.replace('/');
+    Router.reload();
+  };
 
   if (loading) {
     return <Container>Loading...</Container>;
@@ -48,15 +66,22 @@ export default function Navbar(): JSX.Element {
           </Link>
         </NavTitle>
         <NavRight>
-          <li>
-            {!error && !loading && data.currentUser ? (
-              <Link href="/dashboard">
-                <a>Dashboard</a>
-              </Link>
-            ) : (
-              <a href={AUTHURL}>Login</a>
-            )}
-          </li>
+          {!error && !loading && data.currentUser ? (
+            <>
+              <li>
+                <Link href="/dashboard">
+                  <a>Dashboard</a>
+                </Link>
+              </li>
+              <li>
+                <a onClick={logoutUser}>Logout</a>
+              </li>
+            </>
+          ) : (
+            <li>
+              <a href={AUTHURL}>Dashboard</a>
+            </li>
+          )}
         </NavRight>
       </NavContainer>
     </Container>
