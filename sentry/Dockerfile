@@ -4,6 +4,10 @@
 #
 FROM node:lts AS builder
 
+# install dependencies
+RUN apt-get update && \
+  apt-get install -y python3
+
 # set the working directory 
 WORKDIR /usr/sentry
 

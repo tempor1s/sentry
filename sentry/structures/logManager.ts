@@ -58,7 +58,7 @@ export async function logUncachedMsgDelete(
     .addField('Content', '*N/A*', false)
     .addField(
       'Message',
-      `[Context](https://discordapp.com/channels/${eventData.guild_id}/${eventData.channel_id}/${eventData.id})`,
+      `[Context](https://discord.com/channels/${eventData.guild_id}/${eventData.channel_id}/${eventData.id})`,
       true
     )
     .addField('ID', eventData.id, true)
@@ -119,7 +119,7 @@ export async function logUncachedMsgEdit(
     .addField('After', eventData.content, false)
     .addField(
       'Message',
-      `[Context](https://discordapp.com/channels/${eventData.guild_id}/${eventData.channel_id}/${eventData.id})`,
+      `[Context](https://discord.com/channels/${eventData.guild_id}/${eventData.channel_id}/${eventData.id})`,
       true
     )
     .addField('ID', eventData.id, true)
