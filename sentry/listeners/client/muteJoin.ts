@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember } from 'discord.js';
 import { Servers } from '../../models/server';
-import { Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { Mutes } from '../../models/mutes';
 import logger from '../../utils/logger';
 import { logMute } from '../../structures/logManager';
@@ -15,10 +15,8 @@ export default class MuteJoinListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    const serversRepo: Repository<Servers> = this.client.db.getRepository(
-      Servers
-    );
-    const mutesRepo: Repository<Mutes> = this.client.db.getRepository(Mutes);
+    const serversRepo = getRepository(Servers);
+    const mutesRepo = getRepository(Mutes);
 
     let muted = await mutesRepo.findOne({
       where: { server: member.guild.id, user: member.id },
@@ -46,7 +44,6 @@ export default class MuteJoinListener extends Listener {
       await member.send('Nice try mute evading...');
 
       logMute(
-        serversRepo,
         member,
         'Mute Evading | Remute',
         muted.end - Date.now(),

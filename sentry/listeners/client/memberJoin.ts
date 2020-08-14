@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember, TextChannel } from 'discord.js';
 import { Servers } from '../../models/server';
-import { Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import logger from '../../utils/logger';
 import { logJoinMsg } from '../../structures/logManager';
 import { getDefaultEmbed } from '../../utils/message';
@@ -15,9 +15,7 @@ export default class MemberJoinListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    const serversRepo: Repository<Servers> = this.client.db.getRepository(
-      Servers
-    );
+    const serversRepo = getRepository(Servers);
 
     let server = await serversRepo.findOne({
       where: { server: member.guild.id },
@@ -25,7 +23,7 @@ export default class MemberJoinListener extends Listener {
 
     try {
       // log join
-      logJoinMsg(server!, member);
+      logJoinMsg(member);
 
       // TODO: Refactor out possibly
       // send welcome message if enabled

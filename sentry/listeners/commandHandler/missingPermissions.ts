@@ -1,5 +1,6 @@
 import { Command, Listener } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
+import { getRepository } from 'typeorm';
 import { Servers } from '../../models/server';
 import logger from '../../utils/logger';
 import { PERMISSIONS } from '../../utils/permissions';
@@ -19,7 +20,7 @@ export default class MissingPermissionsListener extends Listener {
     type: string,
     missing: any
   ) {
-    const serverRepo = this.client.db.getRepository(Servers);
+    const serverRepo = getRepository(Servers);
 
     const server = await serverRepo.findOneOrFail({
       where: { server: msg.guild?.id },

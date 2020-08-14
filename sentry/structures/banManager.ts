@@ -1,14 +1,11 @@
 import { AkairoClient } from 'discord-akairo';
-import { Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { logUnban } from '../structures/logManager';
-import { Servers } from '../models/server';
 import { TempBans } from '../models/tempBans';
 
-export async function tempUnbanLoop(
-  serversRepo: Repository<Servers>,
-  tempBanRepo: Repository<TempBans>,
-  client: AkairoClient
-) {
+export async function tempUnbanLoop(client: AkairoClient) {
+  const tempBanRepo = getRepository(TempBans);
+
   const tempBans = await tempBanRepo.find();
   tempBans
     .filter((ban) => ban.end <= Date.now())
@@ -24,6 +21,6 @@ export async function tempUnbanLoop(
       // remove ban
       let user = await server!.members.unban(ban.user);
       // log unban
-      logUnban(serversRepo, user, botMember!, 'Temporary ban expired.');
+      logUnban(user, botMember!, 'Temporary ban expired.');
     });
 }

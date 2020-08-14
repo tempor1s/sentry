@@ -1,10 +1,9 @@
 import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
-import { Repository } from 'typeorm';
-import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
+import { createWarning } from '../../../services/warnings';
 
 export default class WarnAddCommand extends Command {
   public constructor() {
@@ -34,10 +33,6 @@ export default class WarnAddCommand extends Command {
       return msg.util?.send('User not specified / found.');
     }
 
-    const warningRepo: Repository<Warnings> = this.client.db.getRepository(
-      Warnings
-    );
-
     // do not want to be able to warn people higher than the executor
     if (await checkHigherOrEqualPermissions(msg, member))
       return msg.util?.send(
@@ -45,12 +40,14 @@ export default class WarnAddCommand extends Command {
       );
 
     try {
-      await warningRepo.insert({
+      const inserted = await createWarning({
         server: msg.guild!.id,
         user: member.id,
         moderator: msg.author.id,
         reason: reason,
       });
+
+      if (!inserted) return msg.util?.send('Error adding warning to user.');
 
       logger.debug(
         `Added warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'`
@@ -61,7 +58,7 @@ export default class WarnAddCommand extends Command {
         err
       );
 
-      return msg.util?.send('Error adding warning.');
+      return msg.util?.send('Error adding warning to user.');
     }
 
     return msg.util?.send(

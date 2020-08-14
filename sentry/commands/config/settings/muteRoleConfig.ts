@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
+import { getServerById, updateServerById } from '../../../services/server';
 
 export default class MuteRoleConfigCommand extends Command {
   public constructor() {
@@ -25,10 +25,7 @@ export default class MuteRoleConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { role }: { role: Role }) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     if (!role) {
       return msg.util?.send(
@@ -40,14 +37,21 @@ export default class MuteRoleConfigCommand extends Command {
 
     // update the muterole
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { mutedRole: role.id }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        mutedRole: role.id,
+      });
 
-      logger.debug(
-        `Updating muted role in ${msg.guild?.name} (${msg.guild?.id}) to ${role.name} (${role.id})`
-      );
+      if (updated) {
+        logger.debug(
+          `Updating muted role in ${msg.guild?.name} (${msg.guild?.id}) to ${role.name} (${role.id})`
+        );
+      } else {
+        logger.error(
+          `Error updating mute role in ${msg.guild?.name} (${msg.guild?.id}).`
+        );
+
+        return msg.util?.send('Error when updating the mute role.');
+      }
     } catch (err) {
       logger.error(
         `Error updating mute role in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

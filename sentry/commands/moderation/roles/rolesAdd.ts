@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRoleAdd } from '../../../structures/logManager';
-import { Servers } from '../../../models/server';
 import {
   checkHigherOrEqualPermissions,
   checkHigherRole,
@@ -50,11 +49,9 @@ export default class RolesAddCommand extends Command {
         'You can not assign roles that are higher than your own.'
       );
 
-    let serverRepo = this.client.db.getRepository(Servers);
-
     try {
       await member.roles.add(role).then(() => {
-        logRoleAdd(serverRepo, member, msg.member!, role);
+        logRoleAdd(member, msg.member!, role);
       });
 
       logger.debug(

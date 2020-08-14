@@ -1,10 +1,9 @@
 import { stripIndent } from 'common-tags';
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { Repository } from 'typeorm';
-import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import ms from 'ms';
+import { getServerById } from '../../services/server';
 
 export default class ShowConfigCommand extends Command {
   public constructor() {
@@ -16,13 +15,7 @@ export default class ShowConfigCommand extends Command {
   }
 
   public async exec(msg: Message) {
-    const serversRepo: Repository<Servers> = this.client.db.getRepository(
-      Servers
-    );
-
-    let server = await serversRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     const embed = getDefaultEmbed()
       .setTitle(`Server Config | ${msg.guild!.name}`)

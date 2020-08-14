@@ -1,8 +1,12 @@
+import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { AutoPurges } from '../../../models/autoPurge';
-import ms from 'ms';
+import {
+  getSingleAutoPurge,
+  createAutoPurge,
+} from '../../../services/autopurge';
 
 export default class AutoPurgeStartCommand extends Command {
   public constructor() {
@@ -63,13 +67,8 @@ export default class AutoPurgeStartCommand extends Command {
       );
     }
 
-    let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
+    const existingPurge = await getSingleAutoPurge(msg.guild!.id, channel.id);
 
-    let existingPurge = await autoPurgeRepo.findOne({
-      where: { server: msg.guild!.id, channel: channel.id },
-    });
-
-    // TODO: Maybe allow multiple purges per channel?
     // purge already exists on the channel
     if (existingPurge) {
       return msg.util?.send(
@@ -78,12 +77,15 @@ export default class AutoPurgeStartCommand extends Command {
     }
 
     // add the auto-purge into the db
-    await autoPurgeRepo.insert({
+    const inserted = await createAutoPurge({
       server: msg.guild!.id,
       channel: channel.id,
       timeUntilNextPurge: interval + Date.now(),
       purgeInterval: interval,
     });
+
+    if (!inserted)
+      return msg.util?.send(`Failed to start autopurge. Please try again.`);
 
     return msg.util?.send(
       `Auto purge started with an interval of \`${ms(interval)}\``

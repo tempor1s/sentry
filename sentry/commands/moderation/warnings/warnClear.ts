@@ -1,9 +1,8 @@
 import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
-import { Repository } from 'typeorm';
-import { Warnings } from '../../../models/warnings';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
+import { removeAllWarnings } from '../../../services/warnings';
 
 export default class WarnClearCommand extends Command {
   public constructor() {
@@ -31,20 +30,15 @@ export default class WarnClearCommand extends Command {
       return msg.util?.send('User not specified / found.');
     }
 
-    const warningRepo: Repository<Warnings> = this.client.db.getRepository(
-      Warnings
-    );
-
     if (await checkHigherOrEqualPermissions(msg, member))
       return msg.util?.send(
         'This member has a higher or equal role to you. You are unable to clear their warnings.'
       );
 
     try {
-      await warningRepo.delete({
-        server: msg.guild!.id,
-        user: member.id,
-      });
+      const removed = await removeAllWarnings(msg.guild!.id, member.id);
+
+      if (!removed) return msg.util?.send('Failed to clear warnings.');
 
       logger.debug(
         `Cleared warnings from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`

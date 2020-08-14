@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRolesRemoveAll } from '../../../structures/logManager';
-import { Servers } from '../../../models/server';
 import { checkHigherRole } from '../../../utils/permissions';
 
 export default class RolesRemoveAllCommand extends Command {
@@ -46,8 +45,7 @@ export default class RolesRemoveAllCommand extends Command {
       return msg.util?.send('Error removing role from everyone.');
     }
 
-    let serverRepo = this.client.db.getRepository(Servers);
-    logRolesRemoveAll(serverRepo, role, msg.member!);
+    logRolesRemoveAll(role, msg.member!);
 
     return msg.util?.send(`Removed <@&${role.id}> from everyone.`);
   }

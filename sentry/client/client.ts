@@ -1,12 +1,11 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
 import { Message, Permissions, ClientApplication } from 'discord.js';
 import { join } from 'path';
-import { owners, dbName } from '../config';
-import { Connection } from 'typeorm';
+import { owners } from '../config';
 import { getPrefix } from '../structures/prefixManager';
 import { redisClient } from '../structures/redis';
 import { RedisClient } from 'redis';
-import Database from '../structures/database';
+import { createDBConnection } from '../structures/database';
 import logger from '../utils/logger';
 import http from 'http';
 
@@ -14,7 +13,6 @@ declare module 'discord-akairo' {
   interface AkairoClient {
     commandHander: CommandHandler;
     listenerHandler: ListenerHandler;
-    db: Connection;
     invite: string;
     site: http.Server;
     application: ClientApplication;
@@ -29,16 +27,13 @@ interface BotOptions {
 
 export default class Client extends AkairoClient {
   public config: BotOptions;
-  public db: Connection = Database.get(dbName);
   public invite!: string;
   public listenerHandler: ListenerHandler = new ListenerHandler(this, {
     directory: join(__dirname, '..', 'listeners'),
   });
   public commandHandler: CommandHandler = new CommandHandler(this, {
     directory: join(__dirname, '..', 'commands'),
-    prefix: async (msg: Message): Promise<string> => {
-      return getPrefix(msg, this);
-    },
+    prefix: async (msg: Message) => getPrefix(msg),
     blockBots: true,
     allowMention: true,
     commandUtil: true,
@@ -81,9 +76,7 @@ export default class Client extends AkairoClient {
 
     // connect to the db
     logger.debug('Connecting to DB..');
-    await this.db.connect();
-    logger.debug('Synchronizing DB..');
-    await this.db.synchronize();
+    await createDBConnection();
 
     // initalize cache
     logger.debug('Initializing redis cache..');

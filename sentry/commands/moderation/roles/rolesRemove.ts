@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRoleRemove } from '../../../structures/logManager';
-import { Servers } from '../../../models/server';
 import {
   checkHigherOrEqualPermissions,
   checkHigherRole,
@@ -50,12 +49,10 @@ export default class RolesRemoveCommand extends Command {
         'You are unable to remove roles that are higher than your own.'
       );
 
-    let serverRepo = this.client.db.getRepository(Servers);
-
     try {
       if (member.roles.cache.has(role.id)) {
         await member.roles.remove(role).then(() => {
-          logRoleRemove(serverRepo, member, msg.member!, role);
+          logRoleRemove(member, msg.member!, role);
         });
       } else {
         return msg.util?.send('User does not have that role.');

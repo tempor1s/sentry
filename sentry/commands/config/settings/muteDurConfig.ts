@@ -1,8 +1,8 @@
 import { Command } from 'discord-akairo';
-import { Message, Permissions, Role } from 'discord.js';
-import { Servers } from '../../../models/server';
+import { Message, Permissions } from 'discord.js';
 import logger from '../../../utils/logger';
 import ms from 'ms';
+import { getServerById, updateServerById } from '../../../services/server';
 
 export default class MuteDurationConfigCommand extends Command {
   public constructor() {
@@ -31,10 +31,7 @@ export default class MuteDurationConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { duration }: { duration: number }) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     if (duration === 0) {
       return msg.util?.send(
@@ -44,16 +41,23 @@ export default class MuteDurationConfigCommand extends Command {
 
     // update the mute duration
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { muteDuration: duration }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        muteDuration: duration,
+      });
 
-      logger.debug(
-        `Updating muted duration in ${msg.guild?.name} (${
-          msg.guild?.id
-        }) to ${ms(duration)}`
-      );
+      if (updated) {
+        logger.debug(
+          `Updating muted duration in ${msg.guild?.name} (${
+            msg.guild?.id
+          }) to ${ms(duration)}`
+        );
+      } else {
+        logger.error(
+          `Error updating mute duration in ${msg.guild?.name} (${msg.guild?.id}).`
+        );
+
+        return msg.util?.send('Error when updating mute duration.');
+      }
     } catch (err) {
       logger.error(
         `Error updating mute duration in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

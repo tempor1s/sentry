@@ -3,17 +3,17 @@ import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import { logBan } from '../../structures/logManager';
-import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
-import { TempBans } from '../../models/tempBans';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
+import { createTempBan } from '../../services/tempbans';
 
 export default class TempBanCommand extends Command {
   public constructor() {
     super('tempban', {
       aliases: ['tempban'],
       description: {
-        content: 'Temporarily ban a user from the server.',
+        content:
+          'Temporarily ban a user from the server. (also known as a softban)',
         usage: 'tempban <user> <duration> [reason] [--silent]',
         examples: [
           '@temporis#6402 1d',
@@ -101,9 +101,6 @@ export default class TempBanCommand extends Command {
         'That member has a higher or equal role to you. You are unable to ban them.'
       );
 
-    let serversRepo = this.client.db.getRepository(Servers);
-    let tempBansRepo = this.client.db.getRepository(TempBans);
-
     let msDuration = ms(duration);
 
     try {
@@ -122,7 +119,7 @@ export default class TempBanCommand extends Command {
       await member.ban({ reason: reason, days: days });
 
       // so that we can unban people later :)
-      await tempBansRepo.insert({
+      const inserted = await createTempBan({
         server: msg.guild!.id,
         user: member.id,
         end: Date.now() + duration,
@@ -131,7 +128,12 @@ export default class TempBanCommand extends Command {
       });
 
       // log ban
-      logBan(serversRepo, member.user, reason, msg.member!, msDuration);
+      logBan(member.user, reason, msg.member!, msDuration);
+
+      if (!inserted)
+        msg.util?.send(
+          'Failed to save temp ban. User will not be unbanned automatically.'
+        );
 
       logger.debug(
         `Temp banned ${member.user.tag} (${member.id}) for ${msDuration} for reason: ${reason}`

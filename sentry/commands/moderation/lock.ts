@@ -2,9 +2,7 @@ import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { lockChannel } from '../../structures/lockManager';
-import { ChannelLocks } from '../../models/channelLocks';
 import { logChannelLock } from '../../structures/logManager';
-import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 
 export default class LockCommand extends Command {
@@ -49,16 +47,13 @@ export default class LockCommand extends Command {
     msg: Message,
     { channel, duration }: { channel: TextChannel; duration: number }
   ) {
-    const channelLocksRepo = this.client.db.getRepository(ChannelLocks);
-    const serversRepo = this.client.db.getRepository(Servers);
-
     // try to lock the channel
-    let locked = await lockChannel(channelLocksRepo, channel, duration);
+    let locked = await lockChannel(channel, duration);
 
     if (!locked)
       return msg.util?.send('Channel is already locked or lock failed.');
 
-    logChannelLock(serversRepo, duration, channel, msg.member!);
+    logChannelLock(duration, channel, msg.member!);
 
     if (msg.channel.id !== channel.id)
       msg.util?.send(

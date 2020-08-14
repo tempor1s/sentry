@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import GET_CURRENT_USER from 'server/graphql/query/currentUser';
 import { AUTHURL } from '../server/config/index';
 import styled from 'styled-components';
+import Link from 'next/link';
 
 const Container = dynamic(() => import('../server/components/container'));
 
@@ -40,8 +41,8 @@ const Dashboard = (props: CurrentUserProps) => {
   }
 
   // error
+  // TODO: Instead of showing this page, just redirect to login page or something
   if (error) {
-    // Router.replace('/');
     return (
       <Container>
         <LoginContainer>
@@ -62,7 +63,11 @@ const Dashboard = (props: CurrentUserProps) => {
       <h2>Servers:</h2>
       {data.currentUser.servers &&
         data.currentUser.servers.map((server: any) => (
-          <p key={server}>Server ID: {server}</p>
+          <Link href={`/dashboard/${server}`}>
+            <p>
+              <a>{server}</a>
+            </p>
+          </Link>
         ))}
     </Container>
   );

@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
+import { getServerById, updateServerById } from '../../../services/server';
 
 export default class LogEditsConfigCommand extends Command {
   public constructor() {
@@ -18,23 +18,29 @@ export default class LogEditsConfigCommand extends Command {
   }
 
   public async exec(msg: Message) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild?.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     let flag = server?.messageLogEditsEnabled ? false : true;
 
     // update the muterole
     try {
-      await serverRepo.update(
-        { server: msg.guild?.id },
-        { messageLogEditsEnabled: flag }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        messageLogEditsEnabled: flag,
+      });
 
-      logger.debug(
-        `Set message edit logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
-      );
+      if (updated) {
+        logger.debug(
+          `Set message edit logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
+        );
+      } else {
+        logger.debug(
+          `Error setting message edit logging in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
+        );
+
+        return msg.util?.send(
+          'Error when toggling edit message logging. Please try again.'
+        );
+      }
     } catch (err) {
       logger.error(
         `Error toggling message edit logging in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

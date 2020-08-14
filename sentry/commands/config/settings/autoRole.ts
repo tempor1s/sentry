@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
-import { Servers } from '../../../models/server';
+import { getServerById, updateServerById } from '../../../services/server';
 import logger from '../../../utils/logger';
 
 export default class AutoRoleConfigCommand extends Command {
@@ -25,10 +25,7 @@ export default class AutoRoleConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { role }: { role: Role }) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     if (!role) {
       let roleMsg = server!.autoroleRole
@@ -39,16 +36,25 @@ export default class AutoRoleConfigCommand extends Command {
 
     // update the muterole
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { autoroleRole: role.id }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        autoroleRole: role.id,
+      });
 
-      logger.debug(
-        `Updated Autorole in ${msg.guild!.name} (${msg.guild!.id}) to ${
-          role.name
-        } (${role.id})`
-      );
+      if (updated) {
+        logger.debug(
+          `Updated Autorole in ${msg.guild!.name} (${msg.guild!.id}) to ${
+            role.name
+          } (${role.id})`
+        );
+      } else {
+        logger.debug(
+          `Failed to update autorole in ${msg.guild!.name} (${
+            msg.guild!.id
+          }) to ${role.name} (${role.id})`
+        );
+
+        return msg.util?.send('Error updating autorole role.');
+      }
     } catch (err) {
       logger.error(
         `Error updating autorole role in ${msg.guild!.name} (${

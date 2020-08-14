@@ -1,10 +1,9 @@
 import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
-import { Repository } from 'typeorm';
-import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
+import { removeSingleWarning } from '../../../services/warnings';
 
 export default class WarnRemoveCommand extends Command {
   public constructor() {
@@ -43,22 +42,13 @@ export default class WarnRemoveCommand extends Command {
       return msg.util?.send('Please specify a warning ID to remove.');
     }
 
-    const warningRepo: Repository<Warnings> = this.client.db.getRepository(
-      Warnings
-    );
-
-    // TODO: Create helper function for this.
     if (await checkHigherOrEqualPermissions(msg, member))
       return msg.util?.reply(
         'This member has a higher or equal role to you. You are unable to remove warnings from them.'
       );
 
     try {
-      let warning = await warningRepo.delete({
-        server: msg.guild!.id,
-        user: member.id,
-        id: id,
-      });
+      const warning = await removeSingleWarning(msg.guild!.id, member.id, id);
 
       if (warning && warning.affected! > 0) {
         logger.debug(

@@ -7,6 +7,8 @@ import { createMuteOrUpdate, mute } from '../../structures/muteManager';
 import { logMute } from '../../structures/logManager';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 import ms from 'ms';
+import { getServerById } from '../../services/server';
+import { findMutedUser } from '../../services/mute';
 
 export default class MuteCommand extends Command {
   public constructor() {
@@ -91,37 +93,30 @@ export default class MuteCommand extends Command {
         `That member has a higher or equal role to you. You are unable to mute them.`
       );
 
-    // TODO: Could just swap this over to checking user roles later if we need to optimize DB
-    let mutesRepo = this.client.db.getRepository(Mutes);
-    let mutedUser = await mutesRepo.findOne({
-      where: { server: msg.guild!.id, user: member.id },
-    });
+    const mutedUser = await findMutedUser(msg.guild!.id, member.id);
 
     if (mutedUser) {
       return msg.util?.send('That user is already muted.');
     }
 
     // Get the guild that we are going to be getting info for
-    let serverRepo = this.client.db.getRepository(Servers);
-    let guild = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     // If no user defined duration, then use servers default mute duration.
     if (!duration) {
-      duration = guild!.muteDuration;
+      duration = server!.muteDuration;
     }
 
     // Get the ID of the 'muted' role.
-    let muteRoleId = guild?.mutedRole;
+    let muteRoleId = server?.mutedRole;
     if (!muteRoleId) {
-      muteRoleId = await createMuteOrUpdate(serverRepo, msg.guild!);
+      muteRoleId = await createMuteOrUpdate(msg.guild!);
     }
 
     // Mute the person
-    await mute(mutesRepo, msg, member, muteRoleId, reason, duration, silent);
+    await mute(msg, member, muteRoleId, reason, duration, silent);
     // Log the mute
-    logMute(serverRepo, member, reason, duration, msg.member!);
+    logMute(member, reason, duration, msg.member!);
 
     // Info sent to the channel for when the person is muted
     const embed = getDefaultEmbed('GREEN')

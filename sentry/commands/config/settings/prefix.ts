@@ -25,6 +25,6 @@ export default class PrefixConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { prefix }: { prefix: string }) {
-    await setPrefix(msg, this.client, this.handler, prefix);
+    await setPrefix(msg, this.handler, prefix);
   }
 }

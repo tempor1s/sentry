@@ -1,17 +1,13 @@
 import { TextChannel } from 'discord.js';
 import { AkairoClient } from 'discord-akairo';
-import { Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import logger from '../utils/logger';
 import { logAutoPurge } from '../structures/logManager';
-
 import { AutoPurges } from '../models/autoPurge';
-import { Servers } from '../models/server';
 
-export async function autoPurgeLoop(
-  serversRepo: Repository<Servers>,
-  autoPurgeRepo: Repository<AutoPurges>,
-  client: AkairoClient
-) {
+export async function autoPurgeLoop(client: AkairoClient) {
+  const autoPurgeRepo = getRepository(AutoPurges);
+
   const autoPurges = await autoPurgeRepo.find();
   autoPurges
     .filter((p) => p.timeUntilNextPurge <= Date.now())
@@ -38,7 +34,7 @@ export async function autoPurgeLoop(
       );
 
       // log when we purge a channel
-      logAutoPurge(serversRepo, messages.size, channel);
+      logAutoPurge(messages.size, channel);
 
       // update our time till next purge to be date.now() + the set interval
       await autoPurgeRepo.update(

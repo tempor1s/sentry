@@ -1,15 +1,12 @@
 import { Message, DMChannel } from 'discord.js';
 import { AkairoClient, PrefixSupplier, CommandHandler } from 'discord-akairo';
 import { defaultPrefix } from '../config';
-import { Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { Servers } from '../models/server';
 import logger from '../utils/logger';
 import { getAsync, setAsync } from './redis';
 
-export async function getPrefix(
-  msg: Message,
-  client: AkairoClient
-): Promise<string> {
+export async function getPrefix(msg: Message): Promise<string> {
   if (msg.channel instanceof DMChannel) {
     return defaultPrefix;
   }
@@ -20,7 +17,7 @@ export async function getPrefix(
     return cachedPrefix;
   }
 
-  let serverRepo: Repository<Servers> = client.db.getRepository(Servers);
+  let serverRepo = getRepository(Servers);
 
   // find the server we want the prefix for
   let server = await serverRepo.findOne({ where: { server: msg.guild?.id } });
@@ -36,7 +33,6 @@ export async function getPrefix(
 
 export async function setPrefix(
   msg: Message,
-  client: AkairoClient,
   handler: CommandHandler,
   prefix: string
 ): Promise<Message | void> {
@@ -46,7 +42,7 @@ export async function setPrefix(
     return msg.util?.send(`Current Prefix: \`${serverPrefix}\``);
   }
 
-  let serverRepo: Repository<Servers> = client.db.getRepository(Servers);
+  let serverRepo = getRepository(Servers);
 
   // update the prefix
   try {
@@ -67,4 +63,3 @@ export async function setPrefix(
 
   return msg.util?.send(`Updated Prefix: \`${prefix}\``);
 }
-

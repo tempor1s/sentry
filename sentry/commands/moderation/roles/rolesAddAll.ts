@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
 import { logRolesAddAll } from '../../../structures/logManager';
-import { Servers } from '../../../models/server';
 import { checkHigherRole } from '../../../utils/permissions';
 
 export default class RolesAddAllCommand extends Command {
@@ -47,9 +46,7 @@ export default class RolesAddAllCommand extends Command {
       return msg.util?.send('Error adding role to everyone.');
     }
 
-    let serverRepo = this.client.db.getRepository(Servers);
-
-    logRolesAddAll(serverRepo, role, msg.member!);
+    logRolesAddAll(role, msg.member!);
 
     return msg.util?.send(`Added <@&${role.id}> to everyone.`);
   }

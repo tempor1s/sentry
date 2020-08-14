@@ -1,6 +1,9 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { AutoPurges } from '../../../models/autoPurge';
+import {
+  getSingleAutoPurge,
+  stopSingleAutoPurge,
+} from '../../../services/autopurge';
 
 export default class AutoPurgeStopCommand extends Command {
   public constructor() {
@@ -24,14 +27,8 @@ export default class AutoPurgeStopCommand extends Command {
     });
   }
 
-  // TODO: Refactor into other file
-  // TODO: Error handling :)
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
-    let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
-
-    let existingPurge = await autoPurgeRepo.findOne({
-      where: { server: msg.guild!.id, channel: channel.id },
-    });
+    const existingPurge = await getSingleAutoPurge(msg.guild!.id, channel.id);
 
     // purge already exists on the channel
     if (!existingPurge) {
@@ -39,10 +36,10 @@ export default class AutoPurgeStopCommand extends Command {
     }
 
     // remove the auto purge from the channel
-    await autoPurgeRepo.delete({
-      server: msg.guild!.id,
-      channel: channel.id,
-    });
+    const stopped = await stopSingleAutoPurge(msg.guild!.id, channel.id);
+
+    if (!stopped)
+      return msg.util?.send(`Failed to remove auto purge. Please try again.`);
 
     return msg.util?.send(`Removed auto purge from ${channel}.`);
   }

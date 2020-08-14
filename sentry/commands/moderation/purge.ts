@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import logger from '../../utils/logger';
 import { logPurge } from '../../structures/logManager';
-import { Servers } from '../../models/server';
 
 export default class PurgeCommand extends Command {
   public constructor() {
@@ -36,8 +35,6 @@ export default class PurgeCommand extends Command {
       );
     }
 
-    let serverRepo = this.client.db.getRepository(Servers);
-
     // delete the first message so we do not need to deal with the math...
     await msg.delete();
 
@@ -47,7 +44,7 @@ export default class PurgeCommand extends Command {
       try {
         const msgs = await msg.channel.bulkDelete(amount, true);
         purgeSize = msgs.size;
-        logPurge(serverRepo, msg.member!, purgeSize, msgs);
+        logPurge(msg.member!, purgeSize, msgs);
 
         logger.debug(
           `Purging ${msgs.size} messages in ${msg.guild?.name} (${msg.guild?.id})`

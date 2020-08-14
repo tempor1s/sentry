@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { Servers } from '../../../models/server';
+import { getServerById, updateServerById } from '../../../services/server';
 import logger from '../../../utils/logger';
 
 export default class CommandLogConfigCommand extends Command {
@@ -25,10 +25,7 @@ export default class CommandLogConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     if (!channel) {
       if (!server?.commandLog) {
@@ -42,14 +39,21 @@ export default class CommandLogConfigCommand extends Command {
 
     // update the command log channel
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { commandLog: channel.id }
-      );
+      const updated = updateServerById(msg.guild!.id, {
+        commandLog: channel.id,
+      });
 
-      logger.debug(
-        `Updating command log channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
-      );
+      if (updated) {
+        logger.debug(
+          `Updating command log channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
+        );
+      } else {
+        logger.debug(
+          `Failed updating command log channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
+        );
+
+        return msg.util?.send('Error when updating the command log channel.');
+      }
     } catch (err) {
       logger.error(
         `Error updating command log channel in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

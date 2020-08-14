@@ -1,10 +1,10 @@
-import { ConnectionManager } from 'typeorm';
+import { ConnectionOptions, createConnection } from 'typeorm';
 import { dbName, dbHost, dbUsername, dbPassword } from '../config';
 import path from 'path';
 
-const connectionManager: ConnectionManager = new ConnectionManager();
+// const connectionManager: ConnectionManager = new ConnectionManager();
 
-connectionManager.create({
+const connectionOptions: ConnectionOptions = {
   name: dbName,
   type: 'postgres',
   host: dbHost,
@@ -15,6 +15,8 @@ connectionManager.create({
   synchronize: true, // TODO: Disable this for production through use of env variable
   logging: false,
   entities: [path.join(__dirname, '..', 'models') + '/**{.ts,.js}'],
-});
+};
 
-export default connectionManager;
+export const createDBConnection = async () => {
+  return createConnection({ ...connectionOptions, name: 'default' });
+};

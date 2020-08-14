@@ -4,7 +4,6 @@ import {
   logUncachedMsgEdit,
   logUncachedMsgDelete,
 } from '../../structures/logManager';
-import { Servers } from '../../models/server';
 
 export default class RawListener extends Listener {
   public constructor() {
@@ -24,14 +23,12 @@ export default class RawListener extends Listener {
     ) as TextChannel;
     if (channel.messages.cache.get(packet.d.id)) return;
 
-    let serversRepo = this.client.db.getRepository(Servers);
-
     switch (packet.t) {
       case 'MESSAGE_UPDATE':
-        logUncachedMsgEdit(serversRepo, this.client, packet.d);
+        logUncachedMsgEdit(this.client, packet.d);
         break;
       case 'MESSAGE_DELETE':
-        logUncachedMsgDelete(serversRepo, this.client, packet.d);
+        logUncachedMsgDelete(this.client, packet.d);
         break;
     }
   }

@@ -2,7 +2,6 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
 import { logKick } from '../../structures/logManager';
-import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
@@ -69,8 +68,6 @@ export default class KickCommand extends Command {
         'That member has a higher or equal role to you. You are unable to kick them.'
       );
 
-    let serversRepo = this.client.db.getRepository(Servers);
-
     try {
       // kick the user and send them a msg
       await member.kick(reason).then(() => {
@@ -82,7 +79,7 @@ export default class KickCommand extends Command {
       });
 
       // log kick
-      logKick(serversRepo, member, reason, msg.member!);
+      logKick(member, reason, msg.member!);
 
       logger.debug(
         `Kicked ${member.user.tag} (${member.id}) for reason: ${reason}`
