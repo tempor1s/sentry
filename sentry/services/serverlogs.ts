@@ -1,3 +1,6 @@
+import ms from 'ms';
+import { utc } from 'moment';
+import 'moment-duration-format';
 import { getRepository } from 'typeorm';
 import { AkairoClient } from 'discord-akairo';
 import { Servers } from '../models/server';
@@ -10,13 +13,10 @@ import {
   User,
 } from 'discord.js';
 import { getDefaultEmbed } from '../utils/message';
-import ms from 'ms';
-import { utc } from 'moment';
-import 'moment-duration-format';
+import { getServerById } from './server';
 
 export async function logMsgDelete(msg: Message) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: msg.member!.guild.id } });
+  const server = await getServerById(msg.member!.guild.id);
 
   if (
     !server?.messageLogDeletesEnabled ||
@@ -49,8 +49,7 @@ export async function logUncachedMsgDelete(
   client: AkairoClient,
   eventData: any
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: eventData.guild_id } });
+  const server = await getServerById(eventData.guild_id);
 
   if (!server?.messageLogEditsEnabled || !server?.messageLog) return;
 
@@ -72,10 +71,7 @@ export async function logUncachedMsgDelete(
 }
 
 export async function logMsgEdit(oldMsg: Message, newMsg: Message) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({
-    where: { server: newMsg.member!.guild.id },
-  });
+  const server = await getServerById(newMsg.member!.guild.id);
 
   if (
     !server?.messageLogEditsEnabled ||
@@ -103,8 +99,7 @@ export async function logMsgEdit(oldMsg: Message, newMsg: Message) {
 
 // TODO: Type the event data
 export async function logUncachedMsgEdit(client: AkairoClient, eventData: any) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: eventData.guild_id } });
+  const server = await getServerById(eventData.guild_id);
 
   if (!server?.messageLogEditsEnabled || !server?.messageLog) return;
 
@@ -136,10 +131,7 @@ export async function logUncachedMsgEdit(client: AkairoClient, eventData: any) {
 }
 
 export async function logImageUpload(msg: Message) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({
-    where: { server: msg.member!.guild.id },
-  });
+  const server = await getServerById(msg.member!.guild.id);
 
   if (!server?.messageLogImagesEnabled || !server?.messageLog || msg.author.bot)
     return;
@@ -160,8 +152,7 @@ export async function logImageUpload(msg: Message) {
 }
 
 export async function logCommandExecute(msg: Message) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: msg.member!.guild.id } });
+  const server = await getServerById(msg.member!.guild.id);
 
   if (!server?.commandLogEnabled || !server?.modLog) {
     return;
@@ -184,8 +175,7 @@ export async function logMute(
   duration: number,
   moderator: GuildMember
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   // make sure mod log is enabled and a channel is set
   if (!server?.modLogEnabled && !server?.modLog) {
@@ -207,8 +197,7 @@ export async function logMute(
 }
 
 export async function logUnmute(member: GuildMember, moderator: GuildMember) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   // make sure mod log is enabled and a channel is set
   if (!server?.modLogEnabled || !server?.modLog) {
@@ -232,8 +221,7 @@ export async function logPurge(
   count: number,
   msgs: Collection<string, Message>
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: moderator.guild.id } });
+  const server = await getServerById(moderator.guild.id);
 
   // make sure mod log is enabled and a channel is set
   if (!server?.modLogEnabled || !server?.modLog) {
@@ -276,8 +264,7 @@ export async function logKick(
   reason: string,
   moderator: GuildMember
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   // make sure mod log is enabled and a channel is set
   if (!server?.modLogEnabled && !server?.modLog) {
@@ -303,8 +290,7 @@ export async function logBan(
   moderator: GuildMember,
   duration: string = 'Indefinite'
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: moderator.guild.id } });
+  const server = await getServerById(moderator.guild.id);
 
   // make sure mod log is enabled and a channel is set
   if (!server?.modLogEnabled && !server?.modLog) {
@@ -330,8 +316,7 @@ export async function logUnban(
   moderator: GuildMember,
   reason: string
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: moderator.guild.id } });
+  const server = await getServerById(moderator.guild.id);
 
   // make sure mod log is enabled and a channel is set
   if (!server?.modLogEnabled && !server?.modLog) {
@@ -358,8 +343,7 @@ export async function logNick(
   oldNick: string,
   newNick: string
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -384,8 +368,7 @@ export async function logRoleAdd(
   moderator: GuildMember,
   role: Role
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -410,8 +393,7 @@ export async function logRoleRemove(
   moderator: GuildMember,
   role: Role
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -435,8 +417,7 @@ export async function logRoleClear(
   moderator: GuildMember,
   roles: Collection<string, Role>
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -456,8 +437,7 @@ export async function logRoleClear(
 }
 
 export async function logNuke(channel: TextChannel, moderator: GuildMember) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: channel.guild.id } });
+  const server = await getServerById(channel.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -476,8 +456,7 @@ export async function logNuke(channel: TextChannel, moderator: GuildMember) {
 }
 
 export async function logRolesAddAll(role: Role, moderator: GuildMember) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: moderator.guild.id } });
+  const server = await getServerById(moderator.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -496,8 +475,7 @@ export async function logRolesAddAll(role: Role, moderator: GuildMember) {
 }
 
 export async function logRolesRemoveAll(role: Role, moderator: GuildMember) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: moderator.guild.id } });
+  const server = await getServerById(moderator.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -516,8 +494,7 @@ export async function logRolesRemoveAll(role: Role, moderator: GuildMember) {
 }
 
 export async function logAutoPurge(msgCount: number, channel: TextChannel) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: channel.guild.id } });
+  const server = await getServerById(channel.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -540,8 +517,7 @@ export async function logChannelLock(
   channel: TextChannel,
   moderator: GuildMember
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: channel.guild.id } });
+  const server = await getServerById(channel.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -564,8 +540,7 @@ export async function logChannelUnlock(
   channel: TextChannel,
   moderator: GuildMember
 ) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: channel.guild.id } });
+  const server = await getServerById(channel.guild.id);
 
   if (!server?.modLogEnabled && !server?.modLog) {
     return;
@@ -584,8 +559,7 @@ export async function logChannelUnlock(
 }
 
 export async function logJoinMsg(member: GuildMember) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   if (!server?.joinMsgEnabled && !server?.joinLeaveLog) {
     return;
@@ -604,8 +578,7 @@ export async function logJoinMsg(member: GuildMember) {
 }
 
 export async function logLeaveMsg(member: GuildMember) {
-  const repo = getRepository(Servers);
-  let server = await repo.findOne({ where: { server: member.guild.id } });
+  const server = await getServerById(member.guild.id);
 
   if (!server?.leaveMsgEnabled && !server?.joinLeaveLog) {
     return;

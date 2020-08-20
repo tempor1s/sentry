@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRoleAdd } from '../../../structures/logManager';
+import { logRoleAdd } from '../../../services/serverlogs';
 import {
   checkHigherOrEqualPermissions,
   checkHigherRole,
@@ -34,7 +34,9 @@ export default class RolesAddCommand extends Command {
     }
 
     if (!role) {
-      return msg.util?.send('Please specify a role to give the user.');
+      return msg.util?.send(
+        'Please specify a role to give the user / role not found.'
+      );
     }
 
     // make sure we can not assign roles higher than us

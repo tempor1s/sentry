@@ -1,8 +1,8 @@
 import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { lockChannel } from '../../structures/lockManager';
-import { logChannelLock } from '../../structures/logManager';
+import { lockChannel } from '../../services/channellocks';
+import { logChannelLock } from '../../services/serverlogs';
 import { getDefaultEmbed } from '../../utils/message';
 
 export default class LockCommand extends Command {

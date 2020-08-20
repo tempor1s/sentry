@@ -65,9 +65,14 @@ export default class AutoPurgeShowCommand extends Command {
     // multi-channel
     const autoPurges = await getAllAutoPurges(msg.guild!.id);
 
+    if (!autoPurges)
+      return msg.util?.send(
+        'There are currently no auto purges set for this server.'
+      );
+
     // create embed and add all purges
     const embed = getDefaultEmbed().setTitle(
-      `Auto Purged Channels | ${msg.guild!.name}`
+      `Auto Purges | ${msg.guild!.name}`
     );
     for (const autoPurge of autoPurges) {
       let purgeChannel = msg.guild!.channels.cache.get(autoPurge.channel);

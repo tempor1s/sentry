@@ -36,7 +36,7 @@ export default class AutoPurgeStopCommand extends Command {
     }
 
     // remove the auto purge from the channel
-    const stopped = await stopSingleAutoPurge(msg.guild!.id, channel.id);
+    const stopped = await stopSingleAutoPurge(channel.id);
 
     if (!stopped)
       return msg.util?.send(`Failed to remove auto purge. Please try again.`);

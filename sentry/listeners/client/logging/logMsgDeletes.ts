@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { Message, DMChannel } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logMsgDelete } from '../../../structures/logManager';
+import { logMsgDelete } from '../../../services/serverlogs';
 
 export default class LogMessageDeleteListener extends Listener {
   public constructor() {

@@ -1,6 +1,6 @@
+import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import logger from '../../../utils/logger';
 import { getServerById, updateServerById } from '../../../services/server';
 
 export default class MessageLogConfigCommand extends Command {

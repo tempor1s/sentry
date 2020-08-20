@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRolesRemoveAll } from '../../../structures/logManager';
+import { logRolesRemoveAll } from '../../../services/serverlogs';
 import { checkHigherRole } from '../../../utils/permissions';
 
 export default class RolesRemoveAllCommand extends Command {
@@ -29,8 +29,12 @@ export default class RolesRemoveAllCommand extends Command {
       );
 
     try {
+      msg.util?.send(
+        `Removing <@&${role.id}> from everyone. This might take a while...`
+      );
+
       for (const member of msg.guild!.members.cache.values()) {
-        member.roles.remove(role);
+        await member.roles.remove(role);
 
         logger.debug(
           `Removed role @${role.name} (${role.id}) from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`

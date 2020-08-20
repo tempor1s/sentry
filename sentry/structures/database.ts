@@ -1,9 +1,8 @@
+import path from 'path';
 import { ConnectionOptions, createConnection } from 'typeorm';
 import { dbName, dbHost, dbUsername, dbPassword } from '../config';
-import path from 'path';
 
-// const connectionManager: ConnectionManager = new ConnectionManager();
-
+// TODO: Pull different config based off of env variables
 const connectionOptions: ConnectionOptions = {
   name: dbName,
   type: 'postgres',

@@ -3,13 +3,11 @@ import { TextChannel } from 'discord.js';
 import logger from '../utils/logger';
 import { ChannelLocks } from '../models/channelLocks';
 import { getRepository } from 'typeorm';
-import { logChannelUnlock } from './logManager';
-import { Servers } from '../models/server';
+import { logChannelUnlock } from './serverlogs';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
 
 export async function unlockChannelLoop(client: AkairoClient): Promise<void> {
-  const serversRepo = getRepository(Servers);
   const locksRepo = getRepository(ChannelLocks);
 
   const channelLocks = await locksRepo.find();

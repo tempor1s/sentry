@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRoleRemove } from '../../../structures/logManager';
+import { logRoleRemove } from '../../../services/serverlogs';
 import {
   checkHigherOrEqualPermissions,
   checkHigherRole,

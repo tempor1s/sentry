@@ -1,8 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember } from 'discord.js';
-import { Servers } from '../../models/server';
 import logger from '../../utils/logger';
-import { getRepository } from 'typeorm';
+import { getServerById } from '../../services/server';
 
 export default class AutoRoleListener extends Listener {
   public constructor() {
@@ -14,10 +13,7 @@ export default class AutoRoleListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    const serversRepo = getRepository(Servers);
-    let server = await serversRepo.findOne({
-      where: { server: member.guild.id },
-    });
+    const server = await getServerById(member.guild.id);
 
     if (server!.autoroleEnabled) {
       if (server!.autoroleRole) {

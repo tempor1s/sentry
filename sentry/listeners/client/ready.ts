@@ -1,8 +1,8 @@
 import { Listener } from 'discord-akairo';
-import { unmuteLoop } from '../../structures/muteManager';
-import { autoPurgeLoop } from '../../structures/autoPurgeManager';
-import { tempUnbanLoop } from '../../structures/banManager';
-import { unlockChannelLoop } from '../../structures/lockManager';
+import { unmuteLoop } from '../../services/mute';
+import { autoPurgeLoop } from '../../services/autopurge';
+import { tempUnbanLoop } from '../../services/tempbans';
+import { unlockChannelLoop } from '../../services/channellocks';
 import logger from '../../utils/logger';
 
 export default class ReadyListener extends Listener {
@@ -17,11 +17,14 @@ export default class ReadyListener extends Listener {
   public async exec() {
     logger.info(`${this.client.user!.tag} is now online.`);
 
-    // Update servers/members every 5 minutes.
-    this.client.user!.setActivity(`from sentrybot.io`, { type: 'WATCHING' });
+    await this.client.user!.setActivity(`from sentrybot.io`, {
+      type: 'WATCHING',
+    });
 
-    setInterval(() => {
-      this.client.user!.setActivity(`from sentrybot.io`, { type: 'WATCHING' });
+    setInterval(async () => {
+      await this.client.user!.setActivity(`from sentrybot.io`, {
+        type: 'WATCHING',
+      });
     }, 3e5);
 
     // Unmute loop (runs every 30 seconds)

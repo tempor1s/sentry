@@ -1,10 +1,9 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember } from 'discord.js';
-import { Servers } from '../../models/server';
-import { getRepository } from 'typeorm';
-import { Mutes } from '../../models/mutes';
 import logger from '../../utils/logger';
-import { logMute } from '../../structures/logManager';
+import { logMute } from '../../services/serverlogs';
+import { findMutedUser } from '../../services/mute';
+import { getServerById } from '../../services/server';
 
 export default class MuteJoinListener extends Listener {
   public constructor() {
@@ -15,20 +14,13 @@ export default class MuteJoinListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    const serversRepo = getRepository(Servers);
-    const mutesRepo = getRepository(Mutes);
-
-    let muted = await mutesRepo.findOne({
-      where: { server: member.guild.id, user: member.id },
-    });
+    const muted = await findMutedUser(member.guild.id, member.id);
 
     if (!muted) {
       return;
     }
 
-    let server = await serversRepo.findOne({
-      where: { server: member.guild.id },
-    });
+    const server = await getServerById(member.guild.id);
 
     // Add the muted role
     try {

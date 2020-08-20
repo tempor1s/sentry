@@ -1,14 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Servers } from './server';
 
 @Entity('channellocks')
 export class ChannelLocks {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @ManyToOne(() => Servers, (servers) => servers.id, { cascade: true })
+  server!: Servers;
 
-  @Column({ type: 'varchar', length: 22 })
-  server!: string;
-
-  @Column({ type: 'varchar', length: 22 })
+  @PrimaryColumn({ type: 'varchar', length: 22 })
   channel!: string;
 
   @Column({ type: 'bigint' })

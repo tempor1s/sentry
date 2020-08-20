@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, Role } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRolesAddAll } from '../../../structures/logManager';
+import { logRolesAddAll } from '../../../services/serverlogs';
 import { checkHigherRole } from '../../../utils/permissions';
 
 export default class RolesAddAllCommand extends Command {
@@ -30,8 +30,12 @@ export default class RolesAddAllCommand extends Command {
       );
 
     try {
+      msg.util?.send(
+        `Adding <@&${role.id}> to everyone. This might take a while...`
+      );
+
       for (const member of msg.guild!.members.cache.values()) {
-        member.roles.add(role);
+        await member.roles.add(role);
 
         logger.debug(
           `Added role @${role.name} (${role.id}) to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`

@@ -1,10 +1,8 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import { getDefaultEmbed } from '../../utils/message';
-import { Servers } from '../../models/server';
-import { Mutes } from '../../models/mutes';
-import { createMuteOrUpdate, mute } from '../../structures/muteManager';
-import { logMute } from '../../structures/logManager';
+import { createMuteOrUpdate, mute } from '../../services/mute';
+import { logMute } from '../../services/serverlogs';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 import ms from 'ms';
 import { getServerById } from '../../services/server';

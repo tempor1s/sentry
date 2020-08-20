@@ -1,6 +1,6 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember } from 'discord.js';
-import { logKick } from '../../structures/logManager';
+import { logKick } from '../../services/serverlogs';
 
 export default class UserKickedListener extends Listener {
   public constructor() {

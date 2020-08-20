@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logNick } from '../../structures/logManager';
+import { logNick } from '../../services/serverlogs';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class NickCommand extends Command {

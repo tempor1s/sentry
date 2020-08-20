@@ -1,9 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
-import { Mutes } from '../../models/mutes';
-import { Servers } from '../../models/server';
-import { unmute } from '../../structures/muteManager';
-import { logUnmute } from '../../structures/logManager';
+import { unmute } from '../../services/mute';
+import { logUnmute } from '../../services/serverlogs';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 import { findMutedUser } from '../../services/mute';
 import { getServerById } from '../../services/server';

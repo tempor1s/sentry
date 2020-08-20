@@ -1,6 +1,6 @@
 import { Listener } from 'discord-akairo';
 import { Guild, User } from 'discord.js';
-import { logBan } from '../../structures/logManager';
+import { logBan } from '../../services/serverlogs';
 
 export default class UserBannedListener extends Listener {
   public constructor() {

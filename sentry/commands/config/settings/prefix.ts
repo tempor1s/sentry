@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { setPrefix } from '../../../structures/prefixManager';
+import { setPrefix } from '../../../services/prefix';
 
 export default class PrefixConfigCommand extends Command {
   public constructor() {

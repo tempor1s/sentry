@@ -20,6 +20,7 @@ import { hasManageServer } from '../utils/permissions';
 import { Users } from '../models/users';
 import logger from '../utils/logger';
 import { customAuthChecker } from './utils/auth';
+import { getRepository } from 'typeorm';
 
 const app = express();
 const RedisStore = connectRedis(session);
@@ -80,7 +81,7 @@ module.exports = async (client: AkairoClient) => {
       // TODO: Maybe move into .deserializeUser
       // called after the user is created
       async (_accessToken, _refreshToken, profile, done) => {
-        const repo = client.db.getRepository(Users);
+        const repo = getRepository(Users);
         const currentUser = await repo.findOne({ where: { id: profile!.id } });
 
         let guilds = profile.guilds

@@ -22,8 +22,8 @@ export default class AutoPurgeStopAllCommand extends Command {
     let removedPurges = await stopAllAutoPurge(msg.guild!.id);
 
     return msg.util?.send(
-      removedPurges.affected
-        ? `Stopped \`${removedPurges.affected}\` auto purge(s) from the server.`
+      removedPurges
+        ? `Stopped \`${removedPurges}\` auto purge(s) from the server.`
         : 'There are no channel auto purges in this server.'
     );
   }

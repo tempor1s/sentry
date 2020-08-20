@@ -3,7 +3,7 @@ import { TextChannel } from 'discord.js';
 import {
   logUncachedMsgEdit,
   logUncachedMsgDelete,
-} from '../../structures/logManager';
+} from '../../services/serverlogs';
 
 export default class RawListener extends Listener {
   public constructor() {
@@ -18,7 +18,7 @@ export default class RawListener extends Listener {
     if (!['MESSAGE_UPDATE', 'MESSAGE_DELETE'].includes(packet.t)) return;
 
     // check to make sure the message is not in the cahe already - ignore if it is
-    let channel = this.client.channels.cache.get(
+    const channel = this.client.channels.cache.get(
       packet.d.channel_id
     ) as TextChannel;
     if (channel.messages.cache.get(packet.d.id)) return;

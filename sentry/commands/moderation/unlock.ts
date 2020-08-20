@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { unlockChannel } from '../../structures/lockManager';
-import { logChannelUnlock } from '../../structures/logManager';
+import { unlockChannel } from '../../services/channellocks';
+import { logChannelUnlock } from '../../services/serverlogs';
 
 export default class UnlockCommand extends Command {
   public constructor() {

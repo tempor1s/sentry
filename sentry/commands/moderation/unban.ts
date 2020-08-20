@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, User } from 'discord.js';
 import logger from '../../utils/logger';
-import { logUnban } from '../../structures/logManager';
+import { logUnban } from '../../services/serverlogs';
 
 export default class UnbanCommand extends Command {
   public constructor() {

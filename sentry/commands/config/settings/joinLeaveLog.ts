@@ -1,6 +1,5 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
 import { getServerById, updateServerById } from '../../../services/server';
 

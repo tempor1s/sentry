@@ -1,7 +1,7 @@
 import { Command, Listener } from 'discord-akairo';
 import { Message } from 'discord.js';
 import logger from '../../utils/logger';
-import { logCommandExecute } from '../../structures/logManager';
+import { logCommandExecute } from '../../services/serverlogs';
 
 export default class LogCommandExecuteListener extends Listener {
   public constructor() {

@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import logger from '../../utils/logger';
 import { stripIndents } from 'common-tags';
-import { logNuke } from '../../structures/logManager';
+import { logNuke } from '../../services/serverlogs';
 
 export default class NukeCommand extends Command {
   public constructor() {

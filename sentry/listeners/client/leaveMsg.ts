@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logLeaveMsg } from '../../structures/logManager';
+import { logLeaveMsg } from '../../services/serverlogs';
 
 export default class LeaveMsgListener extends Listener {
   public constructor() {
@@ -12,7 +12,6 @@ export default class LeaveMsgListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    // Add the muted role
     try {
       // log join
       logLeaveMsg(member);

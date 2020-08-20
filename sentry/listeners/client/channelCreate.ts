@@ -1,6 +1,6 @@
 import { Listener } from 'discord-akairo';
 import { GuildChannel, DMChannel } from 'discord.js';
-import { getMutedRole } from '../../structures/muteManager';
+import { getMutedRole } from '../../services/mute';
 import logger from '../../utils/logger';
 
 export default class ChannelCreateListener extends Listener {
@@ -16,7 +16,7 @@ export default class ChannelCreateListener extends Listener {
     if (channel instanceof DMChannel) return;
 
     // no muted role, something probably went wrong...
-    let mutedRole = await getMutedRole(channel.guild);
+    const mutedRole = await getMutedRole(channel.guild);
     if (!mutedRole) return;
 
     // override the new channels permissions for the muted role so that muted people can not talk in new channels

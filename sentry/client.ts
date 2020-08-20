@@ -1,12 +1,12 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
 import { Message, Permissions, ClientApplication } from 'discord.js';
 import { join } from 'path';
-import { owners } from '../config';
-import { getPrefix } from '../structures/prefixManager';
-import { redisClient } from '../structures/redis';
+import { owners } from './config';
+import { getPrefix } from './services/prefix';
+import { redisClient } from './structures/redis';
 import { RedisClient } from 'redis';
-import { createDBConnection } from '../structures/database';
-import logger from '../utils/logger';
+import { createDBConnection } from './structures/database';
+import logger from './utils/logger';
 import http from 'http';
 
 declare module 'discord-akairo' {
@@ -29,10 +29,10 @@ export default class Client extends AkairoClient {
   public config: BotOptions;
   public invite!: string;
   public listenerHandler: ListenerHandler = new ListenerHandler(this, {
-    directory: join(__dirname, '..', 'listeners'),
+    directory: join(__dirname, 'listeners'),
   });
   public commandHandler: CommandHandler = new CommandHandler(this, {
-    directory: join(__dirname, '..', 'commands'),
+    directory: join(__dirname, 'commands'),
     prefix: async (msg: Message) => getPrefix(msg),
     blockBots: true,
     allowMention: true,
@@ -84,7 +84,7 @@ export default class Client extends AkairoClient {
 
     // initialize the dashboard
     logger.info('Initializing the dashboard..');
-    require('../dashboard/dashboard')(this);
+    require('./dashboard/dashboard')(this);
   }
 
   public async start(): Promise<string> {
