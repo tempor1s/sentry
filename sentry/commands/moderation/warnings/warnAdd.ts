@@ -4,6 +4,7 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 import { createWarning } from '../../../services/warnings';
+import { getServerById } from '../../../services/server';
 
 export default class WarnAddCommand extends Command {
   public constructor() {
@@ -40,8 +41,14 @@ export default class WarnAddCommand extends Command {
       );
 
     try {
+      // TODO: use query builder
+      const server = await getServerById(msg.guild!.id);
+
+      if (!server)
+        return msg.util?.send('Error creating warning. Please try again.');
+
       const inserted = await createWarning({
-        server: msg.guild!.id,
+        server,
         user: member.id,
         moderator: msg.author.id,
         reason: reason,

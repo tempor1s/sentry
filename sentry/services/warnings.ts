@@ -1,14 +1,17 @@
 import { getRepository } from 'typeorm';
 import { Warnings } from '../models/warnings';
+import { Servers } from '../models/server';
+import { getServerById } from './server';
 
 export const getAllWarnings = async (serverId: string, userId: string) => {
   const repo = getRepository(Warnings);
+  const server = await getServerById(serverId);
 
-  return repo.find({ where: { server: serverId, user: userId } });
+  return repo.find({ where: { server: server, user: userId } });
 };
 
 interface CreateWarning {
-  server: string;
+  server: Servers;
   user: string;
   moderator: string;
   reason: string;
@@ -25,13 +28,17 @@ export const removeSingleWarning = async (
   userId: string,
   id: number
 ) => {
+  // TODO: Use query builder
   const repo = getRepository(Warnings);
+  const server = await getServerById(serverId);
 
-  return repo.delete({ server: serverId, user: userId, id });
+  return repo.delete({ server, user: userId, id });
 };
 
 export const removeAllWarnings = async (serverId: string, userId: string) => {
+  // TODO: Use query builder
   const repo = getRepository(Warnings);
+  const server = await getServerById(serverId);
 
-  return repo.delete({ server: serverId, user: userId });
+  return repo.delete({ server, user: userId });
 };
