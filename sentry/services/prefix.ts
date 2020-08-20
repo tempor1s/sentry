@@ -1,15 +1,11 @@
 import { Message, DMChannel } from 'discord.js';
-import { AkairoClient, PrefixSupplier, CommandHandler } from 'discord-akairo';
+import { PrefixSupplier, CommandHandler } from 'discord-akairo';
 import { defaultPrefix } from '../config';
-import { Repository } from 'typeorm';
-import { Servers } from '../models/server';
 import logger from '../utils/logger';
-import { getAsync, setAsync } from './redis';
+import { getAsync, setAsync } from '../structures/redis';
+import { getServerById, updateServerById } from './server';
 
-export async function getPrefix(
-  msg: Message,
-  client: AkairoClient
-): Promise<string> {
+export async function getPrefix(msg: Message): Promise<string> {
   if (msg.channel instanceof DMChannel) {
     return defaultPrefix;
   }
@@ -20,10 +16,8 @@ export async function getPrefix(
     return cachedPrefix;
   }
 
-  let serverRepo: Repository<Servers> = client.db.getRepository(Servers);
-
   // find the server we want the prefix for
-  let server = await serverRepo.findOne({ where: { server: msg.guild?.id } });
+  const server = await getServerById(msg.guild!.id);
   // if we have not seen the server then just return the default prefix
   if (!server) {
     await setAsync(msg.guild!.id, defaultPrefix);
@@ -36,7 +30,6 @@ export async function getPrefix(
 
 export async function setPrefix(
   msg: Message,
-  client: AkairoClient,
   handler: CommandHandler,
   prefix: string
 ): Promise<Message | void> {
@@ -46,12 +39,14 @@ export async function setPrefix(
     return msg.util?.send(`Current Prefix: \`${serverPrefix}\``);
   }
 
-  let serverRepo: Repository<Servers> = client.db.getRepository(Servers);
-
-  // update the prefix
   try {
     // set the new prefix in the db
-    await serverRepo.update({ server: msg.guild!.id }, { prefix: prefix });
+    const updated = await updateServerById(msg.guild!.id, { prefix });
+
+    // failed to update the prefix in the db
+    if (!updated)
+      return msg.util?.send('Failed to update prefix. Please try again.');
+
     // set the new prefix in the cache
     await setAsync(msg.guild!.id, prefix);
 
@@ -67,4 +62,3 @@ export async function setPrefix(
 
   return msg.util?.send(`Updated Prefix: \`${prefix}\``);
 }
-

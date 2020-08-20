@@ -1,8 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { Message, DMChannel } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
-import { logImageUpload } from '../../../structures/logManager';
+import { logImageUpload } from '../../../services/serverlogs';
 
 export default class LogImageUploadListener extends Listener {
   public constructor() {
@@ -24,7 +23,6 @@ export default class LogImageUploadListener extends Listener {
 
     logger.debug(`Image uploaded in ${msg.guild!.name} (${msg.guild!.id})`);
 
-    let serversRepo = this.client.db.getRepository(Servers);
-    await logImageUpload(serversRepo, msg);
+    logImageUpload(msg);
   }
 }

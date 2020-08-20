@@ -1,8 +1,6 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember } from 'discord.js';
-import { Servers } from '../../models/server';
-import { Repository } from 'typeorm';
-import { logKick } from '../../structures/logManager';
+import { logKick } from '../../services/serverlogs';
 
 export default class UserKickedListener extends Listener {
   public constructor() {
@@ -13,10 +11,6 @@ export default class UserKickedListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    const serversRepo: Repository<Servers> = this.client.db.getRepository(
-      Servers
-    );
-
     let auditLogs = await member.guild.fetchAuditLogs();
     // TODO: This might fail. Maybe sort through the first 1-10 and find the EXACT action? :)
     let possibleKickAction = auditLogs.entries.first();
@@ -29,7 +23,6 @@ export default class UserKickedListener extends Listener {
     if (possibleKickAction.executor.id == this.client.user!.id) return;
 
     logKick(
-      serversRepo,
       member,
       possibleKickAction.reason
         ? possibleKickAction.reason

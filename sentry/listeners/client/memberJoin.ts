@@ -1,10 +1,9 @@
 import { Listener } from 'discord-akairo';
 import { GuildMember, TextChannel } from 'discord.js';
-import { Servers } from '../../models/server';
-import { Repository } from 'typeorm';
 import logger from '../../utils/logger';
-import { logJoinMsg } from '../../structures/logManager';
+import { logJoinMsg } from '../../services/serverlogs';
 import { getDefaultEmbed } from '../../utils/message';
+import { getServerById } from '../../services/server';
 
 export default class MemberJoinListener extends Listener {
   public constructor() {
@@ -15,34 +14,28 @@ export default class MemberJoinListener extends Listener {
   }
 
   public async exec(member: GuildMember) {
-    const serversRepo: Repository<Servers> = this.client.db.getRepository(
-      Servers
-    );
-
-    let server = await serversRepo.findOne({
-      where: { server: member.guild.id },
-    });
+    const server = await getServerById(member.guild.id);
 
     try {
       // log join
-      logJoinMsg(server!, member);
+      logJoinMsg(member);
 
-      // TODO: Refactor out possibly
       // send welcome message if enabled
       if (server?.welcomeMessageEnabled) {
-        let channel = member.guild.channels.cache.get(
+        const channel = member.guild.channels.cache.get(
           server.welcomeChannel
         ) as TextChannel;
 
         // format the message
-        let welcomeMessage = server.welcomeMessage
+        const welcomeMessage = server.welcomeMessage
           .replace('{name}', `${member.user}`)
           .replace('{server}', member.guild.name);
 
         if (server.welcomeMessageEmbeded) {
-          let embed = getDefaultEmbed()
+          const embed = getDefaultEmbed()
             .setTitle('Welcome!')
             .setDescription(welcomeMessage);
+
           if (server.welcomeMessageSendDM) {
             try {
               await member.send(embed);
@@ -67,7 +60,7 @@ export default class MemberJoinListener extends Listener {
           }
         }
 
-        channel.send(welcomeMessage);
+        await channel.send(welcomeMessage);
       }
     } catch (err) {
       logger.error(

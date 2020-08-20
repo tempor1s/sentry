@@ -1,9 +1,9 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import { TextChannel } from 'discord.js';
-import { Servers } from '../../models/server';
 import { getDefaultEmbed } from '../../utils/message';
 import logger from '../../utils/logger';
+import { updateServerById } from '../../services/server';
 
 export default class WelcomeCommand extends Command {
   public constructor() {
@@ -53,18 +53,25 @@ export default class WelcomeCommand extends Command {
       );
     }
 
-    let serversRepo = this.client.db.getRepository(Servers);
-
     // update the channel and message in the server and enable it
     try {
-      await serversRepo.update(
-        { server: msg.guild!.id },
-        {
-          welcomeMessage: message,
-          welcomeChannel: channel.id,
-          welcomeMessageEnabled: true,
-        }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        welcomeMessage: message,
+        welcomeChannel: channel.id,
+        welcomeMessageEnabled: true,
+      });
+
+      if (updated) {
+        logger.info(
+          `Updated welcome message in ${msg.guild?.name} (${msg.guild?.id})`
+        );
+      } else {
+        logger.error(
+          `Error when updating welcome message in ${msg.guild?.name} (${msg.guild?.id})`
+        );
+
+        return msg.util?.send(`Error updating welcome message.`);
+      }
     } catch (err) {
       logger.error(
         `Error when updating welcome message in ${msg.guild?.name} (${msg.guild?.id})`

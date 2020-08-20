@@ -5,9 +5,16 @@ import {
   CreateDateColumn,
   BaseEntity,
   Index,
+  ManyToOne,
 } from 'typeorm';
 import { defaultPrefix } from '../config';
 import { ObjectType, Field } from 'type-graphql';
+
+import { AutoPurges } from './autoPurge';
+import { ChannelLocks } from './channelLocks';
+import { Mutes } from './mutes';
+import { TempBans } from './tempBans';
+import { Warnings } from './warnings';
 
 // TODO: Go through here and change fields to be optional, but this will require us to go through the entire project and change fields to handle undefined (very good thing)
 
@@ -18,7 +25,7 @@ export class Servers extends BaseEntity {
   @Field()
   @Index()
   @PrimaryColumn({ type: 'varchar', length: 22, unique: true })
-  server!: string;
+  id!: string;
 
   // Prefix
   @Field()
@@ -124,6 +131,21 @@ export class Servers extends BaseEntity {
   @Field()
   @Column({ type: 'varchar', nullable: true, length: 22 })
   mutedRole!: string;
+
+  @ManyToOne(() => AutoPurges, (autopurges) => autopurges.server)
+  channelPurges!: AutoPurges[];
+
+  @ManyToOne(() => ChannelLocks, (channellocks) => channellocks.server)
+  channelLocks!: ChannelLocks[];
+
+  @ManyToOne(() => Mutes, (mutes) => mutes.server)
+  mutes!: Mutes[];
+
+  @ManyToOne(() => TempBans, (tempbans) => tempbans.server)
+  tempBans!: TempBans[];
+
+  @ManyToOne(() => Warnings, (warnings) => warnings.server)
+  warnings!: Warnings[];
 
   // Mute Duration
   @Field()

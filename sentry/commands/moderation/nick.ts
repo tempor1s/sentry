@@ -1,8 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logNick } from '../../structures/logManager';
-import { Servers } from '../../models/server';
+import { logNick } from '../../services/serverlogs';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class NickCommand extends Command {
@@ -74,10 +73,9 @@ export default class NickCommand extends Command {
       logger.error('Error changing nickname of user. Error: ', err);
       return msg.util?.send('Error occured when trying to nick user.');
     }
-    let serversRepo = this.client.db.getRepository(Servers);
 
     // log that we updated the nickname
-    logNick(serversRepo, member, msg.member!, oldNick, member.nickname!);
+    logNick(member, msg.member!, oldNick, member.nickname!);
 
     return msg.util?.send(retMsg);
   }

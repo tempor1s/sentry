@@ -3,15 +3,17 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Servers } from './server';
 
 @Entity('warnings')
 export class Warnings {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 22 })
-  server!: string;
+  @OneToMany(() => Servers, (servers) => servers.warnings, { cascade: true })
+  server!: Servers;
 
   @Column({ type: 'varchar', length: 22 })
   user!: string;

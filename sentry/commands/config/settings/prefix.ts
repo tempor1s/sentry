@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { setPrefix } from '../../../structures/prefixManager';
+import { setPrefix } from '../../../services/prefix';
 
 export default class PrefixConfigCommand extends Command {
   public constructor() {
@@ -25,6 +25,6 @@ export default class PrefixConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { prefix }: { prefix: string }) {
-    await setPrefix(msg, this.client, this.handler, prefix);
+    await setPrefix(msg, this.handler, prefix);
   }
 }

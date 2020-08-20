@@ -1,9 +1,12 @@
+import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { AutoPurges } from '../../../models/autoPurge';
 import { getDefaultEmbed } from '../../../utils/message';
-import ms from 'ms';
+import {
+  getSingleAutoPurge,
+  getAllAutoPurges,
+} from '../../../services/autopurge';
 
 export default class AutoPurgeShowCommand extends Command {
   public constructor() {
@@ -27,16 +30,12 @@ export default class AutoPurgeShowCommand extends Command {
   }
 
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
-    const autoPurgeRepo = this.client.db.getRepository(AutoPurges);
-
     // single channel
     if (channel) {
       // create embed and add purges that are for the specific channel
       const embed = getDefaultEmbed().setTitle('Channel Purge Info');
 
-      let autoPurge = await autoPurgeRepo.findOne({
-        where: { server: msg.guild!.id, channel: channel.id },
-      });
+      const autoPurge = await getSingleAutoPurge(msg.guild!.id, channel.id);
 
       if (autoPurge) {
         embed.addField(
@@ -64,13 +63,16 @@ export default class AutoPurgeShowCommand extends Command {
     }
 
     // multi-channel
-    let autoPurges = await autoPurgeRepo.find({
-      where: { server: msg.guild!.id },
-    });
+    const autoPurges = await getAllAutoPurges(msg.guild!.id);
+
+    if (!autoPurges)
+      return msg.util?.send(
+        'There are currently no auto purges set for this server.'
+      );
 
     // create embed and add all purges
     const embed = getDefaultEmbed().setTitle(
-      `Auto Purged Channels | ${msg.guild!.name}`
+      `Auto Purges | ${msg.guild!.name}`
     );
     for (const autoPurge of autoPurges) {
       let purgeChannel = msg.guild!.channels.cache.get(autoPurge.channel);

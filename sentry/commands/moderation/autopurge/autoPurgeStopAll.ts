@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { AutoPurges } from '../../../models/autoPurge';
+import { stopAllAutoPurge } from '../../../services/autopurge';
 
 export default class AutoPurgeStopAllCommand extends Command {
   public constructor() {
@@ -17,19 +17,13 @@ export default class AutoPurgeStopAllCommand extends Command {
     });
   }
 
-  // TODO: Refactor into other file
-  // TODO: Error handling :)
   public async exec(msg: Message) {
-    let autoPurgeRepo = this.client.db.getRepository(AutoPurges);
-
-    // remove all purges for the given server
-    let removedPurges = await autoPurgeRepo.delete({
-      server: msg.guild!.id,
-    });
+    // stop all auto purges on the server
+    let removedPurges = await stopAllAutoPurge(msg.guild!.id);
 
     return msg.util?.send(
-      removedPurges.affected
-        ? `Stopped \`${removedPurges.affected}\` auto purge(s) from the server.`
+      removedPurges
+        ? `Stopped \`${removedPurges}\` auto purge(s) from the server.`
         : 'There are no channel auto purges in this server.'
     );
   }

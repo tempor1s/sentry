@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
+import { getServerById, updateServerById } from '../../../services/server';
 
 export default class AutoRoleToggleConfigCommand extends Command {
   public constructor() {
@@ -18,23 +18,29 @@ export default class AutoRoleToggleConfigCommand extends Command {
   }
 
   public async exec(msg: Message) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     let flag = server?.autoroleEnabled ? false : true;
 
     // update the muterole
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { autoroleEnabled: flag }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        autoroleEnabled: flag,
+      });
 
-      logger.debug(
-        `Set autorole in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
-      );
+      if (updated) {
+        logger.debug(
+          `Set autorole in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
+        );
+      } else {
+        logger.error(
+          `Error toggling autorole in ${msg.guild?.name} (${msg.guild?.id}).`
+        );
+
+        return msg.util?.send(
+          'Error when toggling autorole. Please try again.'
+        );
+      }
     } catch (err) {
       logger.error(
         `Error toggling autorole in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

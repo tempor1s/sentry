@@ -1,12 +1,10 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, User } from 'discord.js';
 import logger from '../../utils/logger';
-import { logUnban } from '../../structures/logManager';
-import { Servers } from '../../models/server';
+import { logUnban } from '../../services/serverlogs';
 
 export default class UnbanCommand extends Command {
   public constructor() {
-    // TODO: Allow the ability to purge messages after a ban
     super('unban', {
       aliases: ['unban'],
       description: {
@@ -44,8 +42,6 @@ export default class UnbanCommand extends Command {
       return msg.util?.send('Please specify a user to unban.');
     }
 
-    let serversRepo = this.client.db.getRepository(Servers);
-
     try {
       // check to make sure the user is not already unbanned or not banned
       if (!(await msg.guild!.fetchBan(user).catch(() => {}))) {
@@ -55,7 +51,7 @@ export default class UnbanCommand extends Command {
       // log unban
       await msg.guild!.members.unban(user, reason);
 
-      logUnban(serversRepo, user, msg.member!, reason);
+      logUnban(user, msg.member!, reason);
 
       logger.debug(
         `Unbanned ${user.tag} (${user.id}) in server ${msg.guild!.name} (${

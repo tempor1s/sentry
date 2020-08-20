@@ -1,8 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
-import { logBan } from '../../structures/logManager';
-import { Servers } from '../../models/server';
+import { logBan } from '../../services/serverlogs';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
@@ -76,8 +75,6 @@ export default class BanCommand extends Command {
         `That member has a higher or equal role to you. You are unable to ban them.`
       );
 
-    let serversRepo = this.client.db.getRepository(Servers);
-
     try {
       // check to make sure they are not already banned
       if (await member.guild.fetchBan(member).catch(() => {})) {
@@ -94,7 +91,7 @@ export default class BanCommand extends Command {
       await member.ban({ reason: reason, days: days });
 
       // log ban
-      logBan(serversRepo, member.user, reason, msg.member!);
+      logBan(member.user, reason, msg.member!);
 
       logger.debug(
         `Banned ${member.user.tag} (${member.id}) for reason: ${reason}`

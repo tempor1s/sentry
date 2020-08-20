@@ -1,8 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
 import logger from '../../../utils/logger';
-import { logRoleClear } from '../../../structures/logManager';
-import { Servers } from '../../../models/server';
+import { logRoleClear } from '../../../services/serverlogs';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 
 export default class RolesClearCommand extends Command {
@@ -30,8 +29,6 @@ export default class RolesClearCommand extends Command {
         'This member has a higher or equal role to you. You are unable to update their roles.'
       );
 
-    let serverRepo = this.client.db.getRepository(Servers);
-
     try {
       // Get all the roles from the cache
       let roles = member.roles.cache.filter(
@@ -48,7 +45,7 @@ export default class RolesClearCommand extends Command {
         );
       }
 
-      logRoleClear(serverRepo, member, msg.member!, roles);
+      logRoleClear(member, msg.member!, roles);
     } catch (err) {
       logger.error(
         `Error clearing roles from ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}). Error: `,

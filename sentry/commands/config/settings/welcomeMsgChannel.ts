@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
+import { getServerById, updateServerById } from '../../../services/server';
 
 export default class WelcomeMsgChanConfigCommand extends Command {
   public constructor() {
@@ -25,10 +25,7 @@ export default class WelcomeMsgChanConfigCommand extends Command {
   }
 
   public async exec(msg: Message, { channel }: { channel: TextChannel }) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     if (!channel) {
       if (server?.welcomeChannel) {
@@ -43,14 +40,23 @@ export default class WelcomeMsgChanConfigCommand extends Command {
 
     // update the command log channel
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { welcomeChannel: channel.id }
-      );
+      const updated = updateServerById(msg.guild!.id, {
+        welcomeChannel: channel.id,
+      });
 
-      logger.debug(
-        `Updating welcome message channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
-      );
+      if (updated) {
+        logger.debug(
+          `Updating welcome message channel in ${msg.guild?.name} (${msg.guild?.id}) to ${channel.name} (${channel.id})`
+        );
+      } else {
+        logger.error(
+          `Error updating welcome message channel in ${msg.guild?.name} (${msg.guild?.id}).`
+        );
+
+        return msg.util?.send(
+          'Error when updating the welcome message channel.'
+        );
+      }
     } catch (err) {
       logger.error(
         `Error updating welcome message channel in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

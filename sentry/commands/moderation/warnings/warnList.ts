@@ -1,12 +1,11 @@
 import { Command } from 'discord-akairo';
 import { stripIndents } from 'common-tags';
 import { Message, GuildMember, Permissions } from 'discord.js';
-import { Repository } from 'typeorm';
-import { Warnings } from '../../../models/warnings';
 import { getDefaultEmbed } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 import { utc } from 'moment';
 import 'moment-duration-format';
+import { getAllWarnings } from '../../../services/warnings';
 
 export default class WarnListCommand extends Command {
   public constructor() {
@@ -40,13 +39,7 @@ export default class WarnListCommand extends Command {
         'You may not view the warnings of someone with a higher rank than yourselves.'
       );
 
-    const warningRepo: Repository<Warnings> = this.client.db.getRepository(
-      Warnings
-    );
-
-    let warnings = await warningRepo.find({
-      where: { server: member.guild.id, user: member.id },
-    });
+    const warnings = await getAllWarnings(member.guild.id, member.id);
 
     const embed = getDefaultEmbed().setTitle(`Warnings for ${member.user.tag}`);
 

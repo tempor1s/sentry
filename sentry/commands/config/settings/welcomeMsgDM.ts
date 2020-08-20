@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
+import { getServerById, updateServerById } from '../../../services/server';
 
 export default class WelcomeMsgDMConfigCommand extends Command {
   public constructor() {
@@ -19,23 +19,29 @@ export default class WelcomeMsgDMConfigCommand extends Command {
   }
 
   public async exec(msg: Message) {
-    let serverRepo = this.client.db.getRepository(Servers);
-    let server = await serverRepo.findOne({
-      where: { server: msg.guild!.id },
-    });
+    const server = await getServerById(msg.guild!.id);
 
     let flag = server?.welcomeMessageSendDM ? false : true;
 
     // update if welcome message is enabled
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { welcomeMessageSendDM: flag }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        welcomeMessageSendDM: flag,
+      });
 
-      logger.debug(
-        `Set DM welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
-      );
+      if (updated) {
+        logger.debug(
+          `Set DM welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: ${flag}`
+        );
+      } else {
+        logger.error(
+          `Error toggling DM welcome message in ${msg.guild?.name} (${msg.guild?.id}).`
+        );
+
+        return msg.util?.send(
+          "Error when toggling sending of welcome messages in DM's. Please try again."
+        );
+      }
     } catch (err) {
       logger.error(
         `Error toggling DM welcome message in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

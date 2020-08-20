@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
+import { updateServerById } from '../../../services/server';
 
 export default class WelcomeMsgConfigCommand extends Command {
   public constructor() {
@@ -31,18 +31,25 @@ export default class WelcomeMsgConfigCommand extends Command {
       );
     }
 
-    let serverRepo = this.client.db.getRepository(Servers);
-
     // update the welcome message
     try {
-      await serverRepo.update(
-        { server: msg.guild!.id },
-        { welcomeMessage: message }
-      );
+      const updated = await updateServerById(msg.guild!.id, {
+        welcomeMessage: message,
+      });
 
-      logger.debug(
-        `Set welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: *${message}*`
-      );
+      if (updated) {
+        logger.debug(
+          `Set welcome message in ${msg.guild?.name} (${msg.guild?.id}) to: *${message}*`
+        );
+      } else {
+        logger.error(
+          `Error changing welcome message in ${msg.guild?.name} (${msg.guild?.id}).`
+        );
+
+        return msg.util?.send(
+          'Error when changing welcome message. Please try again.'
+        );
+      }
     } catch (err) {
       logger.error(
         `Error changing welcome message in ${msg.guild?.name} (${msg.guild?.id}). Error: `,

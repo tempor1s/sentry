@@ -1,8 +1,6 @@
 import { Listener } from 'discord-akairo';
 import { Guild, User } from 'discord.js';
-import { Servers } from '../../models/server';
-import { Repository } from 'typeorm';
-import { logBan } from '../../structures/logManager';
+import { logBan } from '../../services/serverlogs';
 
 export default class UserBannedListener extends Listener {
   public constructor() {
@@ -13,10 +11,6 @@ export default class UserBannedListener extends Listener {
   }
 
   public async exec(guild: Guild, user: User) {
-    const serversRepo: Repository<Servers> = this.client.db.getRepository(
-      Servers
-    );
-
     let auditLogs = await guild.fetchAuditLogs();
     // TODO: This might fail. Maybe sort through the first 1-10 and find the EXACT action? :)
     let banAction = auditLogs.entries.first();
@@ -28,7 +22,6 @@ export default class UserBannedListener extends Listener {
 
     // log the user banned
     logBan(
-      serversRepo,
       user,
       banAction.reason ? banAction.reason : 'No reason provided.',
       guild.members.cache.get(banAction.executor.id)!

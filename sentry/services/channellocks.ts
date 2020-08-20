@@ -2,17 +2,14 @@ import { AkairoClient } from 'discord-akairo';
 import { TextChannel } from 'discord.js';
 import logger from '../utils/logger';
 import { ChannelLocks } from '../models/channelLocks';
-import { Repository } from 'typeorm';
-import { logChannelUnlock } from './logManager';
-import { Servers } from '../models/server';
+import { getRepository } from 'typeorm';
+import { logChannelUnlock } from './serverlogs';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
 
-export async function unlockChannelLoop(
-  serversRepo: Repository<Servers>,
-  locksRepo: Repository<ChannelLocks>,
-  client: AkairoClient
-) {
+export async function unlockChannelLoop(client: AkairoClient): Promise<void> {
+  const locksRepo = getRepository(ChannelLocks);
+
   const channelLocks = await locksRepo.find();
   channelLocks
     .filter(
@@ -30,19 +27,20 @@ export async function unlockChannelLoop(
 
       let clientMember = lockedChan.guild.members.cache.get(client.user!.id);
 
-      let unlocked = await unlockChannel(locksRepo, lockedChan);
+      let unlocked = await unlockChannel(lockedChan);
       if (!unlocked) lockedChan.send('Failed to unlock channel.');
 
-      logChannelUnlock(serversRepo, lockedChan, clientMember!);
+      logChannelUnlock(lockedChan, clientMember!);
     });
 }
 
 // "locks" given channel by disabling
 export async function lockChannel(
-  locksRepo: Repository<ChannelLocks>,
   channel: TextChannel,
   duration: number
 ): Promise<boolean> {
+  const locksRepo = getRepository(ChannelLocks);
+
   // make sure the channel is not already locked
   let channelLock = await locksRepo.findOne({
     where: { server: channel.guild.id, channel: channel.id },
@@ -83,10 +81,9 @@ export async function lockChannel(
   return true;
 }
 
-export async function unlockChannel(
-  locksRepo: Repository<ChannelLocks>,
-  channel: TextChannel
-): Promise<boolean> {
+export async function unlockChannel(channel: TextChannel): Promise<boolean> {
+  const locksRepo = getRepository(ChannelLocks);
+
   // get the channels lock
   let channelLock = await locksRepo.findOne({
     where: { server: channel.guild.id, channel: channel.id },

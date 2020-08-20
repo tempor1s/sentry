@@ -1,8 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { Message, DMChannel } from 'discord.js';
-import { Servers } from '../../../models/server';
 import logger from '../../../utils/logger';
-import { logMsgEdit } from '../../../structures/logManager';
+import { logMsgEdit } from '../../../services/serverlogs';
 
 export default class LogMessageEditListener extends Listener {
   public constructor() {
@@ -20,7 +19,6 @@ export default class LogMessageEditListener extends Listener {
       `Message edited in ${newMessage.guild!.name} (${newMessage.guild!.id})`
     );
 
-    let serversRepo = this.client.db.getRepository(Servers);
-    logMsgEdit(serversRepo, oldMessage, newMessage);
+    logMsgEdit(oldMessage, newMessage);
   }
 }

@@ -1,12 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Servers } from './server';
 
 @Entity('tempbans')
 export class TempBans {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 22 })
-  server!: string;
+  @OneToMany(() => Servers, (servers) => servers.tempBans, { cascade: true })
+  server!: Servers;
 
   @Column({ type: 'varchar', length: 22 })
   user!: string;

@@ -36,8 +36,8 @@ export default class InfoCommand extends Command {
       .addField('❯ Channels', this.client.channels.cache.size, true)
       .addField('❯ Users', this.client.users.cache.size, true)
       .addField('❯ Language', 'Typescript', true)
-      .addField('❯ Library', 'Discord.js', true)
-      .addField('❯ Framework', 'Akairo', true)
+      .addField('❯ Library', 'discord.js', true)
+      .addField('Website', 'sentrybot.io')
       .addField('Code', '[Source](https://github.com/tempor1s/sentry)')
       .setThumbnail(this.client.user?.displayAvatarURL() ?? '');
 

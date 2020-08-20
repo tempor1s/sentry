@@ -1,5 +1,5 @@
-import { promisify } from 'util';
 import redis from 'redis';
+import { promisify } from 'util';
 import { redisUrl, redisPassword } from '../config';
 
 const redisClient = redis.createClient(redisUrl, { password: redisPassword });

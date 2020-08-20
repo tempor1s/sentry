@@ -1,23 +1,28 @@
+import ms from 'ms';
+import logger from '../utils/logger';
+import { getServerById, updateServerById } from './server';
 import { GuildMember, Guild, Permissions, Message, Role } from 'discord.js';
 import { AkairoClient } from 'discord-akairo';
-import { Repository } from 'typeorm';
-import { logUnmute } from '../structures/logManager';
-import logger from '../utils/logger';
-import ms from 'ms';
-
+import { getRepository } from 'typeorm';
+import { logUnmute } from './serverlogs';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
 
-export async function unmuteLoop(
-  serversRepo: Repository<Servers>,
-  mutesRepo: Repository<Mutes>,
-  client: AkairoClient
-) {
+export const findMutedUser = async (serverId: string, userId: string) => {
+  const server = await getServerById(serverId);
+
+  return server?.mutes.find((mute) => mute.user === userId);
+};
+
+export async function unmuteLoop(client: AkairoClient) {
+  const serversRepo = getRepository(Servers);
+  const mutesRepo = getRepository(Mutes);
+
   const mutes = await mutesRepo.find();
   mutes
     .filter((m) => m.end <= Date.now())
     .map(async (m) => {
-      let guild = client.guilds.cache.get(m.server);
+      let guild = client.guilds.cache.get(m.server.id);
       let member = guild!.members.cache.get(m.user);
       // TODO: This is slow. Optimize with relations or something? :)
       let serverDb = await serversRepo.findOne({
@@ -27,13 +32,9 @@ export async function unmuteLoop(
       // try to mute the user
       try {
         // Unmute the user
-        await unmute(mutesRepo, member!, serverDb!.mutedRole);
+        await unmute(member!, serverDb!.mutedRole);
         // Log the unmute
-        logUnmute(
-          serversRepo,
-          member!,
-          member!.guild.members.cache.get(client.user!.id)!
-        );
+        logUnmute(member!, member!.guild.members.cache.get(client.user!.id)!);
 
         logger.debug(`Unmuting user ${member!.user.tag} (${member!.id}).`);
       } catch (err) {
@@ -43,7 +44,6 @@ export async function unmuteLoop(
 }
 
 export async function mute(
-  muteRepo: Repository<Mutes>,
   msg: Message,
   member: GuildMember,
   muteRoleId: string,
@@ -51,6 +51,7 @@ export async function mute(
   duration: number,
   silent: boolean = false
 ) {
+  const muteRepo = getRepository(Mutes);
   // remove all the roles that are not @everyone
   let roles = member.roles.cache
     .filter((role) => role.name !== '@everyone')
@@ -78,8 +79,11 @@ export async function mute(
 
   // Insert the mute into the DB
   try {
+    // TODO: Use query builder
+    const server = await getServerById(member.guild.id);
+
     await muteRepo.insert({
-      server: member.guild.id,
+      server: server,
       user: member.user.id,
       end: Date.now() + duration, // when the mute ends
       reason: reason,
@@ -108,14 +112,13 @@ export async function mute(
   }
 }
 
-export async function unmute(
-  muteRepo: Repository<Mutes>,
-  member: GuildMember,
-  muteRoleId: string
-) {
-  // remove the muted role
+export async function unmute(member: GuildMember, muteRoleId: string) {
+  const muteRepo = getRepository(Mutes);
+
   try {
+    // remove the muted role
     await member.roles.remove(muteRoleId, 'Unmuted');
+
     logger.debug(
       `Unmuted ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id})`
     );
@@ -141,9 +144,11 @@ export async function unmute(
   }
 
   try {
+    // TODO: Use query builder
+    const server = await getServerById(member.guild.id);
     // Remove mute from the DB
     await muteRepo.delete({
-      server: member.guild.id,
+      server: server,
       user: member.id,
     });
 
@@ -157,12 +162,8 @@ export async function unmute(
   }
 }
 
-export async function createMuteOrUpdate(
-  serverRepo: Repository<Servers>,
-  server: Guild
-): Promise<string> {
+export async function createMuteOrUpdate(server: Guild): Promise<string> {
   let muteRoleId: string;
-
   // see if we can find a muted role
   let mutedRole = server.roles.cache.find((role) =>
     role.name.toLowerCase().includes('muted')
@@ -176,35 +177,30 @@ export async function createMuteOrUpdate(
     // updated out muted role
     muteRoleId = mutedRole.id;
     try {
-      await serverRepo.update(
-        { server: server.id },
-        { mutedRole: mutedRole.id }
-      );
+      await updateServerById(server.id, {
+        mutedRole: mutedRole.id,
+      });
     } catch (err) {
       logger.error(`Error updating muted role for ${server.id}`);
     }
   } else {
     logger.debug('Did not find existing muted role. Creating..');
-    muteRoleId = await createMutedRole(serverRepo, server);
+    muteRoleId = await createMutedRole(server);
   }
 
   return muteRoleId;
 }
 
-export async function getMutedRole(
-  serverRepo: Repository<Servers>,
-  guild: Guild
-): Promise<Role> {
+export async function getMutedRole(guild: Guild): Promise<Role> {
+  const serverRepo = getRepository(Servers);
+
   let server = await serverRepo.findOne({ where: { server: guild.id } });
   let mutedRole = guild.roles.cache.get(server!.mutedRole);
 
   return mutedRole!;
 }
 
-async function createMutedRole(
-  serverRepo: Repository<Servers>,
-  server: Guild
-): Promise<string> {
+async function createMutedRole(server: Guild): Promise<string> {
   let role = await server.roles.create({
     data: {
       name: 'Muted',
@@ -234,7 +230,7 @@ async function createMutedRole(
 
   // add the role id to the server configuration
   try {
-    await serverRepo.update({ server: server.id }, { mutedRole: role.id });
+    await updateServerById(server.id, { mutedRole: role.id });
   } catch (err) {
     logger.error(`Error updating muted role for ${server.id}`);
   }
