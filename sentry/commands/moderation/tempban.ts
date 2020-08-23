@@ -6,6 +6,7 @@ import { logBan } from '../../services/serverlogs';
 import { getDefaultEmbed } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 import { createTempBan } from '../../services/tempbans';
+import { getServerById } from '../../services/server';
 
 export default class TempBanCommand extends Command {
   public constructor() {
@@ -103,12 +104,18 @@ export default class TempBanCommand extends Command {
 
     let msDuration = ms(duration);
 
+    // check to make sure they are not already banned
     try {
-      // check to make sure they are not already banned
-      if (await member.guild.fetchBan(member)) {
+      const ban = await member.guild.fetchBan(member);
+
+      if (ban) {
         return msg.util?.send('That user is already banned.');
       }
+    } catch (e) {
+      logger.info('User was not already banned... continuing..');
+    }
 
+    try {
       if (!silent) {
         await member.send(
           `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`
@@ -118,9 +125,14 @@ export default class TempBanCommand extends Command {
       // ban the user and send them a msg
       await member.ban({ reason: reason, days: days });
 
+      const server = await getServerById(msg.guild!.id);
+
+      if (!server)
+        return msg.util?.send('Error occured when trying to ban the user.');
+
       // so that we can unban people later :)
       const inserted = await createTempBan({
-        server: msg.guild!.id,
+        server,
         user: member.id,
         end: Date.now() + duration,
         reason: reason,

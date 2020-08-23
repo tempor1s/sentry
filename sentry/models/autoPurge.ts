@@ -12,9 +12,7 @@ export class AutoPurges {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Servers, (servers) => servers.channelPurges, {
-    cascade: true,
-  })
+  @ManyToOne(() => Servers, (servers) => servers.channelPurges)
   server!: Servers;
 
   // the channel that we are purging

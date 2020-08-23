@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Servers } from './server';
 
 @Entity('mutes')
@@ -6,7 +6,7 @@ export class Mutes {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToMany(() => Servers, (servers) => servers.mutes, { cascade: true })
+  @ManyToOne(() => Servers, (servers) => servers.mutes)
   server!: Servers;
 
   @Column({ type: 'varchar', length: 22 })

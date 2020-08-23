@@ -4,6 +4,7 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import { getDefaultEmbed } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 import { createWarning } from '../../../services/warnings';
+import { getServerById } from '../../../services/server';
 
 export default class WarnAddCommand extends Command {
   public constructor() {
@@ -40,14 +41,13 @@ export default class WarnAddCommand extends Command {
       );
 
     try {
-      const inserted = await createWarning({
+      // create the new warning
+      await createWarning({
         server: msg.guild!.id,
         user: member.id,
         moderator: msg.author.id,
         reason: reason,
       });
-
-      if (!inserted) return msg.util?.send('Error adding warning to user.');
 
       logger.debug(
         `Added warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'`

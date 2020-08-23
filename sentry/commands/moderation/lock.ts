@@ -48,7 +48,7 @@ export default class LockCommand extends Command {
     { channel, duration }: { channel: TextChannel; duration: number }
   ) {
     // try to lock the channel
-    let locked = await lockChannel(channel, duration);
+    const locked = await lockChannel(channel, duration);
 
     if (!locked)
       return msg.util?.send('Channel is already locked or lock failed.');

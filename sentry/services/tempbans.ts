@@ -21,14 +21,16 @@ export const createTempBan = async (tempBanData: CreateTempBan) => {
 export async function tempUnbanLoop(client: AkairoClient) {
   const tempBanRepo = getRepository(TempBans);
 
-  const tempBans = await tempBanRepo.find();
+  const tempBans = await tempBanRepo.find({ relations: ['server'] });
   tempBans
     .filter((ban) => ban.end <= Date.now())
     .map(async (ban) => {
-      await tempBanRepo.delete({
-        server: ban.server,
-        user: ban.user,
-      });
+      // await tempBanRepo.delete({
+      //   server: ban.server,
+      //   user: ban.user,
+      // });
+
+      await tempBanRepo.delete(ban);
       // get the server to remove ban from
       const server = client.guilds.cache.get(ban.server.id);
       // the bot member in the server

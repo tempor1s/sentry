@@ -51,6 +51,6 @@ export default class RolesRemoveAllCommand extends Command {
 
     logRolesRemoveAll(role, msg.member!);
 
-    return msg.util?.send(`Removed <@&${role.id}> from everyone.`);
+    return msg.util?.send(`Removed @${role.name} from everyone.`);
   }
 }

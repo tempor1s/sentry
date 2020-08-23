@@ -68,6 +68,6 @@ export default class RolesAddCommand extends Command {
       return msg.util?.send('Error adding role.');
     }
 
-    return msg.util?.send(`Assigned role <@&${role.id}> to ${member.user}!`);
+    return msg.util?.send(`Assigned role @${role.name} to ${member.user}!`);
   }
 }

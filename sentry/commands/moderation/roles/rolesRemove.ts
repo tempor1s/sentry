@@ -70,6 +70,6 @@ export default class RolesRemoveCommand extends Command {
       return msg.util?.send('Error removing role.');
     }
 
-    return msg.util?.send(`Removed role <@&${role.id}> from ${member.user}!`);
+    return msg.util?.send(`Removed role @${role.name} from ${member.user}!`);
   }
 }

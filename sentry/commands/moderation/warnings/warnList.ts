@@ -41,6 +41,8 @@ export default class WarnListCommand extends Command {
 
     const warnings = await getAllWarnings(member.guild.id, member.id);
 
+    if (!warnings) return msg.util?.send('No warnings for that user.');
+
     const embed = getDefaultEmbed().setTitle(`Warnings for ${member.user.tag}`);
 
     for (const warning of warnings) {

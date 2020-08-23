@@ -3,7 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Servers } from './server';
 
@@ -12,7 +12,7 @@ export class Warnings {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @OneToMany(() => Servers, (servers) => servers.warnings, { cascade: true })
+  @ManyToOne(() => Servers, (servers) => servers.warnings)
   server!: Servers;
 
   @Column({ type: 'varchar', length: 22 })

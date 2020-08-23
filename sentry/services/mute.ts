@@ -9,30 +9,27 @@ import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
 
 export const findMutedUser = async (serverId: string, userId: string) => {
-  const server = await getServerById(serverId);
+  const server = await getServerById(serverId, ['mutes']);
 
   return server?.mutes.find((mute) => mute.user === userId);
 };
 
 export async function unmuteLoop(client: AkairoClient) {
-  const serversRepo = getRepository(Servers);
   const mutesRepo = getRepository(Mutes);
 
-  const mutes = await mutesRepo.find();
+  const mutes = await mutesRepo.find({ relations: ['server'] });
   mutes
     .filter((m) => m.end <= Date.now())
     .map(async (m) => {
       let guild = client.guilds.cache.get(m.server.id);
       let member = guild!.members.cache.get(m.user);
       // TODO: This is slow. Optimize with relations or something? :)
-      let serverDb = await serversRepo.findOne({
-        where: { server: m.server },
-      });
+      const server = await getServerById(m.server.id);
 
       // try to mute the user
       try {
         // Unmute the user
-        await unmute(member!, serverDb!.mutedRole);
+        await unmute(member!, server!.mutedRole);
         // Log the unmute
         logUnmute(member!, member!.guild.members.cache.get(client.user!.id)!);
 

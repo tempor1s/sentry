@@ -53,7 +53,7 @@ export default class PermissionMessagesConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `${flag ? 'Enabled' : 'Disabled'} missing permission messsages.`
+      `${flag ? 'Enabled' : 'Disabled'} missing permission messages.`
     );
   }
 }

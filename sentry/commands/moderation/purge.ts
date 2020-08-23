@@ -21,7 +21,6 @@ export default class PurgeCommand extends Command {
         {
           id: 'amount',
           type: 'number',
-          match: 'content',
         },
       ],
     });
@@ -56,14 +55,6 @@ export default class PurgeCommand extends Command {
 
         return msg.util?.send('Error purging messages.');
       }
-
-      return msg.util?.send(
-        `Deleted \`${purgeSize}\` message(s).${
-          purgeSize < amount
-            ? ' Less messages were probably purged due to messages being older than 2 weeks or other discord limitation.'
-            : ''
-        }`
-      );
     } else {
       return msg.util?.send('Please specify an amount under 100.');
     }
