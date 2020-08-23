@@ -2,6 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions } from 'discord.js';
 import logger from '../../utils/logger';
 import { logPurge } from '../../services/serverlogs';
+import { TextChannel } from 'discord.js';
 
 export default class PurgeCommand extends Command {
   public constructor() {
@@ -41,7 +42,11 @@ export default class PurgeCommand extends Command {
     let purgeSize: number;
     if (amount < 100) {
       try {
-        const msgs = await msg.channel.bulkDelete(amount, true);
+        const msgs = await (msg.channel as TextChannel).bulkDelete(
+          amount,
+          true
+        );
+
         purgeSize = msgs.size;
         logPurge(msg.member!, purgeSize, msgs);
 
