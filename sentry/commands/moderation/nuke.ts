@@ -60,7 +60,7 @@ export default class NukeCommand extends Command {
     if (confirmPrompt.toLowerCase() !== 'confirm') {
       return msg.util?.send('Command terminated.');
     }
-    let oldChannel = await channel.delete('Nuked');
+    let oldChannel = (await channel.delete('Nuked')) as TextChannel;
 
     // clone the channel and set it to the same position as the old one
     let newChannel = await channel.clone();
