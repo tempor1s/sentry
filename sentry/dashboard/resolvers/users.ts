@@ -9,6 +9,7 @@ import {
 } from 'type-graphql';
 import { Context } from '../interfaces/context.interface';
 import { Servers } from '../../models/server';
+import { getServerById } from '../../services/server';
 
 @ObjectType()
 class CurrentUserResp {
@@ -48,7 +49,6 @@ export class UserResolver {
   @Query(() => ServersResp)
   async getServers(@Ctx() { getUser, client }: Context): Promise<ServersResp> {
     const user = getUser();
-    const serversRepo = client.db.getRepository(Servers);
 
     let serversResp: ServersRespInterface = {
       joinedServers: [],
@@ -59,7 +59,7 @@ export class UserResolver {
       let guild = client.guilds.cache.get(server);
       // if we find the guild in our cache, we have a db entry, so try to add that
       if (guild) {
-        const dbServer = await serversRepo.findOne({ where: { server } });
+        const dbServer = await getServerById(server);
 
         // db entry doesn't exist
         if (!dbServer) {
@@ -77,8 +77,6 @@ export class UserResolver {
         }
       }
     }
-
-    console.log(serversResp);
 
     return serversResp;
   }

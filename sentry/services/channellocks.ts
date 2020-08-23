@@ -6,20 +6,18 @@ import { getRepository } from 'typeorm';
 import { logChannelUnlock } from './serverlogs';
 import { getDefaultEmbed } from '../utils/message';
 import ms from 'ms';
+import { getServerById } from './server';
 
 export async function unlockChannelLoop(client: AkairoClient): Promise<void> {
   const locksRepo = getRepository(ChannelLocks);
 
-  const channelLocks = await locksRepo.find();
+  const channelLocks = await locksRepo.find({ relations: ['server'] });
   channelLocks
     .filter(
       (channel) => channel.end <= Date.now() && channel.indefinite === false
     )
     .map(async (channel) => {
-      await locksRepo.delete({
-        server: channel.server,
-        channel: channel.server,
-      });
+      await locksRepo.delete(channel);
       // get the server to remove ban from
       let lockedChan = client.channels.cache.get(
         channel.channel
@@ -34,7 +32,7 @@ export async function unlockChannelLoop(client: AkairoClient): Promise<void> {
     });
 }
 
-// "locks" given channel by disabling
+// "locks" given channel by disabling permissions
 export async function lockChannel(
   channel: TextChannel,
   duration: number
@@ -71,8 +69,11 @@ export async function lockChannel(
       .addField('Duration', duration ? ms(duration) : 'Indefinite', true)
   );
 
+  // TODO: query builder
+  const server = await getServerById(channel.guild.id);
+
   await locksRepo.insert({
-    server: channel.guild.id,
+    server,
     channel: channel.id,
     end: Date.now() + duration,
     indefinite: duration === 0 ? true : false,
@@ -110,12 +111,14 @@ export async function unlockChannel(channel: TextChannel): Promise<boolean> {
     `Unlocked channel ${channel.name} (${channel.id}) in ${channel.guild.name} ${channel.guild.id}`
   );
 
-  channel.send('Channel unlocked! :)');
+  const server = await getServerById(channel.guild.id);
 
   await locksRepo.delete({
-    server: channel.guild.id,
+    server,
     channel: channel.id,
   });
+
+  channel.send('Channel unlocked! :)');
 
   return true;
 }
