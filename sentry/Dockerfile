@@ -24,7 +24,10 @@ RUN npm ci --quiet && npm run build
 # This state compile get back the JavaScript code from builder stage
 # It will also install the production package only
 #
-FROM node:lts-alpine
+FROM node:lts
+
+RUN apt-get update && \
+  apt-get install -y python3
 
 # expose 8080 since this is the production stage that will be run
 EXPOSE 8080
