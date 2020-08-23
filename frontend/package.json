@@ -18,9 +18,9 @@
     "apollo-client": "^2.6.10",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
-    "graphql-tag": "^2.10.4",
+    "graphql-tag": "^2.11.0",
     "isomorphic-unfetch": "^3.0.0",
-    "next": "latest",
+    "next": "^9.5.2",
     "next-with-apollo": "^5.1.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
@@ -29,10 +29,10 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.7",
-    "@types/node": "^12.12.52",
-    "@types/react": "^16.9.43",
+    "@types/node": "^12.12.54",
+    "@types/react": "^16.9.46",
     "@types/react-dom": "16.8.4",
-    "@types/styled-components": "^5.1.1",
+    "@types/styled-components": "^5.1.2",
     "nodemon": "^2.0.4",
     "typescript": "^3.9.7"
   }
