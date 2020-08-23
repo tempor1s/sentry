@@ -5,8 +5,9 @@ import { Message, Permissions, TextChannel } from 'discord.js';
 import { AutoPurges } from '../../../models/autoPurge';
 import {
   getSingleAutoPurge,
-  createAutoPurge,
+  startAutoPurge,
 } from '../../../services/autopurge';
+import { getServerById } from '../../../services/server';
 
 export default class AutoPurgeStartCommand extends Command {
   public constructor() {
@@ -76,9 +77,14 @@ export default class AutoPurgeStartCommand extends Command {
       );
     }
 
+    const server = await getServerById(msg.guild!.id);
+
+    if (!server)
+      return msg.util?.send('Failed to start autopurge. Please try again.');
+
     // add the auto-purge into the db
-    const inserted = await createAutoPurge({
-      server: msg.guild!.id,
+    const inserted = await startAutoPurge({
+      server,
       channel: channel.id,
       timeUntilNextPurge: interval + Date.now(),
       purgeInterval: interval,

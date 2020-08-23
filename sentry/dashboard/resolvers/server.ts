@@ -8,8 +8,10 @@ import {
   InputType,
   Field,
 } from 'type-graphql';
+import { getServerById, updateServerById } from '../../services/server';
 import { Context } from '../interfaces/context.interface';
 import { Servers } from '../../models/server';
+import logger from '../../utils/logger';
 
 @InputType()
 class UpdateServerInput implements Partial<Servers> {
@@ -26,11 +28,11 @@ export class Prefix {
   @Query(() => Servers)
   async getServerByID(
     @Arg('id') id: string,
-    @Ctx() { client }: Context
+    @Ctx() _context: Context
   ): Promise<Servers | undefined> {
-    const serverRepo = client.db.getRepository(Servers);
+    const server = await getServerById(id);
 
-    return await serverRepo.findOne({ where: { server: id } });
+    return server;
   }
 
   @Authorized()
@@ -38,14 +40,17 @@ export class Prefix {
   async updateServerByID(
     @Arg('id') id: string,
     @Arg('data') newServerData: UpdateServerInput,
-    @Ctx() { client }: Context
+    @Ctx() _context: Context
   ): Promise<Servers | undefined> {
-    const serverRepo = client.db.getRepository(Servers);
+    const updated = await updateServerById(id, newServerData);
 
-    await serverRepo.update({ server: id }, newServerData);
+    if (!updated) {
+      logger.error(
+        'Error updating server by id in resolver. Updated: ',
+        updated
+      );
+    }
 
-    const server = await serverRepo.findOne({ server: id });
-
-    return server;
+    return await getServerById(id);
   }
 }
