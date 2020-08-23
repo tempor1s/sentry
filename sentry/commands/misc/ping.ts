@@ -14,6 +14,6 @@ export default class PingCommand extends Command {
   }
 
   public async exec(message: Message) {
-    return message.util?.send(`Pong. \`${this.client.ws.ping}ms\``);
+    return message.util?.send(`Pong! \`${this.client.ws.ping}ms\``);
   }
 }

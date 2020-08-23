@@ -41,20 +41,13 @@ export default class WarnAddCommand extends Command {
       );
 
     try {
-      // TODO: use query builder
-      const server = await getServerById(msg.guild!.id);
-
-      if (!server)
-        return msg.util?.send('Error creating warning. Please try again.');
-
-      const inserted = await createWarning({
-        server,
+      // create the new warning
+      await createWarning({
+        server: msg.guild!.id,
         user: member.id,
         moderator: msg.author.id,
         reason: reason,
       });
-
-      if (!inserted) return msg.util?.send('Error adding warning to user.');
 
       logger.debug(
         `Added warning to ${member.user.tag} (${member.user.id}) in ${member.guild.name} (${member.guild.id}) with reason '${reason}'`

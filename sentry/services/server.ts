@@ -12,9 +12,14 @@ export const createServerById = async (serverId: string) => {
 };
 
 export const getServerById = async (
-  serverId: string
+  serverId: string,
+  relations?: string[]
 ): Promise<Servers | undefined> => {
   const repo = getRepository(Servers);
+
+  if (relations) {
+    return await repo.findOne({ where: { id: serverId }, relations });
+  }
 
   return await repo.findOne({ where: { id: serverId } });
 };

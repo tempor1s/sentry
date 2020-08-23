@@ -52,6 +52,6 @@ export default class RolesAddAllCommand extends Command {
 
     logRolesAddAll(role, msg.member!);
 
-    return msg.util?.send(`Added <@&${role.id}> to everyone.`);
+    return msg.util?.send(`Added @${role.name} to everyone.`);
   }
 }

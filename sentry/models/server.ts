@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   BaseEntity,
   Index,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { defaultPrefix } from '../config';
 import { ObjectType, Field } from 'type-graphql';
@@ -132,19 +132,34 @@ export class Servers extends BaseEntity {
   @Column({ type: 'varchar', nullable: true, length: 22 })
   mutedRole!: string;
 
-  @ManyToOne(() => AutoPurges, (autopurges) => autopurges.server)
+  @OneToMany(() => AutoPurges, (autopurges) => autopurges.server, {
+    cascade: true,
+    nullable: true,
+  })
   channelPurges!: AutoPurges[];
 
-  @ManyToOne(() => ChannelLocks, (channellocks) => channellocks.server)
+  @OneToMany(() => ChannelLocks, (channellocks) => channellocks.server, {
+    cascade: true,
+    nullable: true,
+  })
   channelLocks!: ChannelLocks[];
 
-  @ManyToOne(() => Mutes, (mutes) => mutes.server)
+  @OneToMany(() => Mutes, (mutes) => mutes.server, {
+    cascade: true,
+    nullable: true,
+  })
   mutes!: Mutes[];
 
-  @ManyToOne(() => TempBans, (tempbans) => tempbans.server)
+  @OneToMany(() => TempBans, (tempbans) => tempbans.server, {
+    cascade: true,
+    nullable: true,
+  })
   tempBans!: TempBans[];
 
-  @ManyToOne(() => Warnings, (warnings) => warnings.server)
+  @OneToMany(() => Warnings, (warnings) => warnings.server, {
+    cascade: true,
+    nullable: true,
+  })
   warnings!: Warnings[];
 
   // Mute Duration

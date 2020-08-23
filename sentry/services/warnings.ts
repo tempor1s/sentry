@@ -1,26 +1,55 @@
 import { getRepository } from 'typeorm';
 import { Warnings } from '../models/warnings';
-import { Servers } from '../models/server';
 import { getServerById } from './server';
+import logger from '../utils/logger';
 
 export const getAllWarnings = async (serverId: string, userId: string) => {
-  const repo = getRepository(Warnings);
-  const server = await getServerById(serverId);
+  // TODO: query builder to improve performance
 
-  return repo.find({ where: { server: server, user: userId } });
+  // get the server
+  const server = await getServerById(serverId, ['warnings']);
+  const warnings = server?.warnings;
+
+  console.log('warnings', warnings);
+
+  if (!warnings) {
+    return null;
+  }
+
+  // return only the warnings from the user that we want
+  return warnings.filter((warning) => warning.user === userId);
 };
 
 interface CreateWarning {
-  server: Servers;
+  server: string;
   user: string;
   moderator: string;
   reason: string;
 }
 
 export const createWarning = async (createWarningData: CreateWarning) => {
-  const repo = getRepository(Warnings);
+  // TODO: use query builder
+  try {
+    const server = await getServerById(createWarningData.server);
+    const repo = getRepository(Warnings);
 
-  return repo.insert(createWarningData);
+    const warning = getRepository(Warnings).create({
+      server: server,
+      user: createWarningData.user,
+      moderator: createWarningData.moderator,
+      reason: createWarningData.reason,
+    });
+
+    await repo.insert(warning);
+
+    // await getConnection()
+    //   .createQueryBuilder()
+    //   .relation(Servers, 'warnings')
+    //   .of(server)
+    //   .add(warning);
+  } catch (e) {
+    logger.error('error creating warning: ', e);
+  }
 };
 
 export const removeSingleWarning = async (
