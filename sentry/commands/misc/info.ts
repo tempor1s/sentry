@@ -37,8 +37,8 @@ export default class InfoCommand extends Command {
       .addField('❯ Users', this.client.users.cache.size, true)
       .addField('❯ Language', 'Typescript', true)
       .addField('❯ Library', 'discord.js', true)
-      .addField('Website', 'sentrybot.io')
-      .addField('Code', '[Source](https://github.com/tempor1s/sentry)')
+      .addField('❯ Website', 'sentrybot.io', true)
+      .addField('❯ Code', '[Source](https://github.com/tempor1s/sentry)', true)
       .setThumbnail(this.client.user?.displayAvatarURL() ?? '');
 
     msg.util?.send(embed);
