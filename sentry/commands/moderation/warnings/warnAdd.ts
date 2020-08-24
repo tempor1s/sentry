@@ -73,8 +73,8 @@ export default class WarnAddCommand extends Command {
 
     if (silent === false)
       await dmUser(
-        `You have been warned in ${
-          msg.guild!.name
+        `You have been warned in ${msg.guild!.name} by ${
+          msg.member?.user.username
         } for the reason: *${reason}*`,
         member.user
       );

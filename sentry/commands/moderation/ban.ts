@@ -85,7 +85,7 @@ export default class BanCommand extends Command {
       // if not a silent ban, dm the user
       if (silent === false) {
         await dmUser(
-          `You have been banned from ${member.guild.name} for the reason: *${reason}*`,
+          `You have been banned from ${member.guild.name} by ${msg.member?.user.username} for the reason: *${reason}*`,
           member.user
         );
       }

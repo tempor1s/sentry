@@ -72,7 +72,7 @@ export default class KickCommand extends Command {
       // if not silent, tell the user why they were kicked
       if (silent === false) {
         await dmUser(
-          `You have been kicked from ${member.guild.name} for the reason: *${reason}*`,
+          `You have been kicked from ${member.guild.name} by ${msg.member?.user.username} for the reason: *${reason}*`,
           member.user
         );
       }
