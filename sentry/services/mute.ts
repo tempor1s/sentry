@@ -7,6 +7,7 @@ import { getRepository } from 'typeorm';
 import { logUnmute } from './serverlogs';
 import { Mutes } from '../models/mutes';
 import { Servers } from '../models/server';
+import { dmUser } from '../utils/message';
 
 export const findMutedUser = async (serverId: string, userId: string) => {
   const server = await getServerById(serverId, ['mutes']);
@@ -88,12 +89,13 @@ export async function mute(
       roles: roles,
     });
 
-    // Let the user know we muted them
-    if (!silent) {
-      member.send(
+    // Let the user know we muted them if there is no silent flag
+    if (silent !== false) {
+      await dmUser(
         `You have been muted by ${msg.member!.user} in ${
           msg.guild!.name
-        } for \`${ms(duration)}\``
+        } for \`${ms(duration)}\``,
+        member.user
       );
     }
 

@@ -3,7 +3,7 @@ import ms from 'ms';
 import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import { logBan } from '../../services/serverlogs';
-import { getDefaultEmbed } from '../../utils/message';
+import { getDefaultEmbed, dmUser } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 import { createTempBan } from '../../services/tempbans';
 import { getServerById } from '../../services/server';
@@ -116,9 +116,10 @@ export default class TempBanCommand extends Command {
     }
 
     try {
-      if (!silent) {
-        await member.send(
-          `You have been temporarily banned from ${member.guild.name} for \`${msDuration}\` for the reason: *${reason}*`
+      if (silent !== false) {
+        await dmUser(
+          `You have been temporarily banned from ${member.guild.name} by ${msg.member?.user.username} for \`${msDuration}\` for the reason: *${reason}*`,
+          member.user
         );
       }
 

@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
 import { logBan } from '../../services/serverlogs';
-import { getDefaultEmbed } from '../../utils/message';
+import { getDefaultEmbed, dmUser } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class BanCommand extends Command {
@@ -46,6 +46,7 @@ export default class BanCommand extends Command {
           id: 'silent',
           match: 'flag',
           flag: ['--silent', '-s'],
+          default: false,
         },
       ],
     });
@@ -81,13 +82,15 @@ export default class BanCommand extends Command {
         return msg.util?.send('That user is already banned.');
       }
 
-      if (!silent) {
-        await member.send(
-          `You have been banned from ${member.guild.name} for the reason: *${reason}*`
+      // if not a silent ban, dm the user
+      if (silent !== false) {
+        await dmUser(
+          `You have been banned from ${member.guild.name} by ${msg.member?.user.username} for the reason: *${reason}*`,
+          member.user
         );
       }
 
-      // ban the user and send them a msg
+      // ban the user
       await member.ban({ reason: reason, days: days });
 
       // log ban

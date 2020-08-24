@@ -9,7 +9,7 @@
   "private": false,
   "scripts": {
     "build": "tsc",
-    "start:dev": "ts-node-dev --respawn --watch sentry index.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only --watch sentry index.ts"
   },
   "dependencies": {
     "apollo-server-express": "^2.16.1",

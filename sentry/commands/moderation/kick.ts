@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message, Permissions, GuildMember } from 'discord.js';
 import logger from '../../utils/logger';
 import { logKick } from '../../services/serverlogs';
-import { getDefaultEmbed } from '../../utils/message';
+import { getDefaultEmbed, dmUser } from '../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../utils/permissions';
 
 export default class KickCommand extends Command {
@@ -69,14 +69,16 @@ export default class KickCommand extends Command {
       );
 
     try {
+      // if not silent, tell the user why they were kicked
+      if (silent !== false) {
+        await dmUser(
+          `You have been kicked from ${member.guild.name} by ${msg.member?.user.username} for the reason: *${reason}*`,
+          member.user
+        );
+      }
+
       // kick the user and send them a msg
-      await member.kick(reason).then(() => {
-        if (!silent) {
-          member.send(
-            `You have been kicked from ${member.guild.name} for the reason: *${reason}*`
-          );
-        }
-      });
+      await member.kick(reason);
 
       // log kick
       logKick(member, reason, msg.member!);

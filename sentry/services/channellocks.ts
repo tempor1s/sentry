@@ -17,7 +17,6 @@ export async function unlockChannelLoop(client: AkairoClient): Promise<void> {
       (channel) => channel.end <= Date.now() && channel.indefinite === false
     )
     .map(async (channel) => {
-      await locksRepo.delete(channel);
       // get the server to remove ban from
       let lockedChan = client.channels.cache.get(
         channel.channel
@@ -38,11 +37,13 @@ export async function lockChannel(
   duration: number
 ): Promise<boolean> {
   const locksRepo = getRepository(ChannelLocks);
+  const server = await getServerById(channel.guild.id);
 
   // make sure the channel is not already locked
   let channelLock = await locksRepo.findOne({
-    where: { server: channel.guild.id, channel: channel.id },
+    where: { server: server, channel: channel.id },
   });
+
   if (channelLock) return false;
 
   let everyoneRole = channel.guild.roles.cache.find(
@@ -69,15 +70,14 @@ export async function lockChannel(
       .addField('Duration', duration ? ms(duration) : 'Indefinite', true)
   );
 
-  // TODO: query builder
-  const server = await getServerById(channel.guild.id);
-
-  await locksRepo.insert({
+  const lock = locksRepo.create({
     server,
     channel: channel.id,
     end: Date.now() + duration,
     indefinite: duration === 0 ? true : false,
   });
+
+  await locksRepo.insert(lock);
 
   return true;
 }
@@ -86,9 +86,13 @@ export async function unlockChannel(channel: TextChannel): Promise<boolean> {
   const locksRepo = getRepository(ChannelLocks);
 
   // get the channels lock
-  let channelLock = await locksRepo.findOne({
-    where: { server: channel.guild.id, channel: channel.id },
-  });
+  const server = await getServerById(channel.guild.id, ['channelLocks']);
+
+  // find the channel lock in the server
+  const channelLock = server?.channelLocks.find(
+    (lock) => lock.channel === channel.id
+  );
+
   if (!channelLock) return false;
 
   let everyoneRole = channel.guild.roles.cache.find(
@@ -110,8 +114,6 @@ export async function unlockChannel(channel: TextChannel): Promise<boolean> {
   logger.debug(
     `Unlocked channel ${channel.name} (${channel.id}) in ${channel.guild.name} ${channel.guild.id}`
   );
-
-  const server = await getServerById(channel.guild.id);
 
   await locksRepo.delete({
     server,

@@ -288,7 +288,7 @@ export async function logBan(
   user: User,
   reason: string,
   moderator: GuildMember,
-  duration: string = 'Indefinite'
+  duration?: string
 ) {
   const server = await getServerById(moderator.guild.id);
 
@@ -301,7 +301,7 @@ export async function logBan(
     .setTitle(`User Banned | ${user.tag}`)
     .addField('Reason', reason, false)
     .addField('Moderator', moderator.user, true)
-    .addField('Duration', duration, true)
+    .addField('Duration', duration ? duration : 'Indefinite', true)
     .setThumbnail(user.displayAvatarURL());
 
   let modLogChannel = moderator.guild.channels.cache.get(
