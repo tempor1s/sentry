@@ -1,7 +1,7 @@
 import logger from '../../../utils/logger';
 import { Command } from 'discord-akairo';
 import { Message, GuildMember, Permissions } from 'discord.js';
-import { getDefaultEmbed } from '../../../utils/message';
+import { getDefaultEmbed, dmUser } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 import { createWarning } from '../../../services/warnings';
 import { getServerById } from '../../../services/server';
@@ -22,13 +22,23 @@ export default class WarnAddCommand extends Command {
           match: 'rest',
           default: 'No reason provided.',
         },
+        {
+          id: 'silent',
+          match: 'flag',
+          flag: ['--silent', '-s'],
+          default: false,
+        },
       ],
     });
   }
 
   public async exec(
     msg: Message,
-    { member, reason }: { member: GuildMember; reason: string }
+    {
+      member,
+      reason,
+      silent,
+    }: { member: GuildMember; reason: string; silent: boolean }
   ) {
     if (!member) {
       return msg.util?.send('User not specified / found.');
@@ -60,6 +70,14 @@ export default class WarnAddCommand extends Command {
 
       return msg.util?.send('Error adding warning to user.');
     }
+
+    if (silent === false)
+      await dmUser(
+        `You have been warned in ${
+          msg.guild!.name
+        } for the reason: *${reason}*`,
+        member.user
+      );
 
     return msg.util?.send(
       getDefaultEmbed('GREEN')
