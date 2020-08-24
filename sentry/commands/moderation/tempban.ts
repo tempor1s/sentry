@@ -116,7 +116,7 @@ export default class TempBanCommand extends Command {
     }
 
     try {
-      if (silent === false) {
+      if (silent !== false) {
         await dmUser(
           `You have been temporarily banned from ${member.guild.name} by ${msg.member?.user.username} for \`${msDuration}\` for the reason: *${reason}*`,
           member.user

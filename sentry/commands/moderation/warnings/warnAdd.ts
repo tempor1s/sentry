@@ -4,7 +4,6 @@ import { Message, GuildMember, Permissions } from 'discord.js';
 import { getDefaultEmbed, dmUser } from '../../../utils/message';
 import { checkHigherOrEqualPermissions } from '../../../utils/permissions';
 import { createWarning } from '../../../services/warnings';
-import { getServerById } from '../../../services/server';
 
 export default class WarnAddCommand extends Command {
   public constructor() {
@@ -71,7 +70,7 @@ export default class WarnAddCommand extends Command {
       return msg.util?.send('Error adding warning to user.');
     }
 
-    if (silent === false)
+    if (silent !== false)
       await dmUser(
         `You have been warned in ${msg.guild!.name} by ${
           msg.member?.user.username

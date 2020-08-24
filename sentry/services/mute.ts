@@ -90,7 +90,7 @@ export async function mute(
     });
 
     // Let the user know we muted them if there is no silent flag
-    if (silent === false) {
+    if (silent !== false) {
       await dmUser(
         `You have been muted by ${msg.member!.user} in ${
           msg.guild!.name
