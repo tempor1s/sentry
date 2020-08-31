@@ -30,7 +30,7 @@ export default class ModLogConfigCommand extends Command {
     if (!channel) {
       if (server?.modLog) {
         let oldChannel = msg.guild!.channels.cache.get(server.modLog);
-        return msg.util?.send(`Current Mod Log Channel: ${oldChannel}`);
+        return msg.util?.send(`Current modlog channel: ${oldChannel}`);
       }
 
       return msg.util?.send('There is no modlog channel currently set.');
@@ -61,7 +61,7 @@ export default class ModLogConfigCommand extends Command {
     }
 
     return msg.util?.send(
-      `The command log channel has been set to ${channel} (${channel.id})`
+      `The modlog channel has been set to ${channel} (${channel.id})`
     );
   }
 }
